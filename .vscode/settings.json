@@ -1,0 +1,9 @@
+{
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "eslint.workingDirectories": ["frontend"],
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true
+  }
+}
