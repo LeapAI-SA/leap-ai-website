@@ -41,6 +41,9 @@ router.put("/settings", async (req, res) => {
   if (body.images && typeof body.images === "object") {
     settings.set("images", { ...plain.images, ...(body.images as object) })
   }
+  if (body.social && typeof body.social === "object") {
+    settings.set("social", { ...plain.social, ...(body.social as object) })
+  }
 
   await settings.save()
   await cacheDel("public:settings")

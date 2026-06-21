@@ -1,8 +1,11 @@
 "use client"
 
+import type { ComponentType } from "react"
 import Image from "next/image"
-import { Phone, Mail, MapPin, Clock, Globe, Send, Rss, AtSign, Share2 } from "lucide-react"
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergeSocialLinks, type SocialPlatform } from "@/lib/social-links"
 import type { TranslationKey } from "@/lib/translations"
 
 const quickLinks: { key: TranslationKey; href: string }[] = [
@@ -17,10 +20,37 @@ const legalLinks = [
   { href: "/#faq", ar: "أسئلة شائعة", en: "FAQ" },
 ]
 
-const socialIcons = [Globe, Send, AtSign, Rss, Share2]
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
+
+const socialIcons: Record<SocialPlatform, ComponentType<{ className?: string }>> = {
+  facebook: Facebook,
+  twitter: XIcon,
+  instagram: Instagram,
+  youtube: Youtube,
+  linkedin: Linkedin,
+}
 
 export function SiteFooter() {
   const { t, lang } = useLanguage()
+  const { settings } = useSiteSettings()
+  const social = mergeSocialLinks(settings?.social)
+  const email = settings?.contact.email ?? "info@leapai.ai"
+  const phone = settings?.contact.phone ?? "+966 53 553 3627"
+  const phoneHref = phone.replace(/\s/g, "")
+
+  const socialLabels: Record<SocialPlatform, string> = {
+    facebook: "Facebook",
+    twitter: "X",
+    instagram: "Instagram",
+    youtube: "YouTube",
+    linkedin: "LinkedIn",
+  }
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">
@@ -54,15 +84,15 @@ export function SiteFooter() {
             <h3 className="text-lg font-bold">{t("footer.contactTitle")}</h3>
             <ul className="mt-5 flex flex-col gap-3 text-navy-foreground/75">
               <li>
-                <a href="tel:+966535533627" className="flex items-center gap-2 transition-colors hover:text-amber">
+                <a href={`tel:${phoneHref}`} className="flex items-center gap-2 transition-colors hover:text-amber">
                   <Phone className="size-4 text-amber" />
-                  <span dir="ltr">+966 53 553 3627</span>
+                  <span dir="ltr">{phone}</span>
                 </a>
               </li>
               <li>
-                <a href="mailto:info@leapai.ai" className="flex items-center gap-2 transition-colors hover:text-amber">
+                <a href={`mailto:${email}`} className="flex items-center gap-2 transition-colors hover:text-amber">
                   <Mail className="size-4 text-amber" />
-                  info@leapai.ai
+                  {email}
                 </a>
               </li>
             </ul>
@@ -72,7 +102,7 @@ export function SiteFooter() {
             <h3 className="text-lg font-bold">{t("contact.locationTitle")}</h3>
             <p className="mt-5 flex items-start gap-2 leading-relaxed text-navy-foreground/75">
               <MapPin className="mt-1 size-4 shrink-0 text-amber" />
-              {t("footer.locationDetail")}
+              {settings?.contact.address?.[lang] ?? t("footer.locationDetail")}
             </p>
           </div>
 
@@ -88,16 +118,23 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-navy-foreground/15 pt-8 sm:flex-row">
           <p className="text-sm text-navy-foreground/60">{t("footer.copyright")}</p>
           <div className="flex items-center gap-3">
-            {socialIcons.map((Icon, i) => (
-              <a
-                key={i}
-                href="#"
-                aria-label={t("footer.socialAria")}
-                className="flex size-9 items-center justify-center rounded-full border border-navy-foreground/20 text-navy-foreground/70 transition-colors hover:border-amber hover:bg-amber hover:text-accent-foreground"
-              >
-                <Icon className="size-4" />
-              </a>
-            ))}
+            {(Object.keys(socialIcons) as SocialPlatform[]).map((key) => {
+              const url = social[key]
+              if (!url) return null
+              const Icon = socialIcons[key]
+              return (
+                <a
+                  key={key}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={socialLabels[key]}
+                  className="flex size-9 items-center justify-center rounded-full border border-navy-foreground/20 text-navy-foreground/70 transition-colors hover:border-amber hover:bg-amber hover:text-accent-foreground"
+                >
+                  <Icon className="size-4" />
+                </a>
+              )
+            })}
           </div>
         </div>
       </div>

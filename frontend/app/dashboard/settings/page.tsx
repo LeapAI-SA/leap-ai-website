@@ -14,6 +14,8 @@ import {
   ImageUploadField,
 } from "@/components/dashboard/ui"
 
+import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
+
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
   ticketOverview: "/sections/ticket-overview.png",
@@ -29,7 +31,13 @@ export default function DashboardSettingsPage() {
 
   useEffect(() => {
     adminFetch<PublicSiteSettings>("/api/admin/settings")
-      .then((data) => setSettings({ ...data, images: { ...DEFAULT_IMAGES, ...data.images } }))
+      .then((data) =>
+        setSettings({
+          ...data,
+          images: { ...DEFAULT_IMAGES, ...data.images },
+          social: mergeSocialLinks(data.social),
+        }),
+      )
       .catch((err) => setLoadError(err instanceof Error ? err.message : "Failed to load settings"))
   }, [])
 
@@ -133,6 +141,28 @@ export default function DashboardSettingsPage() {
           </div>
         </Panel>
       </div>
+
+      <Panel title="Social media" description="Footer social links (from leapai.ai)">
+        <div className="grid gap-4 md:grid-cols-2">
+          {SOCIAL_PLATFORMS.map(({ key, label, placeholder }) => (
+            <FormField key={key} label={label}>
+              <input
+                type="url"
+                dir="ltr"
+                value={settings.social?.[key] ?? ""}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    social: { ...mergeSocialLinks(settings.social), [key]: e.target.value },
+                  })
+                }
+                placeholder={placeholder}
+                className="form-input font-mono text-sm"
+              />
+            </FormField>
+          ))}
+        </div>
+      </Panel>
 
       <Panel title="Homepage hero" description="Main headline section on the landing page">
         <div className="space-y-4">

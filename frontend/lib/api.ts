@@ -2,6 +2,8 @@ export type Localized = { ar: string; en: string }
 
 import { getApiUrl, isBuildPhase } from "./api-url"
 
+import type { SocialLinks } from "./social-links"
+
 export type PublicSiteSettings = {
   maintenanceMode: boolean
   defaultLanguage: "ar" | "en"
@@ -24,6 +26,7 @@ export type PublicSiteSettings = {
     omniChannel: string
     logo: string
   }
+  social?: SocialLinks
   updatedAt?: string
 }
 

@@ -1,4 +1,5 @@
 import type { NavGroup, NavItem } from "./site-data"
+import { socialLinksForSchema, type SocialLinks } from "./social-links"
 import { absoluteUrl, getSiteUrl, siteConfig, resolveOgImage } from "./seo"
 import { geoFaqItems, geoKnowsAbout } from "./geo-faq"
 
@@ -78,6 +79,7 @@ export function buildSoftwareApplicationSchema() {
 export function buildEnhancedOrganizationSchema(settings?: {
   contact?: { phone?: string; email?: string; address?: { ar?: string; en?: string } }
   images?: { logo?: string }
+  social?: Partial<SocialLinks>
 }) {
   const orgId = `${getSiteUrl()}/#organization`
   return {
@@ -117,7 +119,7 @@ export function buildEnhancedOrganizationSchema(settings?: {
         closes: "17:00",
       },
     },
-    sameAs: [getSiteUrl()],
+    sameAs: socialLinksForSchema(settings?.social),
   }
 }
 

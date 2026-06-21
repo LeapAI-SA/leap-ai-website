@@ -71,6 +71,13 @@ const siteSettingsSchema = new Schema(
       omniChannel: { type: String, default: "/sections/omni-channel.png" },
       logo: { type: String, default: "/leapai-logo.png" },
     },
+    social: {
+      facebook: { type: String, default: "https://www.facebook.com/leapai_cx/" },
+      twitter: { type: String, default: "https://twitter.com/leapai_cx" },
+      instagram: { type: String, default: "https://www.instagram.com/leapai_cx/" },
+      youtube: { type: String, default: "https://www.youtube.com/channel/UC4kmc62wjm7IjKlO6j28jlg" },
+      linkedin: { type: String, default: "https://www.linkedin.com/company/leapai-sa/" },
+    },
   },
   { timestamps: true },
 )
@@ -93,6 +100,7 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     hero: settings.hero,
     stats: settings.stats,
     images: settings.images,
+    social: settings.social,
     updatedAt: settings.updatedAt,
   }
 }
