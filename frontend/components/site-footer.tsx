@@ -1,8 +1,8 @@
 "use client"
 
-import type { ComponentType } from "react"
 import Image from "next/image"
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
+import { Phone, Mail, MapPin, Clock } from "lucide-react"
+import { socialIcons, socialLabels } from "@/components/social-icons"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { mergeSocialLinks, type SocialPlatform } from "@/lib/social-links"
@@ -20,22 +20,6 @@ const legalLinks = [
   { href: "/#faq", ar: "أسئلة شائعة", en: "FAQ" },
 ]
 
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  )
-}
-
-const socialIcons: Record<SocialPlatform, ComponentType<{ className?: string }>> = {
-  facebook: Facebook,
-  twitter: XIcon,
-  instagram: Instagram,
-  youtube: Youtube,
-  linkedin: Linkedin,
-}
-
 export function SiteFooter() {
   const { t, lang } = useLanguage()
   const { settings } = useSiteSettings()
@@ -43,14 +27,6 @@ export function SiteFooter() {
   const email = settings?.contact.email ?? "info@leapai.ai"
   const phone = settings?.contact.phone ?? "+966 53 553 3627"
   const phoneHref = phone.replace(/\s/g, "")
-
-  const socialLabels: Record<SocialPlatform, string> = {
-    facebook: "Facebook",
-    twitter: "X",
-    instagram: "Instagram",
-    youtube: "YouTube",
-    linkedin: "LinkedIn",
-  }
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">

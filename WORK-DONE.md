@@ -59,8 +59,9 @@ So AI search engines (ChatGPT, Perplexity, Claude, etc.) can find and cite the s
 | `frontend/lib/geo-faq.ts` | 8 FAQ items (AR + EN) |
 | `frontend/lib/geo.ts` | Organization, SoftwareApplication, Corporation schemas + `buildLlmsTxt()` |
 | `frontend/components/geo/faq-section.tsx` | FAQ accordion on homepage |
-| `frontend/app/llms.txt/route.ts` | Short AI crawler summary |
-| `frontend/app/llms-full.txt/route.ts` | Extended version with FAQs |
+| `frontend/app/llms/route.ts` | Short AI crawler summary (rewritten to `/llms.txt`) |
+| `frontend/app/llms-full/route.ts` | Extended version with FAQs (rewritten to `/llms-full.txt`) |
+| `frontend/lib/llms-handler.ts` | Shared LLM text response builder |
 | `scripts/verify-geo.ps1` | Automated GEO checks |
 
 ### Updates
@@ -77,6 +78,28 @@ So AI search engines (ChatGPT, Perplexity, Claude, etc.) can find and cite the s
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/verify-geo.ps1
 ```
+
+### AI bots instructions (simple)
+
+- You do **not** install GPTBot or ClaudeBot manually.
+- Make your site public on a real domain (not localhost).
+- Confirm this page works on live site: `https://your-domain.com/robots.txt`.
+- In `robots.txt`, confirm these entries exist:
+  - `GPTBot`
+  - `ChatGPT-User`
+  - `OAI-SearchBot`
+  - `ClaudeBot`
+  - `PerplexityBot`
+- Keep public pages allowed and admin routes blocked:
+  - `Allow: /`
+  - `Disallow: /dashboard/`
+  - `Disallow: /api/`
+- Wait for crawling/indexing (usually days to weeks).
+- Test live endpoints:
+  - `https://your-domain.com/llms.txt`
+  - `https://your-domain.com/llms-full.txt`
+  - `https://your-domain.com/sitemap.xml`
+  - `https://your-domain.com/robots.txt`
 
 ---
 
@@ -215,7 +238,8 @@ cd backend; npm run dev:local
 ```
 frontend/
   lib/seo.ts, seo-content.ts, geo.ts, geo-faq.ts, page-images.ts, cms.ts, api.ts, api-url.ts
-  app/llms.txt/route.ts, llms-full.txt/route.ts, sitemap.ts, robots.ts, layout.tsx, page.tsx
+  app/llms/route.ts, llms-full/route.ts, sitemap.ts, robots.ts, layout.tsx, page.tsx
+  lib/llms-handler.ts
   components/geo/faq-section.tsx, dashboard/content-form.tsx
   public/pages/*.png
 

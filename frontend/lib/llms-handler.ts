@@ -1,9 +1,6 @@
 import { getNavContent, staticNavContent } from "@/lib/cms"
 import { buildLlmsTxt } from "@/lib/geo"
 
-export const dynamic = "force-dynamic"
-export const revalidate = 3600
-
 async function loadNav() {
   return Promise.race([
     getNavContent(),
@@ -13,9 +10,9 @@ async function loadNav() {
   ])
 }
 
-export async function GET() {
+export async function llmsResponse(extended: boolean) {
   const nav = await loadNav()
-  const body = buildLlmsTxt(nav, true)
+  const body = buildLlmsTxt(nav, extended)
 
   return new Response(body, {
     headers: {
