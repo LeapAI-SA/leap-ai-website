@@ -9,8 +9,7 @@ async function seed() {
   await ensureSeeded()
 
   const email = process.env.ADMIN_EMAIL ?? "admin@leapai.ai"
-  const password = process.env.ADMIN_PASSWORD ?? "admin123"
-  console.log(`Seed complete. Admin: ${email} / ${password}`)
+  console.log(`Seed complete. Admin: ${email}`)
   process.exit(0)
 }
 

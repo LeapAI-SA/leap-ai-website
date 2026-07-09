@@ -327,7 +327,49 @@ export const translations = {
   /* ----------------------------- Stats labels --------------------------- */
   "stats.projects": { ar: "مشاريع", en: "Projects" },
   "stats.experts": { ar: "خبراء", en: "Experts" },
-  "stats.customers": { ar: "عملاء", en: "Customers" },
+  "stats.customers": { ar: "عملاء", en: "Clients" },
+
+  /* ----------------------------- About page ----------------------------- */
+  "about.title": { ar: "معلومات عنا", en: "About us" },
+  "about.subtitle": { ar: "قصتنا ورؤيتنا ومهمتنا", en: "Our story, vision, and mission" },
+  "about.storyHeading": { ar: "قصتنا", en: "Our Story" },
+  "about.story1": {
+    ar: "مع أكثر من 23 عامًا من الخبرة في مجال التكنولوجيا داخل السوق السعودي، أصبحت LeapAI ثمرة إرث وابتكار BAB International. وبصفتها رائدة في تكنولوجيا المعلومات والاتصالات منذ 1999، أطلقت BAB International منصة LeapAI في 2022 لتكون مخصصة لحلول الذكاء الاصطناعي للمؤسسات ورائدة في السوق كمزود رائد لحلول الذكاء الاصطناعي.",
+    en: "With more than 23 years of experience in the technology space within the Saudi market, LeapAI became the fruit of BAB International's legacy and innovation. As an ICT leader since 1999, BAB International initiated LeapAI in 2022 to be dedicated to enterprise AI solutions and a leader in the marketplace as a pioneer AI solution provider.",
+  },
+  "about.story2": {
+    ar: "نهدف إلى تشكيل حقبة جديدة من التحول المدعوم بالذكاء الاصطناعي بقيادة خبرة تقنية وقيادية واسعة تمتد لأكثر من عقدين.",
+    en: "We aim to shape a new era of AI-powered transformation led by vast technical and leadership experience spanning more than two decades.",
+  },
+  "about.story3": {
+    ar: "شغوفون بالعمل معًا والمساعدة في ربط الشركات بالمستقبل الناشئ.",
+    en: "Passionate to work together and help bridge businesses to the emerging future.",
+  },
+  "about.story4": {
+    ar: "نسعى إلى المساهمة في تحقيق أعلى معايير الرفاهية للمجتمع السعودي من خلال توفير قيمة مضافة في مجال خدمة العملاء وفق أعلى المعايير لتحقيق التميز.",
+    en: "We seek to contribute to achieving the highest standards of excellence for Saudi society by providing added value in customer service in accordance with the highest standards.",
+  },
+  "about.visionTagline": { ar: "كن في صدارة اللعبة", en: "Stay ahead of the game" },
+  "about.visionTitle": { ar: "رؤيتنا", en: "Our Vision" },
+  "about.visionText": {
+    ar: "تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — وتعزيز نجاح الأعمال مع إثراء الحياة.",
+    en: "To enable a symbiotic relationship between humans and artificial intelligence — enhancing business success while enriching lives.",
+  },
+  "about.missionTitle": { ar: "مهمتنا", en: "Our Mission" },
+  "about.missionText": {
+    ar: "نهدف إلى دفع التقدم المستدام من خلال جعل إمكانات الذكاء الاصطناعي مؤثرة ومفيدة عبر الأفق التجارية والمجتمعية.",
+    en: "We aim to drive sustainable progress by making AI's potential impactful and beneficial across commercial and societal landscapes.",
+  },
+  "about.valuesTitle": { ar: "قيمنا", en: "Our Values" },
+  "about.valuesText": {
+    ar: "نؤمن بالتعاون متعدد الوظائف الذي يزيد من مشاركة أصحاب المصلحة والاحتفاظ بهم ومشاركة الموظفين لإطلاق العنان للإمكانات والابتكار. نُثري علاقتنا مع عملائنا كرائدين في تقنيات الذكاء الاصطناعي.",
+    en: "We believe in cross-functional collaboration that increases stakeholder buy-in, retention, and employee engagement to unlock potential and innovation. We enrich the relationship with our clients as a pioneer in AI technologies.",
+  },
+  "about.quote": {
+    ar: "هدفنا هو تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — ودفع نجاح الأعمال مع إثراء الحياة.",
+    en: "Our goal is to enable a symbiotic relationship between humans and AI — and to drive business success while enriching lives.",
+  },
+  "about.imageAlt": { ar: "فريق LeapAI", en: "LeapAI team" },
 
   /* ----------------------------- Detail extras -------------------------- */
   "detail.demoBtn": { ar: "اطلب عرضًا توضيحيًا", en: "Request a demo" },

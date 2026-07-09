@@ -16,13 +16,18 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
 import { buildPageMetadata, siteConfig, absoluteUrl, resolveOgImage, getSiteUrl } from "@/lib/seo"
 import { buildFaqPageSchema, buildFaqPageSchemaAr } from "@/lib/geo"
+import { geoFaqItems } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
+  const settings = await fetchPublicSettings()
+  const brand = settings?.seo?.brandLock ?? siteConfig.name
+  const titleAr = settings?.seo?.siteTitle?.ar ?? `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
+  const descriptionAr = settings?.seo?.metaDescription?.ar ?? siteConfig.descriptionAr
   return buildPageMetadata({
-    title: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-    titleAr: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-    description: siteConfig.descriptionAr,
-    descriptionAr: siteConfig.descriptionAr,
+    title: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
+    titleAr: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
+    description: descriptionAr.includes(brand) ? descriptionAr : `${brand} — ${descriptionAr}`,
+    descriptionAr: descriptionAr.includes(brand) ? descriptionAr : `${brand} — ${descriptionAr}`,
     path: "/",
     image: siteConfig.defaultOgImage,
   })
@@ -30,6 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const settings = await fetchPublicSettings()
+  const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
 
   const homeSchema = {
     "@context": "https://schema.org",
@@ -49,7 +55,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={[homeSchema, buildFaqPageSchema(), buildFaqPageSchemaAr()]} />
+      <JsonLd data={[homeSchema, buildFaqPageSchema(faqItems), buildFaqPageSchemaAr(faqItems)]} />
       <SiteHeader />
       <main>
         <Hero />

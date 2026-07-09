@@ -12,9 +12,11 @@ import {
   FormField,
   StickySaveBar,
   ImageUploadField,
+  DashButton,
 } from "@/components/dashboard/ui"
 
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
+import { geoFaqItems } from "@/lib/geo-faq"
 
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
@@ -23,21 +25,44 @@ const DEFAULT_IMAGES = {
   logo: "/leapai-logo.png",
 }
 
+const DEFAULT_SEO = {
+  siteTitle: {
+    ar: "Leap AI — أول منصة سحابية محلية متقدمة لتجربة العملاء",
+    en: "Leap AI — The first advanced local cloud platform for customer experience",
+  },
+  metaDescription: {
+    ar: "LeapAI هي منصة سعودية لتجربة العملاء تشمل مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات أعمال.",
+    en: "LeapAI is a Saudi customer experience platform for omni-channel contact center, WhatsApp Business, AI chatbot, and enterprise integrations.",
+  },
+  footerText: {
+    ar: "هدفنا هو تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — ودفع نجاح الأعمال مع إثراء الحياة.",
+    en: "Our goal is to enable a symbiotic relationship between humans and AI — and to drive business success while enriching lives.",
+  },
+  brandLock: "LeapAI",
+}
+
+const DEFAULT_FAQ = geoFaqItems.slice(0, 4)
+
+function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
+  return {
+    ...data,
+    images: { ...DEFAULT_IMAGES, ...data.images },
+    social: mergeSocialLinks(data.social),
+    seo: { ...DEFAULT_SEO, ...data.seo },
+    faq: data.faq?.length ? data.faq : DEFAULT_FAQ,
+  }
+}
+
 export default function DashboardSettingsPage() {
   const [settings, setSettings] = useState<PublicSiteSettings | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [savingMaintenance, setSavingMaintenance] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null)
 
   useEffect(() => {
     adminFetch<PublicSiteSettings>("/api/admin/settings")
-      .then((data) =>
-        setSettings({
-          ...data,
-          images: { ...DEFAULT_IMAGES, ...data.images },
-          social: mergeSocialLinks(data.social),
-        }),
-      )
+      .then((data) => setSettings(normalizeSettings(data)))
       .catch((err) => setLoadError(err instanceof Error ? err.message : "Failed to load settings"))
   }, [])
 
@@ -50,12 +75,38 @@ export default function DashboardSettingsPage() {
         method: "PUT",
         body: JSON.stringify(settings),
       })
-      setSettings(updated)
+      setSettings(normalizeSettings(updated))
       setMessage({ text: "Settings saved successfully. Changes will appear on the live site.", type: "success" })
     } catch (err) {
       setMessage({ text: err instanceof Error ? err.message : "Save failed", type: "error" })
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function setMaintenanceMode(maintenanceMode: boolean) {
+    if (!settings) return
+    const previous = settings.maintenanceMode
+    setSettings({ ...settings, maintenanceMode })
+    setSavingMaintenance(true)
+    setMessage(null)
+    try {
+      const updated = await adminFetch<PublicSiteSettings>("/api/admin/settings", {
+        method: "PUT",
+        body: JSON.stringify({ ...settings, maintenanceMode }),
+      })
+      setSettings(normalizeSettings(updated))
+      setMessage({
+        text: maintenanceMode
+          ? "Maintenance mode enabled. Public visitors will see the maintenance page."
+          : "Maintenance mode disabled. The public site is live again.",
+        type: "success",
+      })
+    } catch (err) {
+      setSettings({ ...settings, maintenanceMode: previous })
+      setMessage({ text: err instanceof Error ? err.message : "Failed to update maintenance mode", type: "error" })
+    } finally {
+      setSavingMaintenance(false)
     }
   }
 
@@ -94,9 +145,13 @@ export default function DashboardSettingsPage() {
           <div className="space-y-4">
             <Toggle
               checked={settings.maintenanceMode}
-              onChange={(maintenanceMode) => setSettings({ ...settings, maintenanceMode })}
+              onChange={setMaintenanceMode}
               label="Maintenance mode"
-              description="Show a banner and limit public access while you make updates"
+              description={
+                savingMaintenance
+                  ? "Applying maintenance mode..."
+                  : "Redirect all public pages to the maintenance screen (dashboard stays accessible)"
+              }
             />
             <FormField label="Default language">
               <select
@@ -111,8 +166,13 @@ export default function DashboardSettingsPage() {
           </div>
         </Panel>
 
-        <Panel title="Contact information" description="Displayed in footer and contact pages">
+        <Panel title="Contact information" description="Shown on the Contact Us page and site footer. Form messages appear in Contact Us inbox.">
           <div className="space-y-4">
+            <div>
+              <DashButton href="/dashboard/contact" variant="secondary">
+                Open Contact Us inbox
+              </DashButton>
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Email">
                 <input
@@ -161,6 +221,48 @@ export default function DashboardSettingsPage() {
               />
             </FormField>
           ))}
+        </div>
+      </Panel>
+
+      <Panel title="Brand / SEO" description='Site title, meta description, and footer text with locked brand "LeapAI"'>
+        <div className="space-y-4">
+          <FormField label="Locked brand string">
+            <input
+              type="text"
+              value={settings.seo?.brandLock ?? "LeapAI"}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  seo: { ...DEFAULT_SEO, ...settings.seo, brandLock: e.target.value || "LeapAI" },
+                })
+              }
+              className="form-input max-w-xs font-semibold"
+            />
+          </FormField>
+          <LocalizedFieldGroup
+            label="Site title"
+            value={settings.seo?.siteTitle ?? DEFAULT_SEO.siteTitle}
+            onChange={(siteTitle) =>
+              setSettings({ ...settings, seo: { ...DEFAULT_SEO, ...settings.seo, siteTitle } })
+            }
+            rows={2}
+          />
+          <LocalizedFieldGroup
+            label="Meta description"
+            value={settings.seo?.metaDescription ?? DEFAULT_SEO.metaDescription}
+            onChange={(metaDescription) =>
+              setSettings({ ...settings, seo: { ...DEFAULT_SEO, ...settings.seo, metaDescription } })
+            }
+            rows={3}
+          />
+          <LocalizedFieldGroup
+            label="Footer mission text"
+            value={settings.seo?.footerText ?? DEFAULT_SEO.footerText}
+            onChange={(footerText) =>
+              setSettings({ ...settings, seo: { ...DEFAULT_SEO, ...settings.seo, footerText } })
+            }
+            rows={3}
+          />
         </div>
       </Panel>
 
@@ -239,6 +341,64 @@ export default function DashboardSettingsPage() {
               />
             </div>
           ))}
+        </div>
+      </Panel>
+
+      <Panel title="Homepage FAQ" description="On-page FAQ section content (pricing, dialects, PDPL/hosting, integrations)">
+        <div className="space-y-4">
+          {(settings.faq ?? []).map((item, index) => (
+            <div key={index} className="rounded-xl border border-border/60 bg-muted/10 p-4">
+              <LocalizedFieldGroup
+                label={`FAQ #${index + 1} question`}
+                value={item.question}
+                onChange={(question) => {
+                  const faq = [...(settings.faq ?? [])]
+                  faq[index] = { ...faq[index], question }
+                  setSettings({ ...settings, faq })
+                }}
+                rows={2}
+              />
+              <div className="mt-3">
+                <LocalizedFieldGroup
+                  label={`FAQ #${index + 1} answer`}
+                  value={item.answer}
+                  onChange={(answer) => {
+                    const faq = [...(settings.faq ?? [])]
+                    faq[index] = { ...faq[index], answer }
+                    setSettings({ ...settings, faq })
+                  }}
+                  rows={3}
+                />
+              </div>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <DashButton
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                setSettings({
+                  ...settings,
+                  faq: [...(settings.faq ?? []), { question: { ar: "", en: "" }, answer: { ar: "", en: "" } }],
+                })
+              }
+            >
+              Add FAQ item
+            </DashButton>
+            <DashButton
+              type="button"
+              variant="ghost"
+              onClick={() =>
+                setSettings({
+                  ...settings,
+                  faq: (settings.faq ?? []).slice(0, Math.max((settings.faq ?? []).length - 1, 0)),
+                })
+              }
+              disabled={(settings.faq ?? []).length === 0}
+            >
+              Remove last item
+            </DashButton>
+          </div>
         </div>
       </Panel>
 

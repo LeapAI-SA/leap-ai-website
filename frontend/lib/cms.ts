@@ -81,6 +81,7 @@ export async function getUseCasesFromCms(): Promise<NavItem[] | null> {
 }
 
 async function fetchContentBySlug(slug: string): Promise<ContentItemPublic | null> {
+  if (isBuildPhase()) return null
   try {
     return await Promise.race([
       (async () => {
@@ -97,26 +98,47 @@ async function fetchContentBySlug(slug: string): Promise<ContentItemPublic | nul
   }
 }
 
+async function resolveContent(
+  slug: string,
+  type: ContentItemPublic["type"],
+  findStatic: (slug: string) => NavItem | undefined,
+): Promise<NavItem | undefined> {
+  const cms = await fetchContentBySlug(slug)
+  if (cms?.type === type) return toNavItem(cms)
+  return findStatic(slug)
+}
+
+async function allSlugsForType(
+  type: ContentItemPublic["type"],
+  staticSlugs: string[],
+): Promise<string[]> {
+  if (isBuildPhase()) return staticSlugs
+  const items = await fetchPublicContent(type)
+  if (!items.length) return staticSlugs
+  const fromCms = items.map((item) => item.slug)
+  return [...new Set([...fromCms, ...staticSlugs])]
+}
+
 export async function resolveSolution(slug: string): Promise<NavItem | undefined> {
-  return findSolution(slug)
+  return resolveContent(slug, "solution", findSolution)
 }
 
 export async function resolveProduct(slug: string): Promise<NavItem | undefined> {
-  return findProduct(slug)
+  return resolveContent(slug, "product", findProduct)
 }
 
 export async function resolveUseCase(slug: string): Promise<NavItem | undefined> {
-  return findUseCase(slug)
+  return resolveContent(slug, "use-case", findUseCase)
 }
 
 export async function allSolutionSlugs(): Promise<string[]> {
-  return solutionsFlat.map((i) => i.slug)
+  return allSlugsForType("solution", solutionsFlat.map((i) => i.slug))
 }
 
 export async function allProductSlugs(): Promise<string[]> {
-  return products.map((i) => i.slug)
+  return allSlugsForType("product", products.map((i) => i.slug))
 }
 
 export async function allUseCaseSlugs(): Promise<string[]> {
-  return useCases.map((i) => i.slug)
+  return allSlugsForType("use-case", useCases.map((i) => i.slug))
 }

@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Settings,
   FileText,
+  Mail,
   LogOut,
   ExternalLink,
   Menu,
@@ -19,12 +20,14 @@ import { DashButton } from "./ui"
 const nav = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/settings", label: "Site Settings", icon: Settings },
+  { href: "/dashboard/contact", label: "Contact Us", icon: Mail },
   { href: "/dashboard/content", label: "Content", icon: FileText },
 ]
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Overview",
   "/dashboard/settings": "Site Settings",
+  "/dashboard/contact": "Contact Us",
   "/dashboard/content": "Content Library",
   "/dashboard/content/new": "New Content",
 }

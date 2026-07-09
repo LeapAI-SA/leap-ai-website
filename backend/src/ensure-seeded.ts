@@ -84,13 +84,13 @@ async function importContent() {
 export async function ensureSeeded() {
   const email = process.env.ADMIN_EMAIL ?? "admin@leapai.ai"
   const password = process.env.ADMIN_PASSWORD ?? "admin123"
-  const passwordHash = await bcrypt.hash(password, 10)
 
-  await User.findOneAndUpdate(
-    { email },
-    { email, passwordHash, role: "admin" },
-    { upsert: true, new: true },
-  )
+  const existing = await User.findOne({ email })
+  if (!existing) {
+    const passwordHash = await bcrypt.hash(password, 10)
+    await User.create({ email, passwordHash, role: "admin" })
+    console.log(`Admin user created: ${email}`)
+  }
 
   await getOrCreateSettings()
   await importContent()

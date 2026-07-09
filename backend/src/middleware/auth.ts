@@ -15,6 +15,8 @@ declare global {
   }
 }
 
+const JWT_OPTIONS: jwt.VerifyOptions = { algorithms: ["HS256"] }
+
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const header = req.headers.authorization
   if (!header?.startsWith("Bearer ")) {
@@ -28,9 +30,16 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    req.user = jwt.verify(token, secret) as AuthUser
+    req.user = jwt.verify(token, secret, JWT_OPTIONS) as AuthUser
     next()
   } catch {
     return res.status(401).json({ error: "Invalid token" })
   }
+}
+
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ error: "Forbidden" })
+  }
+  next()
 }

@@ -1,6 +1,6 @@
 export type Localized = { ar: string; en: string }
 
-import { getApiUrl, isBuildPhase } from "./api-url"
+import { getApiUrl, getClientApiUrl, isBuildPhase } from "./api-url"
 
 import type { SocialLinks } from "./social-links"
 
@@ -27,6 +27,13 @@ export type PublicSiteSettings = {
     logo: string
   }
   social?: SocialLinks
+  seo?: {
+    siteTitle: Localized
+    metaDescription: Localized
+    footerText: Localized
+    brandLock: string
+  }
+  faq?: { question: Localized; answer: Localized }[]
   updatedAt?: string
 }
 
@@ -45,12 +52,28 @@ export type ContentItemPublic = {
   sortOrder: number
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
-const FETCH_TIMEOUT_MS = 3000
+export type ContactMessage = {
+  id: string
+  source: "contact" | "partner"
+  name: string
+  email: string
+  company: string
+  address: string
+  phone: string
+  message: string
+  read: boolean
+  createdAt: string
+}
+
+function browserApiUrl() {
+  return typeof window === "undefined" ? getApiUrl() : getClientApiUrl()
+}
 
 function apiUnreachableMessage() {
-  return `Cannot reach the API at ${API_URL}. Start the backend: run "npm run dev:local" in the backend folder, or "docker compose up -d" from the project root.`
+  return `Cannot reach the API at ${browserApiUrl()}. Start the backend: run "npm run dev:local" in the backend folder, or "docker compose up -d" from the project root.`
 }
+
+const FETCH_TIMEOUT_MS = 3000
 
 async function clientFetch(input: string, init?: RequestInit) {
   try {
@@ -126,7 +149,7 @@ export function setToken(token: string | null) {
 
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getToken()
-  const res = await clientFetch(`${API_URL}${path}`, {
+  const res = await clientFetch(`${browserApiUrl()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
@@ -142,7 +165,7 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
 }
 
 export async function loginAdmin(email: string, password: string) {
-  const res = await clientFetch(`${API_URL}/api/auth/login`, {
+  const res = await clientFetch(`${browserApiUrl()}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -154,11 +177,32 @@ export async function loginAdmin(email: string, password: string) {
   return res.json() as Promise<{ token: string; user: { email: string; role: string } }>
 }
 
+export async function submitContactMessage(payload: {
+  source?: "contact" | "partner"
+  name: string
+  email: string
+  company?: string
+  address?: string
+  phone: string
+  message: string
+}) {
+  const res = await clientFetch(`${browserApiUrl()}/api/public/contact`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Failed to send message" }))
+    throw new Error(err.error ?? "Failed to send message")
+  }
+  return res.json() as Promise<{ ok: boolean; id: string }>
+}
+
 export async function uploadAdminImage(file: File): Promise<string> {
   const token = getToken()
   const form = new FormData()
   form.append("file", file)
-  const res = await clientFetch(`${API_URL}/api/admin/upload`, {
+  const res = await clientFetch(`${browserApiUrl()}/api/admin/upload`, {
     method: "POST",
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: form,

@@ -5,33 +5,41 @@ import { SitePageShell } from "@/components/site-page-shell"
 import { PageSection, SectionHeading } from "@/components/section-heading"
 import { ContactForm } from "@/components/contact-form"
 import { useLanguage } from "@/lib/i18n"
+import { useSiteSettings } from "@/lib/site-settings-context"
 
 export function ContactPageContent() {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
+  const { settings } = useSiteSettings()
+
+  const email = settings?.contact.email ?? "info@leapai.ai"
+  const phone = settings?.contact.phone ?? "+966 53 553 3627"
+  const phoneHref = phone.replace(/\s/g, "")
+  const address = settings?.contact.address?.[lang] ?? t("contact.locationLine")
+  const mapQuery = encodeURIComponent(address)
 
   const contactCards = [
     {
       icon: MapPin,
-      title: t("contact.locationCity"),
-      line: t("contact.locationLine"),
+      title: t("contact.locationTitle"),
+      line: address,
       actionLabel: t("contact.mapLink"),
-      href: "https://maps.google.com/maps?q=leapai",
+      href: `https://maps.google.com/maps?q=${mapQuery}`,
     },
     {
       icon: Mail,
       title: t("contact.emailTitle"),
-      line: "info@leapai.ai",
+      line: email,
       ltr: true,
       actionLabel: t("contact.emailAction"),
-      href: "mailto:info@leapai.ai",
+      href: `mailto:${email}`,
     },
     {
       icon: Phone,
       title: t("contact.callTitle"),
-      line: "+966 53 553 3627",
+      line: phone,
       ltr: true,
       actionLabel: t("contact.callAction"),
-      href: "tel:+966535533627",
+      href: `tel:${phoneHref}`,
     },
   ]
 
@@ -78,7 +86,7 @@ export function ContactPageContent() {
           <div className="overflow-hidden rounded-3xl border border-border shadow-lg">
             <iframe
               title={t("contact.mapTitle")}
-              src="https://maps.google.com/maps?q=Riyadh%20King%20Abdulaziz%20Road&t=m&z=13&output=embed&iwloc=near"
+              src={`https://maps.google.com/maps?q=${mapQuery}&t=m&z=13&output=embed&iwloc=near`}
               className="h-full min-h-[450px] w-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

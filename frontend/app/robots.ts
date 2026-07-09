@@ -5,7 +5,7 @@ import { getSiteUrl, absoluteUrl } from "@/lib/seo"
 const publicAllow = ["/"]
 
 /** Admin & API — blocked from indexing. */
-const blocked = ["/dashboard/", "/api/"]
+const blocked = ["/dashboard", "/dashboard/", "/api/"]
 
 const aiCrawlers = [
   "GPTBot",

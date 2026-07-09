@@ -5,6 +5,7 @@ import { useState } from "react"
 import { motion } from "motion/react"
 import { CheckCircle2, Building2, MapPin, User, Phone, Mail, MessageSquare, Send, Handshake } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
+import { submitContactMessage } from "@/lib/api"
 
 type Fields = {
   company: string
@@ -28,14 +29,33 @@ export function PartnerForm() {
   const { t } = useLanguage()
   const [values, setValues] = useState<Fields>(initial)
   const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   function update(key: keyof Fields, val: string) {
     setValues((v) => ({ ...v, [key]: val }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setSent(true)
+    setSubmitting(true)
+    setError(null)
+    try {
+      await submitContactMessage({
+        source: "partner",
+        name: values.contact,
+        email: values.email,
+        company: values.company,
+        address: values.address,
+        phone: values.phone,
+        message: values.message,
+      })
+      setSent(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (sent) {
@@ -155,12 +175,15 @@ export function PartnerForm() {
           </Field>
         </div>
 
+        {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+
         <button
           type="submit"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.99]"
+          disabled={submitting}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Send className="size-4" />
-          {t("partner.submit")}
+          {submitting ? "Sending..." : t("partner.submit")}
         </button>
       </form>
     </motion.div>

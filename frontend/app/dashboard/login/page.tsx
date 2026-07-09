@@ -11,8 +11,8 @@ import { loginAdmin, setToken } from "@/lib/api"
 
 export default function DashboardLoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState("admin@leapai.ai")
-  const [password, setPassword] = useState("admin123")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 

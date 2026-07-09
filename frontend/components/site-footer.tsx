@@ -5,7 +5,7 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react"
 import { socialIcons, socialLabels } from "@/components/social-icons"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
-import { mergeSocialLinks, type SocialPlatform } from "@/lib/social-links"
+import { safeSocialLinks, type SocialPlatform } from "@/lib/social-links"
 import type { TranslationKey } from "@/lib/translations"
 
 const quickLinks: { key: TranslationKey; href: string }[] = [
@@ -23,16 +23,17 @@ const legalLinks = [
 export function SiteFooter() {
   const { t, lang } = useLanguage()
   const { settings } = useSiteSettings()
-  const social = mergeSocialLinks(settings?.social)
+  const social = safeSocialLinks(settings?.social)
   const email = settings?.contact.email ?? "info@leapai.ai"
   const phone = settings?.contact.phone ?? "+966 53 553 3627"
   const phoneHref = phone.replace(/\s/g, "")
+  const mission = settings?.seo?.footerText?.[lang] ?? t("footer.mission")
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">
       <div className="mx-auto max-w-7xl px-6 py-16">
         <h2 className="mx-auto max-w-3xl text-balance text-center text-xl font-bold leading-relaxed text-navy-foreground md:text-2xl">
-          {t("footer.mission")}
+          {mission}
         </h2>
 
         <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-4">

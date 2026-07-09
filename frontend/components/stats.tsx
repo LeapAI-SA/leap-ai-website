@@ -42,19 +42,32 @@ function StatItem({ value, label, start }: { value: number; label: string; start
   )
 }
 
-export function Stats() {
+const aboutFallbackStats: { value: number; labelKey: TranslationKey }[] = [
+  { value: 100, labelKey: "stats.projects" },
+  { value: 50, labelKey: "stats.experts" },
+  { value: 80, labelKey: "stats.customers" },
+]
+
+export function Stats({
+  preset = "default",
+}: {
+  /** `about` matches leapai.ai/about-us figures (100 / 50 / 80). */
+  preset?: "default" | "about"
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   const { lang, t } = useLanguage()
   const { settings } = useSiteSettings()
 
+  const fallback = preset === "about" ? aboutFallbackStats : fallbackStats
+
   const stats =
-    settings?.stats?.length
+    settings?.stats?.length && preset === "default"
       ? settings.stats.map((stat) => ({
           value: stat.value,
           label: pickLocalized(stat.label, lang),
         }))
-      : fallbackStats.map((stat) => ({
+      : fallback.map((stat) => ({
           value: stat.value,
           label: t(stat.labelKey),
         }))

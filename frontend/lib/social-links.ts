@@ -33,6 +33,29 @@ export function mergeSocialLinks(links?: Partial<SocialLinks> | null): SocialLin
   return { ...DEFAULT_SOCIAL_LINKS, ...links }
 }
 
+/** Allow only http(s) links — blocks javascript:, data:, etc. */
+export function safeExternalUrl(url: string | undefined | null): string | null {
+  if (!url?.trim()) return null
+  try {
+    const parsed = new URL(url.trim())
+    if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href
+  } catch {
+    /* invalid */
+  }
+  return null
+}
+
+export function safeSocialLinks(links?: Partial<SocialLinks> | null): SocialLinks {
+  const merged = mergeSocialLinks(links)
+  return {
+    facebook: safeExternalUrl(merged.facebook) ?? DEFAULT_SOCIAL_LINKS.facebook,
+    twitter: safeExternalUrl(merged.twitter) ?? DEFAULT_SOCIAL_LINKS.twitter,
+    instagram: safeExternalUrl(merged.instagram) ?? DEFAULT_SOCIAL_LINKS.instagram,
+    youtube: safeExternalUrl(merged.youtube) ?? DEFAULT_SOCIAL_LINKS.youtube,
+    linkedin: safeExternalUrl(merged.linkedin) ?? DEFAULT_SOCIAL_LINKS.linkedin,
+  }
+}
+
 export function socialLinksForSchema(links?: Partial<SocialLinks> | null): string[] {
   return Object.values(mergeSocialLinks(links)).filter(Boolean)
 }

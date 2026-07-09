@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
+import type { MongoMemoryServer } from "mongodb-memory-server"
 
-let memoryServer: { stop: () => Promise<boolean> } | null = null
+let memoryServer: MongoMemoryServer | null = null
 
 export async function connectDB(uri: string) {
   mongoose.set("strictQuery", true)

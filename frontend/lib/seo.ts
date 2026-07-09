@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { resolveMediaUrl } from "./media"
+import type { PublicSiteSettings } from "./api"
 
 export function getSiteUrl() {
   const raw = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
@@ -126,21 +127,24 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   }
 }
 
-export function buildRootMetadata(): Metadata {
+export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadata {
+  const brand = settings?.seo?.brandLock || siteConfig.name
+  const titleAr = settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
+  const descAr = settings?.seo?.metaDescription?.ar || siteConfig.descriptionAr
   return {
     ...buildPageMetadata({
-      title: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-      titleAr: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-      description: siteConfig.descriptionAr,
-      descriptionAr: siteConfig.descriptionAr,
+      title: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
+      titleAr: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
+      description: descAr.includes(brand) ? descAr : `${brand} — ${descAr}`,
+      descriptionAr: descAr.includes(brand) ? descAr : `${brand} — ${descAr}`,
       path: "/",
       image: siteConfig.defaultOgImage,
     }),
     title: {
-      default: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-      template: `%s | ${siteConfig.name}`,
+      default: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
+      template: `%s | ${brand}`,
     },
-    applicationName: siteConfig.name,
+    applicationName: brand,
     category: "technology",
     formatDetection: { email: false, address: false, telephone: false },
     other: {

@@ -1,13 +1,13 @@
 import type { NavGroup, NavItem } from "./site-data"
 import { socialLinksForSchema, type SocialLinks } from "./social-links"
 import { absoluteUrl, getSiteUrl, siteConfig, resolveOgImage } from "./seo"
-import { geoFaqItems, geoKnowsAbout } from "./geo-faq"
+import { geoFaqItems, geoKnowsAbout, type GeoFaqItem } from "./geo-faq"
 
-export function buildFaqPageSchema() {
+export function buildFaqPageSchema(items: GeoFaqItem[] = geoFaqItems) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: geoFaqItems.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question.en,
       acceptedAnswer: {
@@ -18,12 +18,12 @@ export function buildFaqPageSchema() {
   }
 }
 
-export function buildFaqPageSchemaAr() {
+export function buildFaqPageSchemaAr(items: GeoFaqItem[] = geoFaqItems) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     inLanguage: "ar",
-    mainEntity: geoFaqItems.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question.ar,
       acceptedAnswer: {

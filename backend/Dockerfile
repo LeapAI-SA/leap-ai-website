@@ -19,4 +19,4 @@ COPY --from=builder /app/dist ./dist
 COPY package.json ./
 EXPOSE 4000
 RUN mkdir -p /app/uploads
-CMD ["sh", "-c", "node dist/seed.js && node dist/index.js"]
+CMD ["sh", "-c", "if [ \"$SEED_ON_START\" = \"true\" ]; then node dist/seed.js; fi && node dist/index.js"]

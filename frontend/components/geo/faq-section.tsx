@@ -4,10 +4,13 @@ import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { geoFaqItems } from "@/lib/geo-faq"
 import { useLanguage } from "@/lib/i18n"
+import { useSiteSettings } from "@/lib/site-settings-context"
 
 export function GeoFaqSection() {
   const { lang } = useLanguage()
+  const { settings } = useSiteSettings()
   const [open, setOpen] = useState<number | null>(0)
+  const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
 
   return (
     <section id="faq" className="bg-secondary py-20" aria-labelledby="faq-heading">
@@ -27,7 +30,7 @@ export function GeoFaqSection() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3">
-          {geoFaqItems.map((item, i) => {
+          {faqItems.map((item, i) => {
             const isOpen = open === i
             const question = lang === "ar" ? item.question.ar : item.question.en
             const answer = lang === "ar" ? item.answer.ar : item.answer.en

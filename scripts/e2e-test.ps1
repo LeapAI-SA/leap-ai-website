@@ -89,6 +89,10 @@ try {
 
 $pages = @(
   "/",
+  "/about-us",
+  "/become-a-partner",
+  "/contact-us",
+  "/privacy-policy",
   "/dashboard/login",
   "/dashboard/content",
   "/dashboard/content/new",
@@ -96,8 +100,10 @@ $pages = @(
   "/solutions",
   "/products",
   "/use-cases",
-  "/solutions/digital-channels",
-  "/products/$testSlug"
+  "/llms.txt",
+  "/llms-full.txt",
+  "/robots.txt",
+  "/sitemap.xml"
 )
 foreach ($p in $pages) {
   try {
@@ -105,6 +111,33 @@ foreach ($p in $pages) {
     if ($r.StatusCode -ne 200) { throw "status $($r.StatusCode)" }
     Add-Result "Frontend: $p" "PASS"
   } catch { Add-Result "Frontend: $p" "FAIL" $_.Exception.Message }
+}
+
+foreach ($type in @("solution", "product", "use-case")) {
+  $base = switch ($type) {
+    "solution" { "/solutions" }
+    "product" { "/products" }
+    "use-case" { "/use-cases" }
+  }
+  try {
+    $items = Invoke-RestMethod -Uri "$API/api/public/content?type=$type"
+    foreach ($item in $items) {
+      $path = "$base/$($item.slug)"
+      try {
+        $r = Invoke-WebRequest -Uri "$WEB$path" -UseBasicParsing -TimeoutSec 20
+        if ($r.StatusCode -ne 200) { throw "status $($r.StatusCode)" }
+        Add-Result "Frontend: $path" "PASS"
+      } catch { Add-Result "Frontend: $path" "FAIL" $_.Exception.Message }
+    }
+  } catch { Add-Result "Frontend list: $type" "FAIL" $_.Exception.Message }
+}
+
+if ($testSlug) {
+  try {
+    $r = Invoke-WebRequest -Uri "$WEB/products/$testSlug" -UseBasicParsing -TimeoutSec 20
+    if ($r.StatusCode -ne 200) { throw "status $($r.StatusCode)" }
+    Add-Result "Frontend: /products/$testSlug (new CMS page)" "PASS"
+  } catch { Add-Result "Frontend: /products/$testSlug (new CMS page)" "FAIL" $_.Exception.Message }
 }
 
 try {

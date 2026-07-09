@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FileText, Settings, Globe, Server, Shield, ArrowUpRight } from "lucide-react"
+import { FileText, Settings, Globe, Server, Shield, ArrowUpRight, Mail } from "lucide-react"
 import { adminFetch } from "@/lib/api"
 import { PageHeader, StatCard, Panel, DashButton, Badge } from "@/components/dashboard/ui"
 
@@ -95,6 +95,13 @@ export default function DashboardHomePage() {
                 desc: "Edit solutions, products & use cases",
                 icon: FileText,
                 color: "bg-amber/15 text-amber-foreground",
+              },
+              {
+                href: "/dashboard/contact",
+                title: "Contact Us inbox",
+                desc: "Read messages from the contact form",
+                icon: Mail,
+                color: "bg-sky-500/10 text-sky-700",
               },
               {
                 href: "/dashboard/content/new",

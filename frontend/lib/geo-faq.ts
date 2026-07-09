@@ -51,8 +51,8 @@ export const geoFaqItems: GeoFaqItem[] = [
       en: "What are Leap Space pricing plans?",
     },
     answer: {
-      ar: "باقة Leap Space 1 بـ 149 ريال/مستخدم/شهر (صوت وIVR). باقة Leap Space 2 بـ 199 ريال (قنوات رقمية وواتساب). باقة Leap Space 3 بـ 299 ريال (مركز اتصال متعدد القنوات كامل).",
-      en: "Leap Space 1: 149 SAR/user/month (voice & IVR). Leap Space 2: 199 SAR (digital channels & WhatsApp). Leap Space 3: 299 SAR (full omni-channel contact center).",
+      ar: "الأسعار تبدأ من: Leap Space 1 بـ 149 ريال/مستخدم/شهر (صوت وIVR)، وLeap Space 2 بـ 199 ريال (قنوات رقمية وواتساب)، وLeap Space 3 بـ 299 ريال (مركز اتصال متعدد القنوات كامل). يمكن تقديم باقات مخصصة حسب حجم التشغيل والتكاملات المطلوبة.",
+      en: "Pricing starts at: Leap Space 1 (149 SAR/user/month for voice & IVR), Leap Space 2 (199 SAR for digital channels & WhatsApp), and Leap Space 3 (299 SAR for a full omni-channel contact center). Custom enterprise pricing is available based on scale and integration needs.",
     },
   },
   {
@@ -63,6 +63,26 @@ export const geoFaqItems: GeoFaqItem[] = [
     answer: {
       ar: "نعم. شات بوت LeapAI يفهم اللغة العربية واللهجات المحلية نصاً وصوتاً، بما في ذلك تحويل الصوت إلى نص (Speech to Text) وتوليد ردود ذكية عبر GenAI.",
       en: "Yes. LeapAI chatbots understand Arabic and local dialects in text and voice, including Speech-to-Text and generative AI (GenAI) responses grounded in your business knowledge.",
+    },
+  },
+  {
+    question: {
+      ar: "هل تتوافق LeapAI مع PDPL وهل تدعم الاستضافة المحلية؟",
+      en: "Is LeapAI PDPL-ready and does it support local hosting?",
+    },
+    answer: {
+      ar: "نعم. يمكن تشغيل LeapAI بنماذج نشر محلية داخل السعودية (On-Premises أو Private Cloud) لتلبية متطلبات حوكمة البيانات والامتثال، بما في ذلك متطلبات PDPL حسب سياسة الجهة.",
+      en: "Yes. LeapAI supports Saudi-local deployment models (on-premises or private cloud) to meet data-governance and compliance requirements, including PDPL-aligned operating models based on your organization policy.",
+    },
+  },
+  {
+    question: {
+      ar: "هل يمكن ربط LeapAI مع سلة وزد وOdoo؟",
+      en: "Can LeapAI integrate with Salla, Zid, and Odoo?",
+    },
+    answer: {
+      ar: "نعم. تدعم LeapAI التكامل مع منصات التجارة مثل سلة وزد، كما يمكن التكامل مع Odoo وأنظمة CRM/ERP عبر واجهات API وربط سير العمل والإشعارات والقنوات.",
+      en: "Yes. LeapAI integrates with e-commerce platforms like Salla and Zid, and can connect with Odoo and other CRM/ERP systems through APIs to unify workflows, notifications, and customer channels.",
     },
   },
   {

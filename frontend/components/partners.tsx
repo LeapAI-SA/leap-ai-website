@@ -32,7 +32,7 @@ export function Partners() {
             className="pointer-events-none absolute inset-y-0 start-0 z-10 w-24 bg-gradient-to-r from-background to-transparent"
             aria-hidden
           />
-          <div className="flex w-max animate-[marquee_32s_linear_infinite] items-center gap-16">
+          <div className="flex w-max animate-[marquee_16s_linear_infinite] items-center gap-16">
             {[...partners, ...partners].map((p, i) => (
               <div
                 key={`${p.name}-${i}`}

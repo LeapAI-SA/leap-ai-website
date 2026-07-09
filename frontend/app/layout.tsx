@@ -19,7 +19,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-export const metadata = buildRootMetadata()
+export async function generateMetadata() {
+  const settings = await fetchPublicSettings()
+  return buildRootMetadata(settings)
+}
 
 export const viewport: Viewport = {
   themeColor: '#0066b2',

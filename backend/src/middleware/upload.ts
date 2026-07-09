@@ -10,11 +10,18 @@ if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true })
 }
 
+const ALLOWED_MIME: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+}
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || ".jpg"
-    const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${ext}`
+    const ext = ALLOWED_MIME[file.mimetype] ?? ".jpg"
+    const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}${ext}`
     cb(null, safe)
   },
 })
@@ -23,10 +30,10 @@ export const uploadImage = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (/^image\/(jpeg|png|gif|webp|svg\+xml|svg)$/.test(file.mimetype)) {
+    if (ALLOWED_MIME[file.mimetype]) {
       cb(null, true)
     } else {
-      cb(new Error("Only image files are allowed"))
+      cb(new Error("Only JPEG, PNG, GIF, and WebP images are allowed"))
     }
   },
 })
