@@ -56,7 +56,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${tajawal.variable} ${geistMono.variable} bg-background`}
     >
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <JsonLd data={globalGeoSchemas} />
         <AppProviders initialSettings={settings} nav={nav}>{children}</AppProviders>
         {process.env.NODE_ENV === 'production' && <Analytics />}
