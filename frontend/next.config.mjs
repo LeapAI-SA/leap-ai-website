@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const backendUrl = process.env.API_URL ?? process.env.INTERNAL_API_URL ?? "http://localhost:4000"
-
 const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
@@ -27,7 +25,6 @@ const nextConfig = {
     return [
       { source: "/llms.txt", destination: "/llms" },
       { source: "/llms-full.txt", destination: "/llms-full" },
-      { source: "/backend/:path*", destination: `${backendUrl}/:path*` },
     ]
   },
 }
