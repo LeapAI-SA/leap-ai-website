@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+    // Add these two lines
+    basePath: "/leap-ai",
+    assetPrefix: "/leap-ai",
+    
   poweredByHeader: false,
   typescript: {
     ignoreBuildErrors: true,
