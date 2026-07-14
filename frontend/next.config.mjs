@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
+const backendUrl = process.env.API_URL ?? process.env.INTERNAL_API_URL ?? "http://localhost:4000"
+
 const nextConfig = {
   output: "standalone",
-    // Add these two lines
-    basePath: "/leap-ai",
-    assetPrefix: "/leap-ai",
-    
+  ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   poweredByHeader: false,
   typescript: {
     ignoreBuildErrors: true,
@@ -29,6 +29,7 @@ const nextConfig = {
     return [
       { source: "/llms.txt", destination: "/llms" },
       { source: "/llms-full.txt", destination: "/llms-full" },
+      { source: "/backend/:path*", destination: `${backendUrl}/:path*` },
     ]
   },
 }

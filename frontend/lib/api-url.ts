@@ -2,7 +2,11 @@
 export function getClientApiUrl() {
   const configured = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
   if (configured.startsWith("/")) {
-    return configured.replace(/\/$/, "")
+    const path = configured.replace(/\/$/, "")
+    const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
+    // When app is hosted under a basePath, absolute /backend must be prefixed.
+    if (basePath && path === "/backend") return `${basePath}${path}`
+    return path
   }
   return configured
 }

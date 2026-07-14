@@ -1,11 +1,13 @@
 # Environment
 .env
 .env*.local
+backend/.env
 frontend/.env
 
 # Dependencies
 node_modules
 frontend/node_modules
+backend/node_modules
 
 # Next.js
 frontend/.next/
@@ -13,6 +15,14 @@ frontend/out/
 frontend/tsconfig.tsbuildinfo
 .next/
 out/
+
+# Build
+backend/dist
+backend/tsconfig.tsbuildinfo
+
+# Runtime uploads (created by API / Docker)
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # v0 sandbox internal files
 __v0_runtime_loader.js

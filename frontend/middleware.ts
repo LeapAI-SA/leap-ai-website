@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
 
-const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads"]
+const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend"]
 const BYPASS_EXACT = ["/favicon.ico", "/icon.svg", "/apple-icon.png", "/manifest.webmanifest", "/maintenance"]
 
 function shouldBypass(pathname: string) {
@@ -25,18 +25,20 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname, basePath } = request.nextUrl
   const maintenance = await isMaintenanceModeEnabled()
+  const maintenancePath = `${basePath}/maintenance`
+  const homePath = `${basePath}/` || "/"
 
   if (!maintenance && pathname === "/maintenance") {
-    return NextResponse.redirect(new URL("/", request.url))
+    return NextResponse.redirect(new URL(homePath, request.url))
   }
 
   if (!maintenance || shouldBypass(pathname)) {
     return NextResponse.next()
   }
 
-  return NextResponse.redirect(new URL("/maintenance", request.url))
+  return NextResponse.redirect(new URL(maintenancePath, request.url))
 }
 
 export const config = {
