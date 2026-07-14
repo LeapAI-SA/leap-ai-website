@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 
 const partners = [
   { name: "Meta", src: "/logos/meta.png" },
@@ -39,7 +40,7 @@ export function Partners() {
                 className="flex h-14 w-32 shrink-0 items-center justify-center opacity-70 grayscale transition-all hover:opacity-100 hover:grayscale-0"
               >
                 <Image
-                  src={p.src || "/placeholder.svg"}
+                  src={resolveMediaUrl(p.src || "/placeholder.svg")}
                   alt={p.name}
                   width={120}
                   height={48}

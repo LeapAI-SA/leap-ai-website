@@ -5,6 +5,7 @@ import { motion } from "motion/react"
 import { Check, ArrowLeft } from "lucide-react"
 import { storeIntegrations } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 
 export function StoreIntegrations() {
   const { t, tr } = useLanguage()
@@ -28,7 +29,7 @@ export function StoreIntegrations() {
             >
               <div className="flex h-12 items-center">
                 {store.isImage ? (
-                  <Image src={store.logo || "/placeholder.svg"} alt={title} width={120} height={40} className="h-9 w-auto" />
+                  <Image src={resolveMediaUrl(store.logo || "/placeholder.svg")} alt={title} width={120} height={40} className="h-9 w-auto" />
                 ) : (
                   <span className="text-3xl font-extrabold lowercase text-[#5b2be0]">zid</span>
                 )}

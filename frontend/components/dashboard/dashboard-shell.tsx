@@ -15,6 +15,7 @@ import {
   Plus,
 } from "lucide-react"
 import { getToken, setToken } from "@/lib/api"
+import { resolveMediaUrl } from "@/lib/media"
 import { DashButton } from "./ui"
 
 const nav = [
@@ -53,7 +54,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="flex h-[72px] items-center border-b border-white/10 px-5">
         <Link href="/dashboard" className="block">
           <Image
-            src="/leapai-logo.png"
+            src={resolveMediaUrl("/leapai-logo.png")}
             alt="LeapAI"
             width={168}
             height={52}
@@ -151,7 +152,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-3">
               <Image
-                src="/leapai-logo.png"
+                src={resolveMediaUrl("/leapai-logo.png")}
                 alt="LeapAI"
                 width={120}
                 height={38}

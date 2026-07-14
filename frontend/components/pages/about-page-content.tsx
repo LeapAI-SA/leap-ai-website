@@ -7,6 +7,7 @@ import { SitePageShell } from "@/components/site-page-shell"
 import { PageSection, SectionHeading } from "@/components/section-heading"
 import { Stats } from "@/components/stats"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 import type { TranslationKey } from "@/lib/translations"
 
 const storyKeys = ["about.story1", "about.story2", "about.story3", "about.story4"] as const
@@ -44,7 +45,7 @@ export function AboutPageContent() {
             className="relative overflow-hidden rounded-2xl border border-border bg-muted shadow-lg"
           >
             <Image
-              src="/pages/about-us.png"
+              src={resolveMediaUrl("/pages/about-us.png")}
               alt={t("about.imageAlt")}
               width={800}
               height={600}

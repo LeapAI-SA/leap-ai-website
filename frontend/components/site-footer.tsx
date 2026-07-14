@@ -5,6 +5,7 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react"
 import { socialIcons, socialLabels } from "@/components/social-icons"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
+import { resolveMediaUrl } from "@/lib/media"
 import { safeSocialLinks, type SocialPlatform } from "@/lib/social-links"
 import type { TranslationKey } from "@/lib/translations"
 
@@ -38,7 +39,7 @@ export function SiteFooter() {
 
         <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Image src="/leapai-logo-white.png" alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
+            <Image src={resolveMediaUrl("/leapai-logo-white.png")} alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
             <ul className="mt-5 flex flex-col gap-2.5">
               {quickLinks.map((l) => (
                 <li key={l.key}>

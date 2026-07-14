@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { motion } from "motion/react"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 
 export function AcquireCta() {
   const { t } = useLanguage()
@@ -48,7 +49,7 @@ export function AcquireCta() {
             transition={{ duration: 0.5, delay: 0.1 + i * 0.12 }}
           >
             <Image
-              src={`/phones/whatsapp-${n}.png`}
+              src={resolveMediaUrl(`/phones/whatsapp-${n}.png`)}
               alt={`${t("common.chatPreview")} ${n}`}
               width={482}
               height={992}

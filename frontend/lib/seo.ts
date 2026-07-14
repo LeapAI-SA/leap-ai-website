@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { resolveMediaUrl } from "./media"
+import { resolveAssetPath, withBasePath } from "./media"
 import type { PublicSiteSettings } from "./api"
 
 export function getSiteUrl() {
@@ -44,7 +44,7 @@ export function absoluteUrl(path = "/") {
 
 export function resolveOgImage(image?: string) {
   const src = image || siteConfig.defaultOgImage
-  const resolved = resolveMediaUrl(src)
+  const resolved = resolveAssetPath(src)
   if (resolved.startsWith("http")) return resolved
   return absoluteUrl(resolved)
 }
@@ -153,8 +153,11 @@ export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadat
       "ai-content-declaration": "human-authored",
     },
     icons: {
-      icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-light-32x32.png", sizes: "32x32" }],
-      apple: "/apple-icon.png",
+      icon: [
+        { url: withBasePath("/icon.svg"), type: "image/svg+xml" },
+        { url: withBasePath("/icon-light-32x32.png"), sizes: "32x32" },
+      ],
+      apple: withBasePath("/apple-icon.png"),
     },
     alternates: {
       types: {

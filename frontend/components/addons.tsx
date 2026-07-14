@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ChevronDown } from "lucide-react"
 import { addonItems } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 
 export function Addons() {
   const [active, setActive] = useState<number | null>(0)
@@ -33,7 +34,7 @@ export function Addons() {
                   className="flex w-full items-center gap-3 p-4 text-start"
                 >
                   <span className="flex size-11 shrink-0 items-center justify-center">
-                    <Image src={addon.icon || "/placeholder.svg"} alt="" width={44} height={44} className="size-11" />
+                    <Image src={resolveMediaUrl(addon.icon || "/placeholder.svg")} alt="" width={44} height={44} className="size-11" />
                   </span>
                   <span className="flex-1 font-bold text-navy">{title}</span>
                   <ChevronDown

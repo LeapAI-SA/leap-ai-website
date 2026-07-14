@@ -4,6 +4,7 @@ import Image from "next/image"
 import { SitePageShell } from "@/components/site-page-shell"
 import { PageSection, SectionHeading, ContentCard } from "@/components/section-heading"
 import { useLanguage } from "@/lib/i18n"
+import { resolveMediaUrl } from "@/lib/media"
 
 export function PrivacyPageContent() {
   const { t, lang } = useLanguage()
@@ -60,7 +61,7 @@ export function PrivacyPageContent() {
         <div className="mx-auto max-w-4xl">
           <div className="mb-10 overflow-hidden rounded-2xl border border-border shadow-sm">
             <Image
-              src="/sections/ticket-overview.png"
+              src={resolveMediaUrl("/sections/ticket-overview.png")}
               alt={lang === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
               width={960}
               height={320}

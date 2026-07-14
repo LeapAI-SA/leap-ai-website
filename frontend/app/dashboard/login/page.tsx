@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { motion } from "motion/react"
 import { Lock, Mail, ArrowRight, Globe, Database, Zap } from "lucide-react"
 import { loginAdmin, setToken } from "@/lib/api"
+import { resolveMediaUrl } from "@/lib/media"
 
 export default function DashboardLoginPage() {
   const router = useRouter()
@@ -41,7 +42,7 @@ export default function DashboardLoginPage() {
         <div className="relative">
           <Link href="/" className="inline-block">
             <Image
-              src="/leapai-logo.png"
+              src={resolveMediaUrl("/leapai-logo.png")}
               alt="LeapAI"
               width={180}
               height={56}
@@ -94,7 +95,7 @@ export default function DashboardLoginPage() {
         >
           <div className="mb-8 lg:hidden">
             <Image
-              src="/leapai-logo.png"
+              src={resolveMediaUrl("/leapai-logo.png")}
               alt="LeapAI"
               width={160}
               height={50}
