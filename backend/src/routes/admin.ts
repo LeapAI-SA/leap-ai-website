@@ -7,6 +7,7 @@ import {
   isContentType,
   isValidSlug,
   sanitizeImagePath,
+  sanitizeNavLinks,
   sanitizeSocialLinks,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
@@ -107,6 +108,16 @@ router.put("/settings", async (req, res) => {
       }))
       .filter((item) => item.question.ar || item.question.en || item.answer.ar || item.answer.en)
     settings.set("faq", cleanFaq)
+  }
+  if (body.navigation && typeof body.navigation === "object") {
+    const incoming = body.navigation as Record<string, unknown>
+    const current = plain.navigation ?? {}
+    settings.set("navigation", {
+      headerLeft: sanitizeNavLinks(incoming.headerLeft ?? (current as { headerLeft?: unknown }).headerLeft),
+      headerRight: sanitizeNavLinks(incoming.headerRight ?? (current as { headerRight?: unknown }).headerRight),
+      footerLinks: sanitizeNavLinks(incoming.footerLinks ?? (current as { footerLinks?: unknown }).footerLinks),
+      footerLegal: sanitizeNavLinks(incoming.footerLegal ?? (current as { footerLegal?: unknown }).footerLegal),
+    })
   }
 
   await settings.save()

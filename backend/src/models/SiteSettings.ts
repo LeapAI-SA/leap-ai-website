@@ -16,6 +16,36 @@ const faqItemSchema = new Schema(
   { _id: false },
 )
 
+const navLinkSchema = new Schema(
+  {
+    label: { type: localizedSchema, required: true },
+    href: { type: String, required: true },
+    enabled: { type: Boolean, default: true },
+  },
+  { _id: false },
+)
+
+const defaultNavigation = () => ({
+  headerLeft: [
+    { label: { ar: "الرئيسية", en: "Home" }, href: "/", enabled: true },
+    { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us", enabled: true },
+  ],
+  headerRight: [
+    { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
+    { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
+  ],
+  footerLinks: [
+    { label: { ar: "الرئيسية", en: "Home" }, href: "/", enabled: true },
+    { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us", enabled: true },
+    { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
+    { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
+  ],
+  footerLegal: [
+    { label: { ar: "سياسة الخصوصية", en: "Privacy Policy" }, href: "/privacy-policy", enabled: true },
+    { label: { ar: "أسئلة شائعة", en: "FAQ" }, href: "/#faq", enabled: true },
+  ],
+})
+
 const siteSettingsSchema = new Schema(
   {
     maintenanceMode: { type: Boolean, default: false },
@@ -110,6 +140,15 @@ const siteSettingsSchema = new Schema(
       },
       brandLock: { type: String, default: "LeapAI" },
     },
+    navigation: {
+      type: {
+        headerLeft: { type: [navLinkSchema], default: () => defaultNavigation().headerLeft },
+        headerRight: { type: [navLinkSchema], default: () => defaultNavigation().headerRight },
+        footerLinks: { type: [navLinkSchema], default: () => defaultNavigation().footerLinks },
+        footerLegal: { type: [navLinkSchema], default: () => defaultNavigation().footerLegal },
+      },
+      default: defaultNavigation,
+    },
     faq: {
       type: [faqItemSchema],
       default: () => [
@@ -170,6 +209,7 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     images: settings.images,
     social: settings.social,
     seo: settings.seo,
+    navigation: settings.navigation ?? defaultNavigation(),
     faq: settings.faq,
     updatedAt: settings.updatedAt,
   }

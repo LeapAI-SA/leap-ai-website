@@ -17,6 +17,7 @@ import {
 
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
 import { geoFaqItems } from "@/lib/geo-faq"
+import { DEFAULT_NAVIGATION, mergeNavigation, type SiteNavLink, type SiteNavigation } from "@/lib/site-nav"
 
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
@@ -49,7 +50,94 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     images: { ...DEFAULT_IMAGES, ...data.images },
     social: mergeSocialLinks(data.social),
     seo: { ...DEFAULT_SEO, ...data.seo },
+    navigation: mergeNavigation(data.navigation),
     faq: data.faq?.length ? data.faq : DEFAULT_FAQ,
+  }
+}
+
+function NavLinksEditor({
+  title,
+  description,
+  links,
+  onChange,
+}: {
+  title: string
+  description: string
+  links: SiteNavLink[]
+  onChange: (links: SiteNavLink[]) => void
+}) {
+  function updateLink(index: number, patch: Partial<SiteNavLink>) {
+    const next = [...links]
+    next[index] = { ...next[index], ...patch }
+    onChange(next)
+  }
+
+  return (
+    <div className="space-y-4 rounded-xl border border-border/60 bg-muted/10 p-4">
+      <div>
+        <h4 className="font-bold text-navy">{title}</h4>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      </div>
+      {links.map((link, index) => (
+        <div key={index} className="space-y-3 rounded-lg border border-border/50 bg-background p-4">
+          <LocalizedFieldGroup
+            label={`Link #${index + 1} label`}
+            value={link.label}
+            onChange={(label) => updateLink(index, { label })}
+            rows={1}
+          />
+          <FormField label="Page path" hint="Internal path only, e.g. /about-us or /#faq">
+            <input
+              value={link.href}
+              onChange={(e) => updateLink(index, { href: e.target.value })}
+              className="form-input"
+              placeholder="/about-us"
+            />
+          </FormField>
+          <label className="flex items-center gap-2 text-sm font-semibold text-navy">
+            <input
+              type="checkbox"
+              checked={link.enabled !== false}
+              onChange={(e) => updateLink(index, { enabled: e.target.checked })}
+            />
+            Show in menu
+          </label>
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <DashButton
+          type="button"
+          variant="secondary"
+          onClick={() =>
+            onChange([...links, { label: { ar: "", en: "" }, href: "/", enabled: true }])
+          }
+        >
+          Add link
+        </DashButton>
+        <DashButton
+          type="button"
+          variant="ghost"
+          onClick={() => onChange(links.slice(0, Math.max(links.length - 1, 0)))}
+          disabled={links.length === 0}
+        >
+          Remove last
+        </DashButton>
+      </div>
+    </div>
+  )
+}
+
+function updateNavigationSection(
+  settings: PublicSiteSettings,
+  key: keyof SiteNavigation,
+  links: SiteNavLink[],
+): PublicSiteSettings {
+  return {
+    ...settings,
+    navigation: {
+      ...mergeNavigation(settings.navigation),
+      [key]: links,
+    },
   }
 }
 
@@ -341,6 +429,38 @@ export default function DashboardSettingsPage() {
               />
             </div>
           ))}
+        </div>
+      </Panel>
+
+      <Panel
+        title="Header & footer navigation"
+        description="Control the page links shown in the site header and footer. Mega menus (Solutions, Products, Use cases) still come from Content pages."
+      >
+        <div className="space-y-6">
+          <NavLinksEditor
+            title="Header — left links"
+            description="Links shown before Solutions in the top menu."
+            links={settings.navigation?.headerLeft ?? DEFAULT_NAVIGATION.headerLeft}
+            onChange={(headerLeft) => setSettings(updateNavigationSection(settings, "headerLeft", headerLeft))}
+          />
+          <NavLinksEditor
+            title="Header — right links"
+            description="Links shown after Use cases in the top menu."
+            links={settings.navigation?.headerRight ?? DEFAULT_NAVIGATION.headerRight}
+            onChange={(headerRight) => setSettings(updateNavigationSection(settings, "headerRight", headerRight))}
+          />
+          <NavLinksEditor
+            title="Footer — main links"
+            description="Primary footer links under the LeapAI logo."
+            links={settings.navigation?.footerLinks ?? DEFAULT_NAVIGATION.footerLinks}
+            onChange={(footerLinks) => setSettings(updateNavigationSection(settings, "footerLinks", footerLinks))}
+          />
+          <NavLinksEditor
+            title="Footer — legal links"
+            description="Privacy policy, FAQ, and similar links."
+            links={settings.navigation?.footerLegal ?? DEFAULT_NAVIGATION.footerLegal}
+            onChange={(footerLegal) => setSettings(updateNavigationSection(settings, "footerLegal", footerLegal))}
+          />
         </div>
       </Panel>
 

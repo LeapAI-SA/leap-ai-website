@@ -3,6 +3,7 @@ export type Localized = { ar: string; en: string }
 import { getApiUrl, getClientApiUrl, isBuildPhase } from "./api-url"
 
 import type { SocialLinks } from "./social-links"
+import type { SiteNavigation } from "./site-nav"
 
 export type PublicSiteSettings = {
   maintenanceMode: boolean
@@ -34,6 +35,7 @@ export type PublicSiteSettings = {
     brandLock: string
   }
   faq?: { question: Localized; answer: Localized }[]
+  navigation?: SiteNavigation
   updatedAt?: string
 }
 

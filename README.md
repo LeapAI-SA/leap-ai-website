@@ -197,6 +197,8 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ## GEO — How It Works
 
+> **Simple guide (no programming):** see [docs/HOW-TO-USE-GEO.md](docs/HOW-TO-USE-GEO.md)
+
 **GEO (Generative Engine Optimization)** helps AI search tools (ChatGPT, Perplexity, Claude, Google AI, etc.) discover, understand, and cite the LeapAI site accurately.
 
 You do **not** install AI bots manually. The site exposes structured public content and crawler rules so bots can read it when the site is live on a public domain.

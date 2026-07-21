@@ -49,6 +49,39 @@ export function sanitizeImagePath(value: unknown): string | null {
   return sanitizeHttpUrl(path)
 }
 
+/** Site-relative nav paths (optional hash), e.g. /about-us or /#faq */
+export function sanitizeNavPath(value: unknown): string | null {
+  if (typeof value !== "string" || !value.trim()) return null
+  const raw = value.trim()
+  if (!raw.startsWith("/") || raw.includes("..") || raw.includes("\\")) return null
+  const hashIndex = raw.indexOf("#")
+  if (hashIndex === -1) return raw.slice(0, 200)
+  const path = raw.slice(0, hashIndex)
+  const hash = raw.slice(hashIndex + 1).replace(/[^a-zA-Z0-9_-]/g, "")
+  if (!path.startsWith("/")) return null
+  return hash ? `${path}#${hash}`.slice(0, 200) : path.slice(0, 200)
+}
+
+export function sanitizeNavLinks(value: unknown): Array<{ label: { ar: string; en: string }; href: string; enabled: boolean }> {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => {
+      const label = item.label as { ar?: string; en?: string } | undefined
+      const href = sanitizeNavPath(item.href)
+      if (!href) return null
+      return {
+        label: {
+          ar: trimString(label?.ar, 120),
+          en: trimString(label?.en, 120),
+        },
+        href,
+        enabled: item.enabled !== false,
+      }
+    })
+    .filter((item): item is NonNullable<typeof item> => !!item && (item.label.ar || item.label.en))
+}
+
 export function sanitizeSocialLinks(social: Record<string, unknown>) {
   const out: Record<string, string> = {}
   for (const [key, value] of Object.entries(social)) {

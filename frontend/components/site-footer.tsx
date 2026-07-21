@@ -1,25 +1,14 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { Phone, Mail, MapPin, Clock } from "lucide-react"
 import { socialIcons, socialLabels } from "@/components/social-icons"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
+import { activeNavLinks, mergeNavigation, navLinkLabel } from "@/lib/site-nav"
 import { safeSocialLinks, type SocialPlatform } from "@/lib/social-links"
-import type { TranslationKey } from "@/lib/translations"
-
-const quickLinks: { key: TranslationKey; href: string }[] = [
-  { key: "nav.home", href: "/" },
-  { key: "nav.about", href: "/about-us" },
-  { key: "nav.partner", href: "/become-a-partner" },
-  { key: "nav.contact", href: "/contact-us" },
-]
-
-const legalLinks = [
-  { href: "/privacy-policy", ar: "سياسة الخصوصية", en: "Privacy Policy" },
-  { href: "/#faq", ar: "أسئلة شائعة", en: "FAQ" },
-]
 
 export function SiteFooter() {
   const { t, lang } = useLanguage()
@@ -29,6 +18,9 @@ export function SiteFooter() {
   const phone = settings?.contact.phone ?? "+966 53 553 3627"
   const phoneHref = phone.replace(/\s/g, "")
   const mission = settings?.seo?.footerText?.[lang] ?? t("footer.mission")
+  const navigation = mergeNavigation(settings?.navigation)
+  const footerLinks = activeNavLinks(navigation.footerLinks)
+  const footerLegal = activeNavLinks(navigation.footerLegal)
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">
@@ -39,20 +31,22 @@ export function SiteFooter() {
 
         <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Image src={resolveMediaUrl("/leapai-logo-white.png")} alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
+            <Link href="/" className="inline-block">
+              <Image src={resolveMediaUrl("/leapai-logo-white.png")} alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
+            </Link>
             <ul className="mt-5 flex flex-col gap-2.5">
-              {quickLinks.map((l) => (
-                <li key={l.key}>
-                  <a href={l.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
-                    {t(l.key)}
-                  </a>
+              {footerLinks.map((link) => (
+                <li key={`${link.href}-${link.label.en}`}>
+                  <Link href={link.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                    {navLinkLabel(link, lang)}
+                  </Link>
                 </li>
               ))}
-              {legalLinks.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
-                    {lang === "ar" ? l.ar : l.en}
-                  </a>
+              {footerLegal.map((link) => (
+                <li key={`${link.href}-${link.label.en}`}>
+                  <Link href={link.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                    {navLinkLabel(link, lang)}
+                  </Link>
                 </li>
               ))}
             </ul>

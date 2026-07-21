@@ -10,27 +10,19 @@ import { useNavContent } from "@/lib/nav-content-context"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
-import type { TranslationKey } from "@/lib/translations"
-
-type SimpleNav = { key: TranslationKey; href: string }
-
-const leftNav: SimpleNav[] = [
-  { key: "nav.home", href: "/" },
-  { key: "nav.about", href: "/about-us" },
-]
-const rightNav: SimpleNav[] = [
-  { key: "nav.partner", href: "/become-a-partner" },
-  { key: "nav.contact", href: "/contact-us" },
-]
+import { activeNavLinks, mergeNavigation, navLinkLabel } from "@/lib/site-nav"
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState<string | null>(null)
   const [mobileSub, setMobileSub] = useState<string | null>(null)
-  const { t, tr, toggleLang } = useLanguage()
+  const { t, tr, toggleLang, lang } = useLanguage()
   const { solutionsGroups, products, useCases } = useNavContent()
   const { settings } = useSiteSettings()
   const logoSrc = resolveMediaUrl(settings?.images?.logo ?? "/leapai-logo.png")
+  const navigation = mergeNavigation(settings?.navigation)
+  const leftNav = activeNavLinks(navigation.headerLeft)
+  const rightNav = activeNavLinks(navigation.headerRight)
 
   return (
     <header className="relative z-50">
@@ -68,11 +60,11 @@ export function SiteHeader() {
           <nav className="hidden items-center gap-6 lg:flex" onMouseLeave={() => setActive(null)}>
             {leftNav.map((item) => (
               <Link
-                key={item.key}
+                key={`${item.href}-${item.label.en}`}
                 href={item.href}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
-                {t(item.key)}
+                {navLinkLabel(item, lang)}
               </Link>
             ))}
 
@@ -111,11 +103,11 @@ export function SiteHeader() {
 
             {rightNav.map((item) => (
               <Link
-                key={item.key}
+                key={`${item.href}-${item.label.en}`}
                 href={item.href}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
-                {t(item.key)}
+                {navLinkLabel(item, lang)}
               </Link>
             ))}
             <button
@@ -215,13 +207,13 @@ export function SiteHeader() {
             >
               <ul className="flex flex-col gap-1">
                 {leftNav.map((item) => (
-                  <li key={item.key}>
+                  <li key={`${item.href}-${item.label.en}`}>
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >
-                      {t(item.key)}
+                      {navLinkLabel(item, lang)}
                     </Link>
                   </li>
                 ))}
@@ -258,13 +250,13 @@ export function SiteHeader() {
                 />
 
                 {rightNav.map((item) => (
-                  <li key={item.key}>
+                  <li key={`${item.href}-${item.label.en}`}>
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >
-                      {t(item.key)}
+                      {navLinkLabel(item, lang)}
                     </Link>
                   </li>
                 ))}
