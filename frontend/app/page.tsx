@@ -14,23 +14,13 @@ import { WhatsappFab } from "@/components/whatsapp-fab"
 import { GeoFaqSection } from "@/components/geo/faq-section"
 import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
-import { buildPageMetadata, siteConfig, absoluteUrl, resolveOgImage, getSiteUrl } from "@/lib/seo"
+import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig } from "@/lib/seo"
 import { buildFaqPageSchema, buildFaqPageSchemaAr } from "@/lib/geo"
 import { geoFaqItems } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await fetchPublicSettings()
-  const brand = settings?.seo?.brandLock ?? siteConfig.name
-  const titleAr = settings?.seo?.siteTitle?.ar ?? `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
-  const descriptionAr = settings?.seo?.metaDescription?.ar ?? siteConfig.descriptionAr
-  return buildPageMetadata({
-    title: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
-    titleAr: titleAr.includes(brand) ? titleAr : `${brand} — ${titleAr}`,
-    description: descriptionAr.includes(brand) ? descriptionAr : `${brand} — ${descriptionAr}`,
-    descriptionAr: descriptionAr.includes(brand) ? descriptionAr : `${brand} — ${descriptionAr}`,
-    path: "/",
-    image: siteConfig.defaultOgImage,
-  })
+  return buildHomeMetadata(settings)
 }
 
 export default async function Page() {

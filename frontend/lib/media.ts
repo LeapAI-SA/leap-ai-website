@@ -32,7 +32,7 @@ export function resolveMediaUrl(path?: string): string {
   return ""
 }
 
-/** Site-relative path for absolute URLs in meta tags (getSiteUrl already includes basePath). */
+/** Site-relative path for absolute URLs in meta tags (base path is applied in absoluteUrl). */
 export function resolveAssetPath(path?: string): string {
   if (!path) return ""
   if (path.startsWith("http://") || path.startsWith("https://")) {

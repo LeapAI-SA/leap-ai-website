@@ -22,10 +22,16 @@ import { uploadImage } from "../middleware/upload.js"
 const router = Router()
 router.use(requireAuth, requireAdmin)
 
+function containsBrand(text: string, brand: string): boolean {
+  const haystack = text.toLowerCase().replace(/\s+/g, "")
+  const needle = brand.toLowerCase().replace(/\s+/g, "")
+  return haystack.includes(needle) || haystack.includes("leapai")
+}
+
 function enforceBrandLock(text: unknown, brand: string): string {
   const value = typeof text === "string" ? text.trim() : ""
   if (!value) return brand
-  return value.toLowerCase().includes(brand.toLowerCase()) ? value : `${brand} — ${value}`
+  return containsBrand(value, brand) ? value : `${brand} — ${value}`
 }
 
 router.post("/upload", (req, res) => {
