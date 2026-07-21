@@ -20,6 +20,13 @@ export function SiteHeader() {
   const { solutionsGroups, products, useCases } = useNavContent()
   const { settings } = useSiteSettings()
   const logoSrc = resolveMediaUrl(settings?.images?.logo ?? "/leapai-logo.png")
+  const email = settings?.contact.email ?? "info@leapai.ai"
+  const phone = settings?.contact.phone ?? "+966 53 553 3627"
+  const phoneHref = phone.replace(/\s/g, "")
+  const businessHours =
+    settings?.contact.businessHours?.[lang] ??
+    settings?.contact.businessHours?.en ??
+    t("header.hours")
   const navigation = mergeNavigation(settings?.navigation)
   const leftNav = activeNavLinks(navigation.headerLeft)
   const rightNav = activeNavLinks(navigation.headerRight)
@@ -31,16 +38,16 @@ export function SiteHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
           <div className="flex items-center gap-2 text-navy-foreground/80">
             <Clock className="size-4 text-amber" />
-            <span>{t("header.hours")}</span>
+            <span>{businessHours}</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="mailto:info@leapai.ai" className="flex items-center gap-2 transition-colors hover:text-amber">
+            <a href={`mailto:${email}`} className="flex items-center gap-2 transition-colors hover:text-amber">
               <Mail className="size-4 text-amber" />
-              <span>info@leapai.ai</span>
+              <span>{email}</span>
             </a>
-            <a href="tel:+966535533627" className="flex items-center gap-2 transition-colors hover:text-amber">
+            <a href={`tel:${phoneHref}`} className="flex items-center gap-2 transition-colors hover:text-amber">
               <Phone className="size-4 text-amber" />
-              <span dir="ltr">+966 53 553 3627</span>
+              <span dir="ltr">{phone}</span>
             </a>
           </div>
         </div>

@@ -8,6 +8,8 @@ import {
   isValidSlug,
   sanitizeImagePath,
   sanitizeNavLinks,
+  sanitizePartners,
+  sanitizePricingPlans,
   sanitizeSocialLinks,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
@@ -118,6 +120,12 @@ router.put("/settings", async (req, res) => {
       footerLinks: sanitizeNavLinks(incoming.footerLinks ?? (current as { footerLinks?: unknown }).footerLinks),
       footerLegal: sanitizeNavLinks(incoming.footerLegal ?? (current as { footerLegal?: unknown }).footerLegal),
     })
+  }
+  if (Array.isArray(body.partners)) {
+    settings.set("partners", sanitizePartners(body.partners))
+  }
+  if (Array.isArray(body.pricingPlans)) {
+    settings.set("pricingPlans", sanitizePricingPlans(body.pricingPlans))
   }
 
   await settings.save()

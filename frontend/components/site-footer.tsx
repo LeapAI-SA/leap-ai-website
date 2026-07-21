@@ -17,6 +17,10 @@ export function SiteFooter() {
   const email = settings?.contact.email ?? "info@leapai.ai"
   const phone = settings?.contact.phone ?? "+966 53 553 3627"
   const phoneHref = phone.replace(/\s/g, "")
+  const businessHours =
+    settings?.contact.businessHours?.[lang] ??
+    settings?.contact.businessHours?.en ??
+    t("footer.hoursDetail")
   const mission = settings?.seo?.footerText?.[lang] ?? t("footer.mission")
   const navigation = mergeNavigation(settings?.navigation)
   const footerLinks = activeNavLinks(navigation.footerLinks)
@@ -82,7 +86,7 @@ export function SiteFooter() {
             <h3 className="text-lg font-bold">{t("footer.hoursTitle")}</h3>
             <p className="mt-5 flex items-center gap-2 text-navy-foreground/75">
               <Clock className="size-4 text-amber" />
-              {t("footer.hoursDetail")}
+              {businessHours}
             </p>
           </div>
         </div>

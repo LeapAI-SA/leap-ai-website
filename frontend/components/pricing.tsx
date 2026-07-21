@@ -2,13 +2,16 @@
 
 import { motion } from "motion/react"
 import { Check, Headphones, MessagesSquare, LayoutGrid } from "lucide-react"
-import { pricingPlans } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergePricingPlans } from "@/lib/site-marketing"
 
 const planIcons = [Headphones, MessagesSquare, LayoutGrid]
 
 export function Pricing() {
   const { t, tr } = useLanguage()
+  const { settings } = useSiteSettings()
+  const pricingPlans = mergePricingPlans(settings?.pricingPlans)
 
   return (
     <section id="pricing" className="bg-secondary py-20">

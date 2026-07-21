@@ -33,6 +33,8 @@ With `NEXT_PUBLIC_BASE_PATH=/leap-ai`:
 - Email: `admin@leapai.ai`
 - Password: `admin123`
 
+> **Simple admin guide (no programming):** see [docs/HOW-TO-USE-ADMIN.md](docs/HOW-TO-USE-ADMIN.md)
+
 ---
 
 ## Quick Start (PM2 + Docker — recommended for local dev)

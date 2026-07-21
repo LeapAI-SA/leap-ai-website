@@ -25,6 +25,35 @@ const navLinkSchema = new Schema(
   { _id: false },
 )
 
+const partnerSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    logo: { type: String, required: true },
+    enabled: { type: Boolean, default: true },
+  },
+  { _id: false },
+)
+
+const localizedArraySchema = new Schema(
+  {
+    ar: { type: [String], default: [] },
+    en: { type: [String], default: [] },
+  },
+  { _id: false },
+)
+
+const pricingPlanSchema = new Schema(
+  {
+    slug: { type: String, required: true },
+    price: { type: String, required: true },
+    featured: { type: Boolean, default: false },
+    name: { type: localizedSchema, required: true },
+    tagline: { type: localizedSchema, required: true },
+    features: { type: localizedArraySchema, required: true },
+  },
+  { _id: false },
+)
+
 const defaultNavigation = () => ({
   headerLeft: [
     { label: { ar: "الرئيسية", en: "Home" }, href: "/", enabled: true },
@@ -53,6 +82,13 @@ const siteSettingsSchema = new Schema(
     contact: {
       email: { type: String, default: "info@leapai.ai" },
       phone: { type: String, default: "+966 53 553 3627" },
+      businessHours: {
+        type: localizedSchema,
+        default: () => ({
+          ar: "الأحد - الخميس 8:00 - 17:00",
+          en: "Sun - Thu 8:00 AM - 5:00 PM",
+        }),
+      },
       address: {
         type: localizedSchema,
         default: () => ({
@@ -149,6 +185,8 @@ const siteSettingsSchema = new Schema(
       },
       default: defaultNavigation,
     },
+    partners: { type: [partnerSchema], default: () => [] },
+    pricingPlans: { type: [pricingPlanSchema], default: () => [] },
     faq: {
       type: [faqItemSchema],
       default: () => [
@@ -210,6 +248,8 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     social: settings.social,
     seo: settings.seo,
     navigation: settings.navigation ?? defaultNavigation(),
+    partners: settings.partners ?? [],
+    pricingPlans: settings.pricingPlans ?? [],
     faq: settings.faq,
     updatedAt: settings.updatedAt,
   }

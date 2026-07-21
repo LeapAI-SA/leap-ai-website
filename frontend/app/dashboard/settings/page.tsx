@@ -18,6 +18,16 @@ import {
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
 import { geoFaqItems } from "@/lib/geo-faq"
 import { DEFAULT_NAVIGATION, mergeNavigation, type SiteNavLink, type SiteNavigation } from "@/lib/site-nav"
+import {
+  DEFAULT_PARTNERS,
+  DEFAULT_PRICING_PLANS,
+  featuresToText,
+  mergePartners,
+  mergePricingPlans,
+  textToFeatures,
+  type PartnerLogo,
+} from "@/lib/site-marketing"
+import type { PricingPlan } from "@/lib/site-data"
 
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
@@ -51,6 +61,8 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     social: mergeSocialLinks(data.social),
     seo: { ...DEFAULT_SEO, ...data.seo },
     navigation: mergeNavigation(data.navigation),
+    partners: mergePartners(data.partners),
+    pricingPlans: mergePricingPlans(data.pricingPlans),
     faq: data.faq?.length ? data.faq : DEFAULT_FAQ,
   }
 }
@@ -123,6 +135,141 @@ function NavLinksEditor({
           Remove last
         </DashButton>
       </div>
+    </div>
+  )
+}
+
+function PartnersEditor({
+  partners,
+  onChange,
+}: {
+  partners: PartnerLogo[]
+  onChange: (partners: PartnerLogo[]) => void
+}) {
+  function updatePartner(index: number, patch: Partial<PartnerLogo>) {
+    const next = [...partners]
+    next[index] = { ...next[index], ...patch }
+    onChange(next)
+  }
+
+  return (
+    <div className="space-y-4">
+      {partners.map((partner, index) => (
+        <div key={index} className="space-y-3 rounded-lg border border-border/50 bg-background p-4">
+          <FormField label={`Partner #${index + 1} name`}>
+            <input
+              value={partner.name}
+              onChange={(e) => updatePartner(index, { name: e.target.value })}
+              className="form-input"
+            />
+          </FormField>
+          <ImageUploadField
+            label="Logo"
+            value={partner.logo}
+            onChange={(logo) => updatePartner(index, { logo })}
+          />
+          <label className="flex items-center gap-2 text-sm font-semibold text-navy">
+            <input
+              type="checkbox"
+              checked={partner.enabled !== false}
+              onChange={(e) => updatePartner(index, { enabled: e.target.checked })}
+            />
+            Show on homepage
+          </label>
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-2">
+        <DashButton
+          type="button"
+          variant="secondary"
+          onClick={() => onChange([...partners, { name: "", logo: "/logos/meta.png", enabled: true }])}
+        >
+          Add partner
+        </DashButton>
+        <DashButton
+          type="button"
+          variant="ghost"
+          onClick={() => onChange(partners.slice(0, Math.max(partners.length - 1, 0)))}
+          disabled={partners.length === 0}
+        >
+          Remove last
+        </DashButton>
+        <DashButton type="button" variant="ghost" onClick={() => onChange([...DEFAULT_PARTNERS])}>
+          Reset to defaults
+        </DashButton>
+      </div>
+    </div>
+  )
+}
+
+function PricingPlansEditor({
+  plans,
+  onChange,
+}: {
+  plans: PricingPlan[]
+  onChange: (plans: PricingPlan[]) => void
+}) {
+  function updatePlan(index: number, patch: Partial<PricingPlan>) {
+    const next = [...plans]
+    next[index] = { ...next[index], ...patch }
+    onChange(next)
+  }
+
+  return (
+    <div className="space-y-6">
+      {plans.map((plan, index) => (
+        <div key={plan.slug || index} className="space-y-4 rounded-xl border border-border/60 bg-muted/10 p-4">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <FormField label="Plan ID (slug)" hint="Do not change unless you know what this is">
+              <input
+                value={plan.slug}
+                onChange={(e) => updatePlan(index, { slug: e.target.value })}
+                className="form-input font-mono text-sm"
+              />
+            </FormField>
+            <FormField label="Price (SAR)">
+              <input
+                value={plan.price}
+                onChange={(e) => updatePlan(index, { price: e.target.value })}
+                className="form-input"
+              />
+            </FormField>
+            <label className="flex items-center gap-2 self-end pb-2 text-sm font-semibold text-navy">
+              <input
+                type="checkbox"
+                checked={plan.featured}
+                onChange={(e) => updatePlan(index, { featured: e.target.checked })}
+              />
+              Highlight as featured plan
+            </label>
+          </div>
+          <LocalizedFieldGroup
+            label="Plan name"
+            value={plan.name}
+            onChange={(name) => updatePlan(index, { name })}
+            rows={1}
+          />
+          <LocalizedFieldGroup
+            label="Tagline"
+            value={plan.tagline}
+            onChange={(tagline) => updatePlan(index, { tagline })}
+            rows={2}
+          />
+          <LocalizedFieldGroup
+            label="Features (one per line)"
+            value={{ ar: featuresToText(plan.features.ar), en: featuresToText(plan.features.en) }}
+            onChange={(value) =>
+              updatePlan(index, {
+                features: { ar: textToFeatures(value.ar), en: textToFeatures(value.en) },
+              })
+            }
+            rows={6}
+          />
+        </div>
+      ))}
+      <DashButton type="button" variant="ghost" onClick={() => onChange([...DEFAULT_PRICING_PLANS])}>
+        Reset pricing to defaults
+      </DashButton>
     </div>
   )
 }
@@ -201,7 +348,7 @@ export default function DashboardSettingsPage() {
   if (!settings) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Site Settings" description="Control homepage hero, stats, contact info, and maintenance mode." />
+        <PageHeader title="Site Settings" description="Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English." />
         {loadError ? (
           <Alert variant="error">{loadError}</Alert>
         ) : (
@@ -223,7 +370,7 @@ export default function DashboardSettingsPage() {
     <div className="space-y-8 pb-24">
       <PageHeader
         title="Site Settings"
-        description="Control homepage hero, stats, contact info, and maintenance mode — in both Arabic and English."
+        description="Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English."
       />
 
       {message && <Alert variant={message.type === "success" ? "success" : "error"}>{message.text}</Alert>}
@@ -254,7 +401,7 @@ export default function DashboardSettingsPage() {
           </div>
         </Panel>
 
-        <Panel title="Contact information" description="Shown on the Contact Us page and site footer. Form messages appear in Contact Us inbox.">
+        <Panel title="Contact information" description="Shown in the header, footer, and Contact Us page. Messages go to Contact Us inbox.">
           <div className="space-y-4">
             <div>
               <DashButton href="/dashboard/contact" variant="secondary">
@@ -281,6 +428,17 @@ export default function DashboardSettingsPage() {
                 />
               </FormField>
             </div>
+            <LocalizedFieldGroup
+              label="Business hours"
+              value={
+                settings.contact.businessHours ?? {
+                  ar: "الأحد - الخميس 8:00 - 17:00",
+                  en: "Sun - Thu 8:00 AM - 5:00 PM",
+                }
+              }
+              onChange={(businessHours) => setSettings({ ...settings, contact: { ...settings.contact, businessHours } })}
+              rows={1}
+            />
             <LocalizedFieldGroup
               label="Address"
               value={settings.contact.address}
@@ -462,6 +620,26 @@ export default function DashboardSettingsPage() {
             onChange={(footerLegal) => setSettings(updateNavigationSection(settings, "footerLegal", footerLegal))}
           />
         </div>
+      </Panel>
+
+      <Panel
+        title="Technology partners"
+        description="Partner logos shown in the scrolling strip on the homepage. Upload square or wide logos."
+      >
+        <PartnersEditor
+          partners={settings.partners ?? DEFAULT_PARTNERS}
+          onChange={(partners) => setSettings({ ...settings, partners })}
+        />
+      </Panel>
+
+      <Panel
+        title="Pricing plans"
+        description="Leap Space pricing cards on the homepage (149 / 199 / 299 SAR). One feature per line."
+      >
+        <PricingPlansEditor
+          plans={settings.pricingPlans ?? DEFAULT_PRICING_PLANS}
+          onChange={(pricingPlans) => setSettings({ ...settings, pricingPlans })}
+        />
       </Panel>
 
       <Panel title="Homepage FAQ" description="On-page FAQ section content (pricing, dialects, PDPL/hosting, integrations)">

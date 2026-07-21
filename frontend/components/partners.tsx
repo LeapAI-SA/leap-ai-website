@@ -3,22 +3,13 @@
 import Image from "next/image"
 import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
-
-const partners = [
-  { name: "Meta", src: "/logos/meta.png" },
-  { name: "Microsoft", src: "/logos/microsoft.png" },
-  { name: "Salla", src: "/logos/salla.png" },
-  { name: "Zid", src: "/logos/zid.png" },
-  { name: "Vocalcom", src: "/logos/vocalcom.png" },
-  { name: "WebEngage", src: "/logos/webengage.png" },
-  { name: "LivePerson", src: "/logos/liveperson.png" },
-  { name: "Genesys", src: "/logos/genesys.png" },
-  { name: "Apple", src: "/logos/apple.png" },
-  { name: "Google My Business", src: "/logos/gmb.png" },
-]
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { activePartners, mergePartners } from "@/lib/site-marketing"
 
 export function Partners() {
   const { t } = useLanguage()
+  const { settings } = useSiteSettings()
+  const partners = activePartners(mergePartners(settings?.partners))
 
   return (
     <section id="partner" className="bg-background py-16">
@@ -40,7 +31,7 @@ export function Partners() {
                 className="flex h-14 w-32 shrink-0 items-center justify-center opacity-70 grayscale transition-all hover:opacity-100 hover:grayscale-0"
               >
                 <Image
-                  src={resolveMediaUrl(p.src || "/placeholder.svg")}
+                  src={resolveMediaUrl(p.logo || "/placeholder.svg")}
                   alt={p.name}
                   width={120}
                   height={48}

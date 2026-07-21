@@ -82,6 +82,54 @@ export function sanitizeNavLinks(value: unknown): Array<{ label: { ar: string; e
     .filter((item): item is NonNullable<typeof item> => !!item && (item.label.ar || item.label.en))
 }
 
+export function sanitizePartners(value: unknown): Array<{ name: string; logo: string; enabled: boolean }> {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => {
+      const logo = sanitizeImagePath(item.logo)
+      const name = trimString(item.name, 120)
+      if (!logo || !name) return null
+      return { name, logo, enabled: item.enabled !== false }
+    })
+    .filter((item): item is NonNullable<typeof item> => !!item)
+}
+
+export function sanitizePricingPlans(value: unknown): Array<{
+  slug: string
+  price: string
+  featured: boolean
+  name: { ar: string; en: string }
+  tagline: { ar: string; en: string }
+  features: { ar: string[]; en: string[] }
+}> {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => {
+      const slug = isValidSlug(item.slug) ? item.slug : null
+      const price = trimString(item.price, 20)
+      const name = item.name as { ar?: string; en?: string } | undefined
+      const tagline = item.tagline as { ar?: string; en?: string } | undefined
+      const features = item.features as { ar?: unknown; en?: unknown } | undefined
+      if (!slug || !price) return null
+      const cleanFeatures = (raw: unknown) =>
+        Array.isArray(raw) ? raw.map((line) => trimString(line, 300)).filter(Boolean) : []
+      return {
+        slug,
+        price,
+        featured: item.featured === true,
+        name: { ar: trimString(name?.ar, 200), en: trimString(name?.en, 200) },
+        tagline: { ar: trimString(tagline?.ar, 300), en: trimString(tagline?.en, 300) },
+        features: { ar: cleanFeatures(features?.ar), en: cleanFeatures(features?.en) },
+      }
+    })
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        !!item && (item.name.ar || item.name.en) && (item.features.ar.length > 0 || item.features.en.length > 0),
+    )
+}
+
 export function sanitizeSocialLinks(social: Record<string, unknown>) {
   const out: Record<string, string> = {}
   for (const [key, value] of Object.entries(social)) {

@@ -4,6 +4,8 @@ import { getApiUrl, getClientApiUrl, isBuildPhase } from "./api-url"
 
 import type { SocialLinks } from "./social-links"
 import type { SiteNavigation } from "./site-nav"
+import type { PartnerLogo } from "./site-marketing"
+import type { PricingPlan } from "./site-data"
 
 export type PublicSiteSettings = {
   maintenanceMode: boolean
@@ -11,6 +13,7 @@ export type PublicSiteSettings = {
   contact: {
     email: string
     phone: string
+    businessHours?: Localized
     address: Localized
   }
   hero: {
@@ -36,6 +39,8 @@ export type PublicSiteSettings = {
   }
   faq?: { question: Localized; answer: Localized }[]
   navigation?: SiteNavigation
+  partners?: PartnerLogo[]
+  pricingPlans?: PricingPlan[]
   updatedAt?: string
 }
 
