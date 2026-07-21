@@ -54,6 +54,32 @@ const pricingPlanSchema = new Schema(
   { _id: false },
 )
 
+const addonItemSchema = new Schema(
+  {
+    icon: { type: String, required: true },
+    title: { type: localizedSchema, required: true },
+    desc: { type: localizedSchema, required: true },
+    enabled: { type: Boolean, default: true },
+  },
+  { _id: false },
+)
+
+const legalSectionSchema = new Schema(
+  {
+    title: { type: localizedSchema, required: true },
+    body: { type: localizedSchema, required: true },
+  },
+  { _id: false },
+)
+
+const statSchema = new Schema(
+  {
+    value: { type: Number, required: true },
+    label: { type: localizedSchema, required: true },
+  },
+  { _id: false },
+)
+
 const defaultNavigation = () => ({
   headerLeft: [
     { label: { ar: "الرئيسية", en: "Home" }, href: "/", enabled: true },
@@ -187,6 +213,46 @@ const siteSettingsSchema = new Schema(
     },
     partners: { type: [partnerSchema], default: () => [] },
     pricingPlans: { type: [pricingPlanSchema], default: () => [] },
+    addons: {
+      badge: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      title: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      lead: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      items: { type: [addonItemSchema], default: () => [] },
+    },
+    aboutPage: {
+      title: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      subtitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      storyHeading: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      story: { type: localizedArraySchema, default: () => ({ ar: [], en: [] }) },
+      visionTagline: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      visionTitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      visionText: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      missionTitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      missionText: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      valuesTitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      valuesText: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      quote: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      quoteAttribution: { type: String, default: "Leap AI" },
+      imageAlt: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      image: { type: String, default: "/pages/about-us.png" },
+      stats: { type: [statSchema], default: () => [] },
+    },
+    privacyPage: {
+      title: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      subtitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      introTitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      introSubtitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      image: { type: String, default: "/sections/ticket-overview.png" },
+      imageAlt: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      sections: { type: [legalSectionSchema], default: () => [] },
+    },
+    ctaLabels: {
+      pricing: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      stores: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      acquire: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      headerSignup: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+      learnMore: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
+    },
     faq: {
       type: [faqItemSchema],
       default: () => [
@@ -250,6 +316,10 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     navigation: settings.navigation ?? defaultNavigation(),
     partners: settings.partners ?? [],
     pricingPlans: settings.pricingPlans ?? [],
+    addons: settings.addons,
+    aboutPage: settings.aboutPage,
+    privacyPage: settings.privacyPage,
+    ctaLabels: settings.ctaLabels,
     faq: settings.faq,
     updatedAt: settings.updatedAt,
   }

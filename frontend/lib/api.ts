@@ -4,7 +4,7 @@ import { getApiUrl, getClientApiUrl, isBuildPhase } from "./api-url"
 
 import type { SocialLinks } from "./social-links"
 import type { SiteNavigation } from "./site-nav"
-import type { PartnerLogo } from "./site-marketing"
+import type { PartnerLogo, AddonsSection, AboutPageSettings, PrivacyPageSettings, CtaLabels } from "./site-marketing"
 import type { PricingPlan } from "./site-data"
 
 export type PublicSiteSettings = {
@@ -41,6 +41,10 @@ export type PublicSiteSettings = {
   navigation?: SiteNavigation
   partners?: PartnerLogo[]
   pricingPlans?: PricingPlan[]
+  addons?: AddonsSection
+  aboutPage?: AboutPageSettings
+  privacyPage?: PrivacyPageSettings
+  ctaLabels?: CtaLabels
   updatedAt?: string
 }
 

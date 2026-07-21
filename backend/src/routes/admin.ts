@@ -10,6 +10,10 @@ import {
   sanitizeNavLinks,
   sanitizePartners,
   sanitizePricingPlans,
+  sanitizeAddonsSection,
+  sanitizeAboutPage,
+  sanitizePrivacyPage,
+  sanitizeCtaLabels,
   sanitizeSocialLinks,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
@@ -126,6 +130,18 @@ router.put("/settings", async (req, res) => {
   }
   if (Array.isArray(body.pricingPlans)) {
     settings.set("pricingPlans", sanitizePricingPlans(body.pricingPlans))
+  }
+  if (body.addons && typeof body.addons === "object") {
+    settings.set("addons", sanitizeAddonsSection(body.addons))
+  }
+  if (body.aboutPage && typeof body.aboutPage === "object") {
+    settings.set("aboutPage", sanitizeAboutPage(body.aboutPage))
+  }
+  if (body.privacyPage && typeof body.privacyPage === "object") {
+    settings.set("privacyPage", sanitizePrivacyPage(body.privacyPage))
+  }
+  if (body.ctaLabels && typeof body.ctaLabels === "object") {
+    settings.set("ctaLabels", sanitizeCtaLabels(body.ctaLabels))
   }
 
   await settings.save()

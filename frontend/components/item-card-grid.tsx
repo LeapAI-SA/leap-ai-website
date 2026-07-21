@@ -6,11 +6,16 @@ import { motion } from "motion/react"
 import { ArrowLeft } from "lucide-react"
 import type { NavItem } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
 import { resolveContentImage } from "@/lib/page-images"
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergeCtaLabels } from "@/lib/site-marketing"
 
 export function ItemCardGrid({ items, basePath }: { items: NavItem[]; basePath: string }) {
-  const { t, tr } = useLanguage()
+  const { t, tr, lang } = useLanguage()
+  const { settings } = useSiteSettings()
+  const learnMoreLabel = pickLocalized(mergeCtaLabels(settings?.ctaLabels).learnMore, lang, t("common.learnMore"))
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,7 +48,7 @@ export function ItemCardGrid({ items, basePath }: { items: NavItem[]; basePath: 
                 <h3 className="text-lg font-bold text-navy">{tr(item.title)}</h3>
                 <p className="mt-2 flex-1 leading-relaxed text-muted-foreground">{tr(item.excerpt)}</p>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
-                  {t("common.learnMore")}
+                  {learnMoreLabel}
                   <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
                 </span>
               </div>

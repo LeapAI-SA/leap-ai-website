@@ -21,11 +21,27 @@ import { DEFAULT_NAVIGATION, mergeNavigation, type SiteNavLink, type SiteNavigat
 import {
   DEFAULT_PARTNERS,
   DEFAULT_PRICING_PLANS,
+  DEFAULT_ADDONS_SECTION,
+  DEFAULT_ABOUT_PAGE,
+  DEFAULT_PRIVACY_PAGE,
+  DEFAULT_CTA_LABELS,
   featuresToText,
   mergePartners,
   mergePricingPlans,
+  mergeAddonsSection,
+  mergeAboutPage,
+  mergePrivacyPage,
+  mergeCtaLabels,
+  paragraphsToText,
   textToFeatures,
+  textToParagraphs,
   type PartnerLogo,
+  type AddonItemCms,
+  type AddonsSection,
+  type AboutPageSettings,
+  type PrivacyPageSettings,
+  type PrivacySection,
+  type CtaLabels,
 } from "@/lib/site-marketing"
 import type { PricingPlan } from "@/lib/site-data"
 
@@ -63,6 +79,10 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     navigation: mergeNavigation(data.navigation),
     partners: mergePartners(data.partners),
     pricingPlans: mergePricingPlans(data.pricingPlans),
+    addons: mergeAddonsSection(data.addons),
+    aboutPage: mergeAboutPage(data.aboutPage),
+    privacyPage: mergePrivacyPage(data.privacyPage),
+    ctaLabels: mergeCtaLabels(data.ctaLabels),
     faq: data.faq?.length ? data.faq : DEFAULT_FAQ,
   }
 }
@@ -269,6 +289,181 @@ function PricingPlansEditor({
       ))}
       <DashButton type="button" variant="ghost" onClick={() => onChange([...DEFAULT_PRICING_PLANS])}>
         Reset pricing to defaults
+      </DashButton>
+    </div>
+  )
+}
+
+function AddonsEditor({ section, onChange }: { section: AddonsSection; onChange: (section: AddonsSection) => void }) {
+  function updateItem(index: number, patch: Partial<AddonItemCms>) {
+    const items = [...section.items]
+    items[index] = { ...items[index], ...patch }
+    onChange({ ...section, items })
+  }
+
+  return (
+    <div className="space-y-6">
+      <LocalizedFieldGroup label="Section badge" value={section.badge} onChange={(badge) => onChange({ ...section, badge })} rows={1} />
+      <LocalizedFieldGroup label="Section title" value={section.title} onChange={(title) => onChange({ ...section, title })} rows={2} />
+      <LocalizedFieldGroup label="Section intro" value={section.lead} onChange={(lead) => onChange({ ...section, lead })} rows={2} />
+      {section.items.map((item, index) => (
+        <div key={index} className="space-y-3 rounded-lg border border-border/50 bg-background p-4">
+          <LocalizedFieldGroup label={`Add-on #${index + 1} title`} value={item.title} onChange={(title) => updateItem(index, { title })} rows={1} />
+          <LocalizedFieldGroup label="Description" value={item.desc} onChange={(desc) => updateItem(index, { desc })} rows={3} />
+          <ImageUploadField label="Icon" value={item.icon} onChange={(icon) => updateItem(index, { icon })} />
+          <label className="flex items-center gap-2 text-sm font-semibold text-navy">
+            <input type="checkbox" checked={item.enabled !== false} onChange={(e) => updateItem(index, { enabled: e.target.checked })} />
+            Show on homepage
+          </label>
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-2">
+        <DashButton
+          type="button"
+          variant="secondary"
+          onClick={() =>
+            onChange({
+              ...section,
+              items: [...section.items, { icon: "/icons/1.png", title: { ar: "", en: "" }, desc: { ar: "", en: "" }, enabled: true }],
+            })
+          }
+        >
+          Add item
+        </DashButton>
+        <DashButton type="button" variant="ghost" onClick={() => onChange({ ...section, items: section.items.slice(0, -1) })} disabled={!section.items.length}>
+          Remove last
+        </DashButton>
+        <DashButton type="button" variant="ghost" onClick={() => onChange({ ...DEFAULT_ADDONS_SECTION })}>
+          Reset to defaults
+        </DashButton>
+      </div>
+    </div>
+  )
+}
+
+function AboutPageEditor({ about, onChange }: { about: AboutPageSettings; onChange: (about: AboutPageSettings) => void }) {
+  return (
+    <div className="space-y-6">
+      <LocalizedFieldGroup label="Page title" value={about.title} onChange={(title) => onChange({ ...about, title })} rows={1} />
+      <LocalizedFieldGroup label="Page subtitle" value={about.subtitle} onChange={(subtitle) => onChange({ ...about, subtitle })} rows={1} />
+      <ImageUploadField label="Hero image" value={about.image} onChange={(image) => onChange({ ...about, image })} />
+      <LocalizedFieldGroup label="Image alt text" value={about.imageAlt} onChange={(imageAlt) => onChange({ ...about, imageAlt })} rows={1} />
+      <LocalizedFieldGroup label="Story heading" value={about.storyHeading} onChange={(storyHeading) => onChange({ ...about, storyHeading })} rows={1} />
+      <LocalizedFieldGroup
+        label="Story paragraphs (separate with blank line)"
+        value={{ ar: paragraphsToText(about.story.ar), en: paragraphsToText(about.story.en) }}
+        onChange={(value) => onChange({ ...about, story: { ar: textToParagraphs(value.ar), en: textToParagraphs(value.en) } })}
+        rows={8}
+      />
+      <LocalizedFieldGroup label="Vision tagline" value={about.visionTagline} onChange={(visionTagline) => onChange({ ...about, visionTagline })} rows={1} />
+      <LocalizedFieldGroup label="Vision title" value={about.visionTitle} onChange={(visionTitle) => onChange({ ...about, visionTitle })} rows={1} />
+      <LocalizedFieldGroup label="Vision text" value={about.visionText} onChange={(visionText) => onChange({ ...about, visionText })} rows={3} />
+      <LocalizedFieldGroup label="Mission title" value={about.missionTitle} onChange={(missionTitle) => onChange({ ...about, missionTitle })} rows={1} />
+      <LocalizedFieldGroup label="Mission text" value={about.missionText} onChange={(missionText) => onChange({ ...about, missionText })} rows={3} />
+      <LocalizedFieldGroup label="Values title" value={about.valuesTitle} onChange={(valuesTitle) => onChange({ ...about, valuesTitle })} rows={1} />
+      <LocalizedFieldGroup label="Values text" value={about.valuesText} onChange={(valuesText) => onChange({ ...about, valuesText })} rows={3} />
+      <LocalizedFieldGroup label="Closing quote" value={about.quote} onChange={(quote) => onChange({ ...about, quote })} rows={3} />
+      <FormField label="Quote attribution">
+        <input value={about.quoteAttribution} onChange={(e) => onChange({ ...about, quoteAttribution: e.target.value })} className="form-input max-w-xs" />
+      </FormField>
+      <div className="space-y-4">
+        <h4 className="font-bold text-navy">About page stats</h4>
+        {about.stats.map((stat, index) => (
+          <div key={index} className="grid gap-4 rounded-xl border border-border/60 bg-muted/10 p-4 lg:grid-cols-[140px_1fr]">
+            <FormField label={`Stat #${index + 1} value`}>
+              <input
+                type="number"
+                value={stat.value}
+                onChange={(e) => {
+                  const stats = [...about.stats]
+                  stats[index] = { ...stat, value: Number(e.target.value) }
+                  onChange({ ...about, stats })
+                }}
+                className="form-input"
+              />
+            </FormField>
+            <LocalizedFieldGroup
+              label="Label"
+              value={stat.label}
+              onChange={(label) => {
+                const stats = [...about.stats]
+                stats[index] = { ...stat, label }
+                onChange({ ...about, stats })
+              }}
+              rows={1}
+            />
+          </div>
+        ))}
+      </div>
+      <DashButton type="button" variant="ghost" onClick={() => onChange({ ...DEFAULT_ABOUT_PAGE })}>
+        Reset About page to defaults
+      </DashButton>
+    </div>
+  )
+}
+
+function PrivacyPageEditor({ page, onChange }: { page: PrivacyPageSettings; onChange: (page: PrivacyPageSettings) => void }) {
+  function updateSection(index: number, patch: Partial<PrivacySection>) {
+    const sections = [...page.sections]
+    sections[index] = { ...sections[index], ...patch }
+    onChange({ ...page, sections })
+  }
+
+  return (
+    <div className="space-y-6">
+      <LocalizedFieldGroup label="Page title" value={page.title} onChange={(title) => onChange({ ...page, title })} rows={1} />
+      <LocalizedFieldGroup label="Page subtitle" value={page.subtitle} onChange={(subtitle) => onChange({ ...page, subtitle })} rows={1} />
+      <ImageUploadField label="Header image" value={page.image} onChange={(image) => onChange({ ...page, image })} />
+      <LocalizedFieldGroup label="Image alt text" value={page.imageAlt} onChange={(imageAlt) => onChange({ ...page, imageAlt })} rows={1} />
+      <LocalizedFieldGroup label="Intro title" value={page.introTitle} onChange={(introTitle) => onChange({ ...page, introTitle })} rows={1} />
+      <LocalizedFieldGroup label="Intro subtitle" value={page.introSubtitle} onChange={(introSubtitle) => onChange({ ...page, introSubtitle })} rows={2} />
+      {page.sections.map((section, index) => (
+        <div key={index} className="space-y-3 rounded-lg border border-border/50 bg-background p-4">
+          <LocalizedFieldGroup label={`Section #${index + 1} title`} value={section.title} onChange={(title) => updateSection(index, { title })} rows={1} />
+          <LocalizedFieldGroup label="Section body" value={section.body} onChange={(body) => updateSection(index, { body })} rows={5} />
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-2">
+        <DashButton
+          type="button"
+          variant="secondary"
+          onClick={() => onChange({ ...page, sections: [...page.sections, { title: { ar: "", en: "" }, body: { ar: "", en: "" } }] })}
+        >
+          Add section
+        </DashButton>
+        <DashButton type="button" variant="ghost" onClick={() => onChange({ ...page, sections: page.sections.slice(0, -1) })} disabled={!page.sections.length}>
+          Remove last section
+        </DashButton>
+        <DashButton type="button" variant="ghost" onClick={() => onChange({ ...DEFAULT_PRIVACY_PAGE })}>
+          Reset Privacy page to defaults
+        </DashButton>
+      </div>
+    </div>
+  )
+}
+
+function CtaLabelsEditor({ labels, onChange }: { labels: CtaLabels; onChange: (labels: CtaLabels) => void }) {
+  const fields: { key: keyof CtaLabels; label: string }[] = [
+    { key: "pricing", label: "Pricing cards button" },
+    { key: "stores", label: "Store integrations button" },
+    { key: "acquire", label: "Acquire CTA button" },
+    { key: "headerSignup", label: "Header WhatsApp signup button" },
+    { key: "learnMore", label: "Learn more link (Solutions/Products lists)" },
+  ]
+
+  return (
+    <div className="space-y-4">
+      {fields.map(({ key, label }) => (
+        <LocalizedFieldGroup
+          key={key}
+          label={label}
+          value={labels[key]}
+          onChange={(value) => onChange({ ...labels, [key]: value })}
+          rows={1}
+        />
+      ))}
+      <DashButton type="button" variant="ghost" onClick={() => onChange({ ...DEFAULT_CTA_LABELS })}>
+        Reset button labels to defaults
       </DashButton>
     </div>
   )
@@ -639,6 +834,34 @@ export default function DashboardSettingsPage() {
         <PricingPlansEditor
           plans={settings.pricingPlans ?? DEFAULT_PRICING_PLANS}
           onChange={(pricingPlans) => setSettings({ ...settings, pricingPlans })}
+        />
+      </Panel>
+
+      <Panel title="Add-ons accordion" description="Homepage add-ons section heading and accordion items">
+        <AddonsEditor
+          section={settings.addons ?? DEFAULT_ADDONS_SECTION}
+          onChange={(addons) => setSettings({ ...settings, addons })}
+        />
+      </Panel>
+
+      <Panel title="About Us page" description="Full About Us page content at /about-us">
+        <AboutPageEditor
+          about={settings.aboutPage ?? DEFAULT_ABOUT_PAGE}
+          onChange={(aboutPage) => setSettings({ ...settings, aboutPage })}
+        />
+      </Panel>
+
+      <Panel title="Privacy Policy page" description="Full Privacy Policy content at /privacy-policy">
+        <PrivacyPageEditor
+          page={settings.privacyPage ?? DEFAULT_PRIVACY_PAGE}
+          onChange={(privacyPage) => setSettings({ ...settings, privacyPage })}
+        />
+      </Panel>
+
+      <Panel title="Button labels" description="Main call-to-action buttons across the public site">
+        <CtaLabelsEditor
+          labels={settings.ctaLabels ?? DEFAULT_CTA_LABELS}
+          onChange={(ctaLabels) => setSettings({ ...settings, ctaLabels })}
         />
       </Panel>
 

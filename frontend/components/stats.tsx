@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergeAboutPage } from "@/lib/site-marketing"
 import { pickLocalized } from "@/lib/api"
 import type { TranslationKey } from "@/lib/translations"
 
@@ -61,8 +62,17 @@ export function Stats({
 
   const fallback = preset === "about" ? aboutFallbackStats : fallbackStats
 
+  const aboutStats =
+    preset === "about" && settings?.aboutPage?.stats?.length
+      ? mergeAboutPage(settings.aboutPage).stats.map((stat) => ({
+          value: stat.value,
+          label: pickLocalized(stat.label, lang),
+        }))
+      : null
+
   const stats =
-    settings?.stats?.length && preset === "default"
+    aboutStats ??
+    (settings?.stats?.length && preset === "default"
       ? settings.stats.map((stat) => ({
           value: stat.value,
           label: pickLocalized(stat.label, lang),
@@ -70,7 +80,7 @@ export function Stats({
       : fallback.map((stat) => ({
           value: stat.value,
           label: t(stat.labelKey),
-        }))
+        })))
 
   useEffect(() => {
     const el = ref.current

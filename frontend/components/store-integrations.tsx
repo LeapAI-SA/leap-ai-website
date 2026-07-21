@@ -5,10 +5,15 @@ import { motion } from "motion/react"
 import { Check, ArrowLeft } from "lucide-react"
 import { storeIntegrations } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergeCtaLabels } from "@/lib/site-marketing"
 
 export function StoreIntegrations() {
-  const { t, tr } = useLanguage()
+  const { t, tr, lang } = useLanguage()
+  const { settings } = useSiteSettings()
+  const storesCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).stores, lang, t("stores.cta"))
 
   const sharedPoints = [t("stores.feat1"), t("stores.feat2"), t("stores.feat3"), t("stores.abandonedCart")]
 
@@ -49,7 +54,7 @@ export function StoreIntegrations() {
                 href="#contact"
                 className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-bold text-amber-foreground transition-colors hover:bg-amber/90"
               >
-                {t("stores.cta")}
+                {storesCta}
                 <ArrowLeft className="size-4 rtl:rotate-180" />
               </a>
             </motion.div>

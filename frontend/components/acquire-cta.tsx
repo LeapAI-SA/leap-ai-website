@@ -3,10 +3,15 @@
 import Image from "next/image"
 import { motion } from "motion/react"
 import { useLanguage } from "@/lib/i18n"
+import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
+import { useSiteSettings } from "@/lib/site-settings-context"
+import { mergeCtaLabels } from "@/lib/site-marketing"
 
 export function AcquireCta() {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
+  const { settings } = useSiteSettings()
+  const acquireCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).acquire, lang, t("acquire.cta"))
 
   return (
     <section id="use-cases" className="bg-navy py-20 text-navy-foreground">
@@ -35,7 +40,7 @@ export function AcquireCta() {
           whileTap={{ scale: 0.97 }}
           className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#22c55e] px-7 py-3.5 font-bold text-white shadow-lg transition-colors hover:bg-[#16a34a]"
         >
-          {t("acquire.cta")}
+          {acquireCta}
         </motion.a>
       </div>
 

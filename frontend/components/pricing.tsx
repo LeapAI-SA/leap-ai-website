@@ -3,15 +3,17 @@
 import { motion } from "motion/react"
 import { Check, Headphones, MessagesSquare, LayoutGrid } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
+import { pickLocalized } from "@/lib/api"
 import { useSiteSettings } from "@/lib/site-settings-context"
-import { mergePricingPlans } from "@/lib/site-marketing"
+import { mergePricingPlans, mergeCtaLabels } from "@/lib/site-marketing"
 
 const planIcons = [Headphones, MessagesSquare, LayoutGrid]
 
 export function Pricing() {
-  const { t, tr } = useLanguage()
+  const { t, tr, lang } = useLanguage()
   const { settings } = useSiteSettings()
   const pricingPlans = mergePricingPlans(settings?.pricingPlans)
+  const pricingCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).pricing, lang, t("pricing.cta"))
 
   return (
     <section id="pricing" className="bg-secondary py-20">
@@ -83,7 +85,7 @@ export function Pricing() {
                       : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 >
-                  {t("pricing.cta")}
+                  {pricingCta}
                 </a>
               </motion.div>
             )

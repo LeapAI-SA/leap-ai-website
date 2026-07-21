@@ -45,6 +45,10 @@ Always click **Save** at the bottom of Settings when you finish editing.
 | **Header & footer navigation** | Menu links: Home, About, Partner, Contact, Privacy, FAQ |
 | **Technology partners** | Partner logos on homepage (Meta, Microsoft, etc.) |
 | **Pricing plans** | Leap Space 149 / 199 / 299 cards on homepage |
+| **Add-ons accordion** | Homepage add-ons section title and accordion items |
+| **About Us page** | Full About page text, image, stats, and quote |
+| **Privacy Policy page** | Full Privacy Policy text and sections |
+| **Button labels** | Main CTA buttons (pricing, stores, header signup, etc.) |
 | **Homepage FAQ** | Questions and answers on homepage (`/#faq`) |
 
 ---
@@ -90,6 +94,10 @@ You cannot edit the form labels here — only read incoming messages.
 | FAQ on homepage | Settings → Homepage FAQ |
 | Partner logos on homepage | Settings → Technology partners |
 | Pricing cards (149/199/299) | Settings → Pricing plans |
+| Add-ons accordion on homepage | Settings → Add-ons accordion |
+| About Us page text | Settings → About Us page |
+| Privacy Policy text | Settings → Privacy Policy page |
+| Button labels (Talk to advisor, etc.) | Settings → Button labels |
 | Google/search description | Settings → Brand / SEO |
 | Facebook / LinkedIn links | Settings → Social media |
 | A product or solution page | Content → open page → edit |
@@ -104,10 +112,10 @@ These are still built into the website code:
 
 | Item | Notes |
 |------|--------|
-| Add-ons accordion section | Fixed in code |
-| About Us page story sections | Fixed in code |
-| Privacy Policy page text | Fixed in code |
-| Some button labels | Fixed translations |
+| Services / Omni-channel section text | Fixed translations |
+| Store integration card titles | Fixed in code |
+| Acquire section heading | Fixed translations |
+| Some header/footer chrome labels | Fixed translations |
 
 If you need these editable too, ask your developer.
 
