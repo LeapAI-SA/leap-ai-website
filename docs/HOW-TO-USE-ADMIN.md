@@ -158,6 +158,7 @@ If you need these editable too, ask your developer.
 
 - Fill in **both Arabic and English** for best results
 - Use **Save** once after all changes (sticky bar at bottom)
+- Keep the public site open in another tab — after you save, changes appear within a few seconds (no need to wait a minute)
 - Use **Preview site** from dashboard to check changes
 - Paths for links start with `/` — examples: `/`, `/about-us`, `/#faq`, `/privacy-policy`
 

@@ -86,7 +86,7 @@ async function fetchContentBySlug(slug: string): Promise<ContentItemPublic | nul
     return await Promise.race([
       (async () => {
         const res = await fetchWithTimeout(`${getApiUrl()}/api/public/content/${slug}`, {
-          next: { revalidate: 60 },
+          cache: "no-store",
         })
         if (!res.ok) return null
         return (await res.json()) as ContentItemPublic

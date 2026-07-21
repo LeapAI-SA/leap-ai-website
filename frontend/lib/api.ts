@@ -125,7 +125,7 @@ export async function fetchPublicSettings(): Promise<PublicSiteSettings | null> 
   if (isBuildPhase()) return null
   try {
     const res = await fetchWithTimeout(`${getApiUrl()}/api/public/settings`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     })
     if (!res.ok) return null
     return res.json()
@@ -138,7 +138,7 @@ export async function fetchPublicContent(type: ContentItemPublic["type"]): Promi
   if (isBuildPhase()) return []
   try {
     const res = await fetchWithTimeout(`${getApiUrl()}/api/public/content?type=${type}`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     })
     if (!res.ok) return []
     return res.json()

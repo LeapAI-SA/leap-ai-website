@@ -17,6 +17,7 @@ import {
 
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
 import { geoFaqItems } from "@/lib/geo-faq"
+import { notifySettingsUpdated } from "@/lib/cms-refresh"
 import { DEFAULT_NAVIGATION, mergeNavigation, type SiteNavLink, type SiteNavigation } from "@/lib/site-nav"
 import {
   DEFAULT_PARTNERS,
@@ -506,7 +507,8 @@ export default function DashboardSettingsPage() {
         body: JSON.stringify(settings),
       })
       setSettings(normalizeSettings(updated))
-      setMessage({ text: "Settings saved successfully. Changes will appear on the live site.", type: "success" })
+      notifySettingsUpdated()
+      setMessage({ text: "Settings saved. Open the public site tab — changes appear within a few seconds.", type: "success" })
     } catch (err) {
       setMessage({ text: err instanceof Error ? err.message : "Save failed", type: "error" })
     } finally {
@@ -526,6 +528,7 @@ export default function DashboardSettingsPage() {
         body: JSON.stringify({ ...settings, maintenanceMode }),
       })
       setSettings(normalizeSettings(updated))
+      notifySettingsUpdated()
       setMessage({
         text: maintenanceMode
           ? "Maintenance mode enabled. Public visitors will see the maintenance page."

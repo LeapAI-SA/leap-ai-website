@@ -4,6 +4,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { adminFetch } from "@/lib/api"
+import { notifyContentUpdated } from "@/lib/cms-refresh"
 import { LoadingBlock, Alert } from "@/components/dashboard/ui"
 import { ContentForm, type ContentFormValues } from "@/components/dashboard/content-form"
 
@@ -42,6 +43,7 @@ export default function EditContentPage() {
     setError("")
     try {
       await adminFetch(`/api/admin/content/${id}`, { method: "PUT", body: JSON.stringify(form) })
+      notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Save failed")
@@ -54,6 +56,7 @@ export default function EditContentPage() {
     if (!confirm("Delete this content item permanently?")) return
     try {
       await adminFetch(`/api/admin/content/${id}`, { method: "DELETE" })
+      notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Delete failed")

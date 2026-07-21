@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { adminFetch } from "@/lib/api"
+import { notifyContentUpdated } from "@/lib/cms-refresh"
 import { ContentForm, emptyContentForm } from "@/components/dashboard/content-form"
 
 export default function NewContentPage() {
@@ -18,6 +19,7 @@ export default function NewContentPage() {
     setError("")
     try {
       await adminFetch("/api/admin/content", { method: "POST", body: JSON.stringify(form) })
+      notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create")

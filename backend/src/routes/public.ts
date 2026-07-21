@@ -33,6 +33,7 @@ router.get("/maintenance", async (_req, res) => {
 })
 
 router.get("/settings", async (_req, res) => {
+  res.set("Cache-Control", "no-store")
   const cached = await cacheGet<ReturnType<typeof serializePublicSettings>>(CACHE_SETTINGS)
   if (cached) {
     return res.json(cached)
@@ -40,7 +41,7 @@ router.get("/settings", async (_req, res) => {
 
   const settings = await getOrCreateSettings()
   const payload = serializePublicSettings(settings)
-  await cacheSet(CACHE_SETTINGS, payload, 300)
+  await cacheSet(CACHE_SETTINGS, payload, 30)
   res.json(payload)
 })
 
@@ -51,6 +52,7 @@ router.get("/content", async (req, res) => {
   }
 
   const cacheKey = cacheContentKey(type)
+  res.set("Cache-Control", "no-store")
   const cached = await cacheGet<ReturnType<typeof serializeContentItem>[]>(cacheKey)
   if (cached) {
     return res.json(cached)
@@ -58,7 +60,7 @@ router.get("/content", async (req, res) => {
 
   const items = await ContentItem.find({ type, published: true }).sort({ sortOrder: 1, createdAt: 1 })
   const payload = items.map(serializeContentItem)
-  await cacheSet(cacheKey, payload, 300)
+  await cacheSet(cacheKey, payload, 30)
   res.json(payload)
 })
 
