@@ -24,12 +24,26 @@
 
 The site must be on the **real internet** (not only on your computer).
 
-**Live site example:**
+**Production domain (current setup):**
 
-`https://leapai-webhook.bab.solutions/leap-ai`
+| What | URL |
+|------|-----|
+| Website | `https://leapai-webhook.bab.solutions/leap-ai` |
+| Admin login | `https://leapai-webhook.bab.solutions/leap-ai/dashboard/login` |
 
-- If the site is **online** → GEO can work  
+Environment on the server:
+
+```env
+NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions/leap-ai
+NEXT_PUBLIC_BASE_PATH=/leap-ai
+```
+
+- If the site is **online on your domain** → GEO can work  
 - If the site is **only on localhost** → AI bots cannot see it  
+
+> **AI validators** often check `https://your-domain.com/llms.txt` (no `/leap-ai`).  
+> Your files live at `https://your-domain.com/leap-ai/llms.txt` today.  
+> Ask your server admin to add the nginx rules in `deploy/nginx-crawler-root.conf` so root URLs redirect to `/leap-ai/…`.
 
 ---
 
@@ -72,7 +86,17 @@ Replace the domain if yours is different.
 **All 6 work?** → GEO is working.  
 **Error page?** → Tell your developer.
 
-> **Note:** The site lives under `/leap-ai`. Tools that check only `https://your-domain.com/llms.txt` (without `/leap-ai`) will show "Not Found" unless your server redirects root paths to `/leap-ai/…`.
+> **Note:** The site lives under `/leap-ai`. Tools that check only `https://your-domain.com/llms.txt` (without `/leap-ai`) will show "Not Found" until your server admin adds the redirects in `deploy/nginx-crawler-root.conf`.
+
+**Verify on production (PowerShell):**
+
+```powershell
+# Files under /leap-ai (works today)
+powershell -ExecutionPolicy Bypass -File scripts/verify-geo-production.ps1
+
+# Domain root (after nginx redirects)
+powershell -ExecutionPolicy Bypass -File scripts/verify-geo-production-root.ps1
+```
 
 ---
 
