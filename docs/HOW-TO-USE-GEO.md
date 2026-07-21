@@ -54,7 +54,7 @@ When you click **Save**, the website uses this content for GEO automatically.
 
 ---
 
-### Step 3 — Check 4 links in your browser
+### Step 3 — Check 6 links in your browser
 
 Open each link below in Chrome. You should see **text**, not an error page.
 
@@ -64,11 +64,15 @@ Replace the domain if yours is different.
 |---|------|---------------------|
 | 1 | `https://leapai-webhook.bab.solutions/leap-ai/llms.txt` | Short text summary about LeapAI |
 | 2 | `https://leapai-webhook.bab.solutions/leap-ai/llms-full.txt` | Summary + FAQ questions |
-| 3 | `https://leapai-webhook.bab.solutions/leap-ai/robots.txt` | Rules for web crawlers (includes AI bots) |
-| 4 | `https://leapai-webhook.bab.solutions/leap-ai/sitemap.xml` | List of all site pages |
+| 3 | `https://leapai-webhook.bab.solutions/leap-ai/llms-small.txt` | Compact summary about LeapAI |
+| 4 | `https://leapai-webhook.bab.solutions/leap-ai/robots.txt` | Rules for web crawlers (includes AI bots + LLMs-Txt) |
+| 5 | `https://leapai-webhook.bab.solutions/leap-ai/sitemap.xml` | List of all site pages |
+| 6 | `https://leapai-webhook.bab.solutions/leap-ai/.well-known/ai.txt` | AI crawler guidance file |
 
-**All 4 work?** → GEO is working.  
+**All 6 work?** → GEO is working.  
 **Error page?** → Tell your developer.
+
+> **Note:** The site lives under `/leap-ai`. Tools that check only `https://your-domain.com/llms.txt` (without `/leap-ai`) will show "Not Found" unless your server redirects root paths to `/leap-ai/…`.
 
 ---
 

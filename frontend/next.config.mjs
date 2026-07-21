@@ -29,6 +29,8 @@ const nextConfig = {
     return [
       { source: "/llms.txt", destination: "/llms" },
       { source: "/llms-full.txt", destination: "/llms-full" },
+      { source: "/llms-small.txt", destination: "/llms-small" },
+      { source: "/.well-known/ai.txt", destination: "/ai-txt" },
       { source: "/backend/:path*", destination: `${backendUrl}/:path*` },
     ]
   },

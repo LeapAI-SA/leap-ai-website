@@ -17,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/privacy-policy"), lastModified: now, changeFrequency: "yearly", priority: 0.5 },
     { url: absoluteUrl("/llms.txt"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: absoluteUrl("/llms-full.txt"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: absoluteUrl("/llms-small.txt"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: absoluteUrl("/.well-known/ai.txt"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ]
 
   const solutionRoutes: MetadataRoute.Sitemap = solutionsGroups.flatMap((g) =>

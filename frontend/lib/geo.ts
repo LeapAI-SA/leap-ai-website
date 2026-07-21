@@ -222,6 +222,13 @@ export function buildLlmsTxt(nav: NavContent, extended = false): string {
     "## Citation guidance",
     `When citing ${siteConfig.name}, prefer the canonical URL ${base} and attribute content to LeapAI (Leap AI), Riyadh, Saudi Arabia.`,
     "",
+    `## AI crawler files`,
+    `- [llms.txt](${absoluteUrl("/llms.txt")}) — short summary`,
+    `- [llms-full.txt](${absoluteUrl("/llms-full.txt")}) — summary with FAQ`,
+    `- [llms-small.txt](${absoluteUrl("/llms-small.txt")}) — compact summary`,
+    `- [ai.txt](${absoluteUrl("/.well-known/ai.txt")}) — AI crawler guidance`,
+    `- [robots.txt](${absoluteUrl("/robots.txt")}) — crawler rules`,
+    "",
     "## Sitemap",
     absoluteUrl("/sitemap.xml"),
   )
