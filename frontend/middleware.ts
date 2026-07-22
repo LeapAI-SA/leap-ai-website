@@ -21,7 +21,11 @@ function redirectBarePathToBasePath(request: NextRequest) {
   const basePath = getBasePath()
   if (!basePath) return null
 
-  const { pathname, search } = request.nextUrl
+  const { pathname, search, basePath: requestBasePath } = request.nextUrl
+
+  // Next.js strips basePath from pathname in middleware — do not redirect again.
+  if (requestBasePath) return null
+
   if (pathname === basePath || pathname.startsWith(`${basePath}/`)) return null
 
   const skipPrefixes = ["/_next", "/backend", "/api"]
