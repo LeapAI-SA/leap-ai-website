@@ -1,12 +1,10 @@
 import type { Metadata } from "next"
 import { resolveAssetPath, withBasePath } from "./media"
 import type { PublicSiteSettings } from "./api"
+import { getPublicSiteUrl, getBasePath } from "./site-url"
 
 export function getSiteUrl() {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL
-  if (raw) return raw.replace(/\/$/, "")
-  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
-  return `http://localhost:3000${basePath}`
+  return getPublicSiteUrl()
 }
 
 export const siteConfig = {
@@ -41,7 +39,7 @@ export const siteConfig = {
 export function absoluteUrl(path = "/") {
   const siteUrl = getSiteUrl().replace(/\/$/, "")
   const normalized = path.startsWith("/") ? path : `/${path}`
-  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
+  const basePath = getBasePath()
 
   if (basePath && siteUrl.endsWith(basePath)) {
     if (normalized === "/") return siteUrl

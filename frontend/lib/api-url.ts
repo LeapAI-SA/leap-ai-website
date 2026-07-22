@@ -1,10 +1,13 @@
 /** Server-side uses internal Docker URL; browser uses public URL or same-origin proxy. */
+import { getBasePath } from "./site-url"
+
+const LOCAL_API = "http://localhost:4000"
+
 export function getClientApiUrl() {
-  const configured = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
+  const configured = process.env.NEXT_PUBLIC_API_URL ?? LOCAL_API
   if (configured.startsWith("/")) {
     const path = configured.replace(/\/$/, "")
-    const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
-    // When app is hosted under a basePath, absolute /backend must be prefixed.
+    const basePath = getBasePath()
     if (basePath && path === "/backend") return `${basePath}${path}`
     return path
   }
@@ -19,7 +22,7 @@ export function getApiUrl() {
       (process.env.NEXT_PUBLIC_API_URL?.startsWith("http")
         ? process.env.NEXT_PUBLIC_API_URL
         : undefined) ??
-      "http://localhost:4000"
+      LOCAL_API
     )
   }
   return getClientApiUrl()

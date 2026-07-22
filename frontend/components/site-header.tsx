@@ -13,6 +13,7 @@ import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
 import { activeNavLinks, mergeNavigation, navLinkLabel } from "@/lib/site-nav"
 import { mergeCtaLabels } from "@/lib/site-marketing"
+import { sitePath } from "@/lib/site-path"
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
@@ -85,7 +86,7 @@ export function SiteHeader() {
             {leftNav.map((item) => (
               <Link
                 key={`${item.href}-${item.label.en}`}
-                href={item.href}
+                href={sitePath(item.href)}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {navLinkLabel(item, lang)}
@@ -128,7 +129,7 @@ export function SiteHeader() {
             {rightNav.map((item) => (
               <Link
                 key={`${item.href}-${item.label.en}`}
-                href={item.href}
+                href={sitePath(item.href)}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {navLinkLabel(item, lang)}
@@ -233,7 +234,7 @@ export function SiteHeader() {
                 {leftNav.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
                     <Link
-                      href={item.href}
+                      href={sitePath(item.href)}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >
@@ -276,7 +277,7 @@ export function SiteHeader() {
                 {rightNav.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
                     <Link
-                      href={item.href}
+                      href={sitePath(item.href)}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >

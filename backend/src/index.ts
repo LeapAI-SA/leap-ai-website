@@ -60,8 +60,14 @@ async function start() {
   const corsOrigins = [
     ...new Set([
       ...parseCorsOrigins(corsOrigin),
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
+      ...(isProd
+        ? []
+        : [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:3000/leap-ai",
+            "http://127.0.0.1:3000/leap-ai",
+          ]),
     ]),
   ]
 

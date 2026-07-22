@@ -9,6 +9,7 @@ import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
 import { activeNavLinks, mergeNavigation, navLinkLabel } from "@/lib/site-nav"
 import { safeSocialLinks, type SocialPlatform } from "@/lib/social-links"
+import { sitePath } from "@/lib/site-path"
 
 export function SiteFooter() {
   const { t, lang } = useLanguage()
@@ -41,14 +42,14 @@ export function SiteFooter() {
             <ul className="mt-5 flex flex-col gap-2.5">
               {footerLinks.map((link) => (
                 <li key={`${link.href}-${link.label.en}`}>
-                  <Link href={link.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                  <Link href={sitePath(link.href)} className="text-navy-foreground/75 transition-colors hover:text-amber">
                     {navLinkLabel(link, lang)}
                   </Link>
                 </li>
               ))}
               {footerLegal.map((link) => (
                 <li key={`${link.href}-${link.label.en}`}>
-                  <Link href={link.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                  <Link href={sitePath(link.href)} className="text-navy-foreground/75 transition-colors hover:text-amber">
                     {navLinkLabel(link, lang)}
                   </Link>
                 </li>

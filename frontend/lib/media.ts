@@ -1,8 +1,5 @@
 import { getClientApiUrl } from "./api-url"
-
-function getBasePath() {
-  return (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
-}
+import { getBasePath } from "./site-url"
 
 function safeHttpUrl(url: string): string | null {
   try {
@@ -39,8 +36,7 @@ export function resolveAssetPath(path?: string): string {
     return safeHttpUrl(path) ?? ""
   }
   if (path.startsWith("/uploads/")) {
-    const api = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
-    if (api.startsWith("/")) return `${api.replace(/\/$/, "")}${path}`
+    const api = getClientApiUrl()
     return `${api.replace(/\/$/, "")}${path}`
   }
   if (path.startsWith("/") && !path.includes("..")) return path

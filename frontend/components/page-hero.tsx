@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
+import { sitePath } from "@/lib/site-path"
 
 type Crumb = { label: string; href?: string }
 
@@ -24,7 +25,7 @@ export function PageHero({
             <span key={`${c.label}-${i}`} className="flex items-center gap-1">
               {i > 0 && <ChevronLeft className="size-3.5 opacity-50 rtl:rotate-180" />}
               {c.href ? (
-                <Link href={c.href} className="transition-colors hover:text-amber">
+                <Link href={sitePath(c.href)} className="transition-colors hover:text-amber">
                   {c.label}
                 </Link>
               ) : (

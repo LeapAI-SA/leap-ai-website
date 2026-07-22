@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
+import { getBasePath } from "@/lib/site-url"
 
 const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt"]
 const BYPASS_EXACT = [
@@ -16,8 +17,23 @@ const BYPASS_EXACT = [
   "/sitemap.xml",
 ]
 
+function redirectBarePathToBasePath(request: NextRequest) {
+  const basePath = getBasePath()
+  if (!basePath) return null
+
+  const { pathname, search } = request.nextUrl
+  if (pathname === basePath || pathname.startsWith(`${basePath}/`)) return null
+
+  const skipPrefixes = ["/_next", "/backend", "/api"]
+  if (skipPrefixes.some((prefix) => pathname.startsWith(prefix))) return null
+  if (pathname.includes(".")) return null
+
+  const target = pathname === "/" ? basePath : `${basePath}${pathname}`
+  return NextResponse.redirect(new URL(`${target}${search}`, request.url), 308)
+}
+
 function stripBasePath(pathname: string) {
-  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
+  const basePath = getBasePath()
   if (basePath && (pathname === basePath || pathname.startsWith(`${basePath}/`))) {
     return pathname.slice(basePath.length) || "/"
   }
@@ -49,6 +65,9 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
+  const basePathRedirect = redirectBarePathToBasePath(request)
+  if (basePathRedirect) return basePathRedirect
+
   const { pathname, basePath } = request.nextUrl
   const maintenance = await isMaintenanceModeEnabled()
   const maintenancePath = `${basePath}/maintenance`

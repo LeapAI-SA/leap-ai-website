@@ -44,7 +44,7 @@ services:
       MONGODB_URI: mongodb://leap:leapsecret@mongodb:27017/leapai?authSource=admin
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
-      CORS_ORIGIN: http://localhost:3000,http://127.0.0.1:3000
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3000/leap-ai}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       SEED_ON_START: ${SEED_ON_START:-true}
@@ -62,7 +62,8 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: /backend
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/leap-ai}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000/leap-ai}
         API_URL: http://backend:4000
     container_name: leap-frontend
     restart: unless-stopped
@@ -70,9 +71,10 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: /backend
+      NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-/leap-ai}
       API_URL: http://backend:4000
       INTERNAL_API_URL: http://backend:4000
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000/leap-ai}
     depends_on:
       - backend
 

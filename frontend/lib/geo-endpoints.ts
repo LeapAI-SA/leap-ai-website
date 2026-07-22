@@ -1,5 +1,6 @@
 import { withBasePath } from "./media"
 import { absoluteUrl } from "./seo"
+import { getBrowserSiteUrl, getPublicSiteUrl } from "./site-url"
 
 export type GeoEndpointCheck = {
   id: string
@@ -64,11 +65,8 @@ export function geoBrowserUrl(path: string) {
 }
 
 export function geoPublicSiteUrl() {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
-  if (fromEnv) return fromEnv
   if (typeof window !== "undefined") {
-    const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")
-    return `${window.location.origin}${basePath}`
+    return getBrowserSiteUrl()
   }
-  return absoluteUrl("/")
+  return getPublicSiteUrl()
 }
