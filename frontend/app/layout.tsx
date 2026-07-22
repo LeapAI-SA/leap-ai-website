@@ -28,6 +28,7 @@ export const viewport: Viewport = {
   themeColor: '#0066b2',
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export const dynamic = 'force-dynamic'

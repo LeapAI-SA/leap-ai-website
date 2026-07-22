@@ -87,7 +87,7 @@ export function ContactPageContent() {
             <iframe
               title={t("contact.mapTitle")}
               src={`https://maps.google.com/maps?q=${mapQuery}&t=m&z=13&output=embed&iwloc=near`}
-              className="h-full min-h-[450px] w-full"
+              className="h-full min-h-[240px] w-full sm:min-h-[360px] lg:min-h-[450px]"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />

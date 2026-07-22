@@ -12,7 +12,8 @@ export function WhatsappFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t("common.whatsapp")}
-      className="fixed bottom-6 start-6 z-50 flex size-14 items-center justify-center rounded-full bg-[oklch(0.72_0.17_145)] text-white shadow-lg transition-transform hover:scale-105"
+      className="fixed bottom-4 start-4 z-50 flex size-14 items-center justify-center rounded-full bg-[oklch(0.72_0.17_145)] text-white shadow-lg transition-transform hover:scale-105 sm:bottom-6 sm:start-6"
+      style={{ marginBottom: "env(safe-area-inset-bottom)", marginInlineStart: "env(safe-area-inset-left)" }}
     >
       <MessageCircle className="size-7" />
     </a>

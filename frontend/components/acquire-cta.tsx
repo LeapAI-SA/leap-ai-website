@@ -44,7 +44,7 @@ export function AcquireCta() {
         </motion.a>
       </div>
 
-      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-4 px-6 sm:gap-6 md:grid-cols-4">
+      <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 md:gap-4">
         {[1, 2, 3, 4].map((n, i) => (
           <motion.div
             key={n}

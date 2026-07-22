@@ -29,7 +29,7 @@ export function Pricing() {
         </motion.h2>
         <p className="mx-auto mt-4 max-w-xl text-center leading-relaxed text-muted-foreground">{t("pricing.subtitle")}</p>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {pricingPlans.map((plan, i) => {
             const Icon = planIcons[i] ?? Headphones
             const name = tr(plan.name)
@@ -44,7 +44,7 @@ export function Pricing() {
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
                 whileHover={{ y: -8 }}
-                className={`relative flex flex-col rounded-2xl border bg-card p-8 transition-shadow hover:shadow-xl ${
+                className={`relative flex flex-col rounded-2xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-xl sm:p-8 ${
                   plan.featured ? "border-amber shadow-lg ring-1 ring-amber/40 lg:-translate-y-3" : "border-border"
                 }`}
               >
@@ -59,8 +59,8 @@ export function Pricing() {
                 </div>
                 <h3 className="mt-5 text-center text-xl font-bold text-navy">{name}</h3>
 
-                <div className="mt-4 flex items-end justify-center gap-1">
-                  <span className={`text-5xl font-extrabold ${plan.featured ? "text-amber" : "text-navy"}`}>
+                <div className="mt-4 flex flex-wrap items-end justify-center gap-1">
+                  <span className={`text-4xl font-extrabold sm:text-5xl ${plan.featured ? "text-amber" : "text-navy"}`}>
                     {plan.price}
                   </span>
                   <span className="mb-1 text-lg font-bold text-muted-foreground">{t("pricing.currency")}</span>

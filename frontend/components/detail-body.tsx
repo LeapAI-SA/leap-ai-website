@@ -64,7 +64,7 @@ export function DetailBody({ item, related, basePath }: { item: NavItem; related
         </article>
 
         <aside>
-          <div className="sticky top-24 rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <div className="lg:sticky lg:top-24 rounded-2xl border border-border bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-center gap-3">
               <span className="h-6 w-1.5 rounded-full bg-amber" />
               <h3 className="text-lg font-bold text-navy">{t("detail.related")}</h3>

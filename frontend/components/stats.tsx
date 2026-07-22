@@ -34,11 +34,11 @@ function StatItem({ value, label, start }: { value: number; label: string; start
   const count = useCountUp(value, start)
   return (
     <div className="text-center">
-      <p className="text-5xl font-extrabold text-primary-foreground md:text-6xl">
+      <p className="text-4xl font-extrabold text-primary-foreground sm:text-5xl lg:text-6xl">
         {count}
         <span className="text-amber">+</span>
       </p>
-      <p className="mt-2 text-lg font-semibold text-primary-foreground/80">{label}</p>
+      <p className="mt-2 text-base font-semibold text-primary-foreground/80 sm:text-lg">{label}</p>
     </div>
   )
 }
@@ -100,7 +100,7 @@ export function Stats({
 
   return (
     <section ref={ref} className="bg-navy py-20">
-      <div className="mx-auto grid max-w-5xl gap-12 px-6 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-5xl gap-10 px-4 sm:grid-cols-3 sm:gap-12 sm:px-6">
         {stats.map((s) => (
           <StatItem key={`${s.label}-${s.value}`} value={s.value} label={s.label} start={visible} />
         ))}

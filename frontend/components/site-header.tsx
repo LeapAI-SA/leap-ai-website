@@ -36,9 +36,23 @@ export function SiteHeader() {
 
   return (
     <header className="relative z-50">
+      {/* Mobile contact strip */}
+      <div className="border-b border-white/10 bg-navy text-navy-foreground md:hidden">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-4 px-4 py-2 text-xs">
+          <a href={`tel:${phoneHref}`} className="flex items-center gap-1.5 font-semibold">
+            <Phone className="size-3.5 shrink-0 text-amber" />
+            <span dir="ltr">{phone}</span>
+          </a>
+          <span className="text-navy-foreground/40">|</span>
+          <a href={`mailto:${email}`} className="truncate text-navy-foreground/90">
+            {email}
+          </a>
+        </div>
+      </div>
+
       {/* Top utility bar */}
       <div className="hidden bg-navy text-navy-foreground md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2 text-sm sm:px-6">
           <div className="flex items-center gap-2 text-navy-foreground/80">
             <Clock className="size-4 text-amber" />
             <span>{businessHours}</span>
@@ -58,11 +72,11 @@ export function SiteHeader() {
 
       {/* Main nav */}
       <div className="border-b border-white/10 bg-navy text-navy-foreground">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
           {/* Logo */}
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <Link href="/" className="flex items-center shrink-0">
-              <Image src={logoSrc} alt="LeapAI" width={150} height={48} priority className="h-10 w-auto" unoptimized />
+            <Link href="/" className="flex shrink-0 items-center">
+              <Image src={logoSrc} alt="LeapAI" width={150} height={48} priority className="h-8 w-auto sm:h-10" unoptimized />
             </Link>
           </motion.div>
 
@@ -132,7 +146,7 @@ export function SiteHeader() {
             <AnimatePresence>
               {active === "solutions" && (
                 <DropdownPanel onMouseEnter={() => setActive("solutions")}>
-                  <div className="grid gap-x-8 gap-y-6 md:grid-cols-4">
+                  <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
                     {solutionsGroups.map((group) => (
                       <div key={group.slug}>
                         <Link
@@ -357,7 +371,7 @@ function MobileGroup({
         <Link
           href={href}
           onClick={onNavigate}
-          className="flex-1 px-3 py-2.5 text-sm font-semibold text-foreground/80 hover:text-primary"
+          className="flex-1 truncate px-3 py-2.5 text-sm font-semibold text-foreground/80 hover:text-primary"
         >
           {label}
         </Link>

@@ -41,7 +41,7 @@ export function OmniChannel() {
           <span className="inline-block rounded-full bg-amber/15 px-4 py-1.5 text-sm font-bold text-amber-foreground">
             {t("omni.badge")}
           </span>
-          <h2 className="mt-5 text-balance text-2xl font-extrabold leading-snug text-primary md:text-3xl">
+          <h2 className="mt-5 text-balance text-3xl font-extrabold leading-snug text-primary md:text-4xl">
             {t("omni.heading")}
           </h2>
           <p className="mt-6 text-pretty leading-loose text-muted-foreground">{t("omni.p1")}</p>

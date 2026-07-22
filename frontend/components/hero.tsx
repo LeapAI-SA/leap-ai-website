@@ -44,7 +44,7 @@ export function Hero() {
         transition={{ duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
       />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-16 md:py-24 lg:grid-cols-2">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:grid-cols-2 lg:gap-10 lg:py-24">
         <motion.div className="max-w-xl" variants={container} initial="hidden" animate="show">
           <motion.h1
             variants={item}
@@ -68,7 +68,7 @@ export function Hero() {
               href="#contact"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center justify-center rounded-full bg-amber px-12 py-4 text-lg font-bold text-accent-foreground shadow-lg"
+              className="inline-flex w-full max-w-sm items-center justify-center rounded-full bg-amber px-6 py-3 text-base font-bold text-accent-foreground shadow-lg sm:w-auto sm:px-10 sm:py-3.5 sm:text-lg lg:px-12 lg:py-4"
             >
               {cta}
             </motion.a>

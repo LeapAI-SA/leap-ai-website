@@ -28,7 +28,7 @@ export function SiteFooter() {
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">
-      <div className="mx-auto max-w-7xl px-6 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
         <h2 className="mx-auto max-w-3xl text-balance text-center text-xl font-bold leading-relaxed text-navy-foreground md:text-2xl">
           {mission}
         </h2>

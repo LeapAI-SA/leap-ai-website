@@ -46,9 +46,9 @@ export function GeoFaqSection() {
                   type="button"
                   onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 p-5 text-start"
+                  className="flex w-full min-w-0 items-center justify-between gap-3 p-4 text-start sm:gap-4 sm:p-5"
                 >
-                  <h3 className="font-bold text-navy" itemProp="name">
+                  <h3 className="min-w-0 flex-1 break-words font-bold text-navy" itemProp="name">
                     {question}
                   </h3>
                   <ChevronDown
