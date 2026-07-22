@@ -83,7 +83,7 @@ export default function DashboardContactPage() {
         description="View messages submitted from the public Contact Us form. Edit contact details in Site Settings."
         actions={
           <>
-            <DashButton onClick={load} variant="secondary" disabled={loading}>
+            <DashButton onClick={() => load()} variant="secondary" disabled={loading}>
               <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </DashButton>

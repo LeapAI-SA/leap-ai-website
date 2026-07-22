@@ -21,6 +21,7 @@ Local: http://localhost:3000/leap-ai/dashboard/login
 After login you see the main dashboard with:
 
 - **Homepage settings** — hero, contact, menus, SEO, FAQ
+- **GEO** — check AI crawler files and AI search readiness
 - **Content library** — Solutions, Products, Use cases pages
 - **Contact Us inbox** — messages from the contact form
 - **Create new page** — add new content
@@ -80,6 +81,18 @@ You cannot edit the form labels here — only read incoming messages.
 
 ---
 
+### 4. GEO — AI visibility (`Dashboard → GEO`)
+
+Check that AI tools (ChatGPT, Perplexity, Claude) can read your public summary files.
+
+- Click **Check all links** — each file should show **OK**
+- Click **Open** on any row to view the text file in a new tab
+- Use the links on the page to update **FAQ**, **SEO**, and **Content** (those feed GEO automatically)
+
+You do **not** need to run scripts or edit code.
+
+---
+
 ## Quick map: “I want to change…”
 
 | I want to change… | Go to… |
@@ -99,6 +112,7 @@ You cannot edit the form labels here — only read incoming messages.
 | Privacy Policy text | Settings → Privacy Policy page |
 | Button labels (Talk to advisor, etc.) | Settings → Button labels |
 | Google/search description | Settings → Brand / SEO |
+| Check AI crawler files (GEO) | GEO → Check all links |
 | Facebook / LinkedIn links | Settings → Social media |
 | A product or solution page | Content → open page → edit |
 | Put site in maintenance | Settings → General → Maintenance mode |

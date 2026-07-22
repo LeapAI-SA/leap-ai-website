@@ -70,7 +70,9 @@ When you click **Save**, the website uses this content for GEO automatically.
 
 ### Step 3 — Check 6 links in your browser
 
-Open each link below in Chrome. You should see **text**, not an error page.
+**Easiest way:** open **Dashboard → GEO** in the admin. It checks all 6 links automatically and shows OK / Failed.
+
+Or open each link manually in Chrome. You should see **text**, not an error page.
 
 Replace the domain if yours is different.
 

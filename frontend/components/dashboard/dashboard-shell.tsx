@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Menu,
   Plus,
+  Sparkles,
 } from "lucide-react"
 import { getToken, setToken } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
@@ -21,6 +22,7 @@ import { DashButton } from "./ui"
 const nav = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/settings", label: "Site Settings", icon: Settings },
+  { href: "/dashboard/geo", label: "GEO", icon: Sparkles },
   { href: "/dashboard/contact", label: "Contact Us", icon: Mail },
   { href: "/dashboard/content", label: "Content", icon: FileText },
 ]
@@ -28,6 +30,7 @@ const nav = [
 const pageTitles: Record<string, string> = {
   "/dashboard": "Overview",
   "/dashboard/settings": "Site Settings",
+  "/dashboard/geo": "GEO",
   "/dashboard/contact": "Contact Us",
   "/dashboard/content": "Content Library",
   "/dashboard/content/new": "New Content",

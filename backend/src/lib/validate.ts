@@ -79,7 +79,7 @@ export function sanitizeNavLinks(value: unknown): Array<{ label: { ar: string; e
         enabled: item.enabled !== false,
       }
     })
-    .filter((item): item is NonNullable<typeof item> => !!item && (item.label.ar || item.label.en))
+    .filter((item): item is NonNullable<typeof item> => !!item && !!(item.label.ar || item.label.en))
 }
 
 export function sanitizePartners(value: unknown): Array<{ name: string; logo: string; enabled: boolean }> {
@@ -126,7 +126,9 @@ export function sanitizePricingPlans(value: unknown): Array<{
     })
     .filter(
       (item): item is NonNullable<typeof item> =>
-        !!item && (item.name.ar || item.name.en) && (item.features.ar.length > 0 || item.features.en.length > 0),
+        !!item &&
+        !!(item.name.ar || item.name.en) &&
+        (item.features.ar.length > 0 || item.features.en.length > 0),
     )
 }
 

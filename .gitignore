@@ -34,3 +34,7 @@ __v0_jsx-dev-runtime.ts
 
 # OS
 .DS_Store
+
+# Local scratch / debug output
+tmp-*
+frontend/[0-9]*
