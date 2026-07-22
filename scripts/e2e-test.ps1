@@ -1,6 +1,17 @@
+param(
+  [string]$ApiBase = "http://localhost:4000",
+  [string]$WebBase = ""
+)
+
 $ErrorActionPreference = "Continue"
-$API = "http://localhost:4000"
-$WEB = "http://localhost:3000"
+
+if (-not $WebBase) {
+  $basePath = if ($env:NEXT_PUBLIC_BASE_PATH) { $env:NEXT_PUBLIC_BASE_PATH.TrimEnd("/") } else { "" }
+  $WebBase = "http://localhost:3000$basePath"
+}
+
+$API = $ApiBase.TrimEnd("/")
+$WEB = $WebBase.TrimEnd("/")
 $results = @()
 $token = $null
 $testId = $null
@@ -94,20 +105,26 @@ $pages = @(
   "/contact-us",
   "/privacy-policy",
   "/dashboard/login",
+  "/dashboard",
   "/dashboard/content",
   "/dashboard/content/new",
   "/dashboard/settings",
+  "/dashboard/geo",
+  "/dashboard/contact",
   "/solutions",
   "/products",
   "/use-cases",
   "/llms.txt",
   "/llms-full.txt",
+  "/llms-small.txt",
   "/robots.txt",
-  "/sitemap.xml"
+  "/sitemap.xml",
+  "/.well-known/ai.txt"
 )
 foreach ($p in $pages) {
   try {
-    $r = Invoke-WebRequest -Uri "$WEB$p" -UseBasicParsing -TimeoutSec 20
+    $url = if ($p -eq "/") { $WEB } else { "$WEB$p" }
+    $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 20
     if ($r.StatusCode -ne 200) { throw "status $($r.StatusCode)" }
     Add-Result "Frontend: $p" "PASS"
   } catch { Add-Result "Frontend: $p" "FAIL" $_.Exception.Message }
@@ -166,7 +183,8 @@ if ($testId) {
 Write-Host ""
 Write-Host "=== TEST SUMMARY ===" -ForegroundColor Cyan
 $results | Format-Table -AutoSize -Wrap
-$pass = ($results | Where-Object Status -eq "PASS").Count
-$fail = ($results | Where-Object Status -eq "FAIL").Count
+$pass = @($results | Where-Object Status -eq "PASS").Count
+$fail = @($results | Where-Object Status -eq "FAIL").Count
 Write-Host "Passed: $pass  Failed: $fail  Total: $($results.Count)"
 if ($fail -gt 0) { exit 1 }
+exit 0

@@ -57,3 +57,4 @@ foreach ($c in $checks) {
 
 Write-Host "`n$passed / $total GEO crawler checks passed`n" -ForegroundColor $(if ($passed -eq $total) { "Green" } else { "Yellow" })
 if ($passed -ne $total) { exit 1 }
+exit 0
