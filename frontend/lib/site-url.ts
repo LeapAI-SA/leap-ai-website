@@ -16,19 +16,22 @@ function localDevSiteUrl() {
 /** Canonical public site URL (SEO, GEO, sitemap, metadata). */
 export function getPublicSiteUrl() {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "")
-  if (fromEnv) {
-    if (isProduction() && isLocalhostUrl(fromEnv)) {
-      console.error(
-        "[site-url] NEXT_PUBLIC_SITE_URL must be your live domain in production, not localhost.",
-      )
-    }
+
+  if (fromEnv && !(isProduction() && isLocalhostUrl(fromEnv))) {
     return fromEnv
   }
 
   if (isProduction()) {
-    console.error(
-      "[site-url] NEXT_PUBLIC_SITE_URL is missing in production. Set it to e.g. https://leapai-webhook.bab.solutions/leap-ai",
-    )
+    if (fromEnv) {
+      console.warn(
+        `[site-url] NEXT_PUBLIC_SITE_URL is localhost in production; using ${PRODUCTION_SITE_URL}`,
+      )
+    } else {
+      console.warn(
+        `[site-url] NEXT_PUBLIC_SITE_URL is missing in production; using ${PRODUCTION_SITE_URL}`,
+      )
+    }
+    return PRODUCTION_SITE_URL
   }
 
   return localDevSiteUrl()

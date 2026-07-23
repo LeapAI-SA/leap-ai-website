@@ -3,6 +3,8 @@ import { solutionsGroups, products, useCases } from "@/lib/site-data"
 import { absoluteUrl } from "@/lib/seo"
 
 /** Static sitemap from seed data — reliable for build & GEO crawlers. */
+export const dynamic = "force-dynamic"
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
