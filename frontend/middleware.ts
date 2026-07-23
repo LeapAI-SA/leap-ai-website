@@ -89,10 +89,16 @@ export async function middleware(request: NextRequest) {
   return NextResponse.redirect(new URL(maintenancePath, request.url))
 }
 
+// Matcher must be static literals (Next.js build requirement). Keep in sync with lib/geo-paths.ts.
 export const config = {
   matcher: [
     "/((?!.*\\..*).*)",
-    ...GEO_ROOT_PATHS,
+    "/llms.txt",
+    "/llms-full.txt",
+    "/llms-small.txt",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/.well-known/ai.txt",
   ],
 }
 
