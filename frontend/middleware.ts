@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
+import { GEO_ROOT_PATHS } from "@/lib/geo-paths"
 import { getBasePath } from "@/lib/site-url"
 
 const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt"]
@@ -30,7 +31,7 @@ function redirectBarePathToBasePath(request: NextRequest) {
 
   const skipPrefixes = ["/_next", "/backend", "/api"]
   if (skipPrefixes.some((prefix) => pathname.startsWith(prefix))) return null
-  if (pathname.includes(".")) return null
+  if (pathname.includes(".") && !(GEO_ROOT_PATHS as readonly string[]).includes(pathname)) return null
 
   const target = pathname === "/" ? basePath : `${basePath}${pathname}`
   return NextResponse.redirect(new URL(`${target}${search}`, request.url), 308)
@@ -89,6 +90,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!.*\\..*).*)"],
+  matcher: [
+    "/((?!.*\\..*).*)",
+    ...GEO_ROOT_PATHS,
+  ],
 }
 
