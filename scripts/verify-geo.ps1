@@ -27,7 +27,7 @@ function Test-Url($path, $expectContent = $null, [switch]$RejectLocalhost) {
       return $false
     }
     if ($RejectLocalhost -and $r.Content -match "localhost|127\.0\.0\.1") {
-      Write-Host "FAIL $url (contains localhost URLs — set NEXT_PUBLIC_SITE_URL on server)" -ForegroundColor Red
+      Write-Host "FAIL $url (contains localhost URLs - set NEXT_PUBLIC_SITE_URL on server)" -ForegroundColor Red
       return $false
     }
     Write-Host "OK   $url ($($r.StatusCode))" -ForegroundColor Green

@@ -1,7 +1,7 @@
 /** PM2: frontend + backend on the host; MongoDB + Redis via Docker. */
 const path = require("path")
 
-const PRODUCTION_SITE = "https://leapai-webhook.bab.solutions/leap-ai"
+const PRODUCTION_SITE = "https://leapai-webhook.bab.solutions"
 
 module.exports = {
   apps: [
@@ -17,7 +17,7 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: "production",
-        CORS_ORIGIN: `https://leapai-webhook.bab.solutions,${PRODUCTION_SITE}`,
+        CORS_ORIGIN: `${PRODUCTION_SITE},http://localhost:3000/leap-ai`,
         ENFORCE_PROD_SECRETS: "true",
       },
       max_restarts: 10,
@@ -32,16 +32,16 @@ module.exports = {
       env: {
         NODE_ENV: "development",
         PORT: "3000",
-        NEXT_PUBLIC_BASE_PATH: "/leap-ai",
+        NEXT_PUBLIC_BASE_PATH: "",
         NEXT_PUBLIC_API_URL: "/backend",
-        NEXT_PUBLIC_SITE_URL: "http://localhost:3000/leap-ai",
+        NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
         API_URL: "http://localhost:4000",
         INTERNAL_API_URL: "http://localhost:4000",
       },
       env_production: {
         NODE_ENV: "production",
         PORT: "3000",
-        NEXT_PUBLIC_BASE_PATH: "/leap-ai",
+        NEXT_PUBLIC_BASE_PATH: "",
         NEXT_PUBLIC_API_URL: "/backend",
         NEXT_PUBLIC_SITE_URL: PRODUCTION_SITE,
         API_URL: "http://localhost:4000",
@@ -60,7 +60,7 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: "3000",
-        NEXT_PUBLIC_BASE_PATH: "/leap-ai",
+        NEXT_PUBLIC_BASE_PATH: "",
         NEXT_PUBLIC_API_URL: "/backend",
         NEXT_PUBLIC_SITE_URL: PRODUCTION_SITE,
         API_URL: "http://localhost:4000",

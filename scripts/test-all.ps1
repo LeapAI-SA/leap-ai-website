@@ -1,5 +1,5 @@
 param(
-  [string]$WebBase = "http://localhost:3000/leap-ai",
+  [string]$WebBase = "http://localhost:3000",
   [string]$ApiBase = "http://localhost:4000"
 )
 
@@ -20,7 +20,7 @@ Write-Host "`n--- Admin pages and API ---" -ForegroundColor Yellow
 if ($LASTEXITCODE -ne 0) { $failed++ }
 
 Write-Host "`n--- GEO crawler files ---" -ForegroundColor Yellow
-& (Join-Path $root "verify-geo.ps1") -BaseUrl $WebBase -BasePath "/leap-ai"
+& (Join-Path $root "verify-geo.ps1") -BaseUrl $WebBase -BasePath ""
 if ($LASTEXITCODE -ne 0) { $failed++ }
 
 Write-Host "`n--- End-to-end (API + public pages) ---" -ForegroundColor Yellow

@@ -130,6 +130,17 @@ foreach ($p in $pages) {
   } catch { Add-Result "Frontend: $p" "FAIL" $_.Exception.Message }
 }
 
+try {
+  $legacyCheck = curl.exe -sI "$WEB/leap-ai/about-us" 2>&1 | Out-String
+  if ($legacyCheck -notmatch "HTTP/1\.1 30[18]") { throw "expected 301/308 redirect" }
+  if ($legacyCheck -notmatch "about-us") { throw "Location missing /about-us" }
+  $r = Invoke-WebRequest -Uri "$WEB/about-us" -UseBasicParsing -TimeoutSec 20
+  if ($r.StatusCode -ne 200) { throw "target page not 200" }
+  Add-Result "Legacy redirect: /leap-ai/about-us -> /about-us" "PASS"
+} catch {
+  Add-Result "Legacy redirect: /leap-ai/about-us -> /about-us" "FAIL" $_.Exception.Message
+}
+
 foreach ($type in @("solution", "product", "use-case")) {
   $base = switch ($type) {
     "solution" { "/solutions" }

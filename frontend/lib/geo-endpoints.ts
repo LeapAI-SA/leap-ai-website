@@ -57,7 +57,7 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
   },
 ]
 
-/** Paths AI validators check at the domain root (without /leap-ai). */
+/** Paths AI validators check at the domain root. */
 export { GEO_ROOT_PATHS } from "./geo-paths"
 
 /** Browser URL for a GEO file on the current host (respects base path). */

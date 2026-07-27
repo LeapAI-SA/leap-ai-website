@@ -1,5 +1,5 @@
 param(
-  [string]$WebBase = "http://localhost:3000/leap-ai",
+  [string]$WebBase = "http://localhost:3000",
   [string]$ApiBase = "http://localhost:4000",
   [string]$Email = "admin@leapai.ai",
   [string]$Password = "admin123"
@@ -134,9 +134,9 @@ if ($testId) {
 try {
   $proxy = Invoke-RestMethod -Uri "$WebBase/backend/api/admin/settings" -Headers $headers
   if (-not $proxy.hero) { throw "proxy settings missing hero" }
-  Add-Result "Proxy: /leap-ai/backend/api/admin/settings" "PASS"
+  Add-Result "Proxy: /backend/api/admin/settings" "PASS"
 } catch {
-  Add-Result "Proxy: /leap-ai/backend/api/admin/settings" "FAIL" $_.Exception.Message
+  Add-Result "Proxy: /backend/api/admin/settings" "FAIL" $_.Exception.Message
 }
 
 if ($testId) {

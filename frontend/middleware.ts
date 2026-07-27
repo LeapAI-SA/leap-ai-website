@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
 import { GEO_ROOT_PATHS } from "@/lib/geo-paths"
-import { getBasePath } from "@/lib/site-url"
+import { getBasePath, LEGACY_BASE_PATH } from "@/lib/site-url"
 
 const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt"]
 const BYPASS_EXACT = [
@@ -37,6 +37,29 @@ function redirectBarePathToBasePath(request: NextRequest) {
   return NextResponse.redirect(new URL(`${target}${search}`, request.url), 308)
 }
 
+/** When hosted at domain root, send old /leap-ai/* bookmarks to /* */
+function redirectLegacySubpath(request: NextRequest) {
+  const basePath = getBasePath()
+  if (basePath) return null
+
+  const legacy = LEGACY_BASE_PATH
+  const { pathname } = request.nextUrl
+
+  if (pathname === legacy) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/"
+    return NextResponse.redirect(url, 308)
+  }
+
+  if (pathname.startsWith(`${legacy}/`)) {
+    const url = request.nextUrl.clone()
+    url.pathname = pathname.slice(legacy.length) || "/"
+    return NextResponse.redirect(url, 308)
+  }
+
+  return null
+}
+
 function stripBasePath(pathname: string) {
   const basePath = getBasePath()
   if (basePath && (pathname === basePath || pathname.startsWith(`${basePath}/`))) {
@@ -70,6 +93,9 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
+  const legacyRedirect = redirectLegacySubpath(request)
+  if (legacyRedirect) return legacyRedirect
+
   const basePathRedirect = redirectBarePathToBasePath(request)
   if (basePathRedirect) return basePathRedirect
 
@@ -98,6 +124,8 @@ export const config = {
     "/robots.txt",
     "/sitemap.xml",
     "/.well-known/ai.txt",
+    "/leap-ai",
+    "/leap-ai/:path*",
   ],
 }
 

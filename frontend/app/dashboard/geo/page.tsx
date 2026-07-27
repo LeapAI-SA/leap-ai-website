@@ -314,12 +314,9 @@ export default function DashboardGeoPage() {
             ))}
           </ul>
           <p className="mt-6 rounded-xl border border-amber/30 bg-amber/10 px-4 py-3 text-xs leading-relaxed text-amber-foreground">
-            <strong>Domain root note:</strong> Some AI validators check{" "}
-            <code className="rounded bg-background/80 px-1">/llms.txt</code> without{" "}
-            <code className="rounded bg-background/80 px-1">/leap-ai</code>. Your files work under{" "}
-            <code className="rounded bg-background/80 px-1">/leap-ai/…</code> today. Ask your server admin to add nginx
-            redirects from <code className="rounded bg-background/80 px-1">deploy/nginx-crawler-root.conf</code> if
-            needed.
+            <strong>Legacy URLs:</strong> Old links under <code className="rounded bg-background/80 px-1">/leap-ai/…</code>{" "}
+            redirect to the same page at the domain root. Production nginx:{" "}
+            <code className="rounded bg-background/80 px-1">deploy/nginx-root-hosting.conf</code>.
           </p>
         </Panel>
       </div>

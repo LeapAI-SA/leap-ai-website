@@ -8,11 +8,11 @@
 
 | Field | Value |
 |-------|--------|
-| **URL** | `https://your-domain.com/leap-ai/dashboard/login` |
+| **URL** | `https://your-domain.com/dashboard/login` |
 | **Email** | `admin@leapai.ai` |
 | **Password** | `admin123` |
 
-Local: http://localhost:3000/leap-ai/dashboard/login
+Local: http://localhost:3000/dashboard/login
 
 ---
 

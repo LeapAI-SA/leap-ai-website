@@ -28,22 +28,20 @@ The site must be on the **real internet** (not only on your computer).
 
 | What | URL |
 |------|-----|
-| Website | `https://leapai-webhook.bab.solutions/leap-ai` |
-| Admin login | `https://leapai-webhook.bab.solutions/leap-ai/dashboard/login` |
+| Website | `https://leapai-webhook.bab.solutions` |
+| Admin login | `https://leapai-webhook.bab.solutions/dashboard/login` |
 
 Environment on the server:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions/leap-ai
-NEXT_PUBLIC_BASE_PATH=/leap-ai
+NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions
+NEXT_PUBLIC_BASE_PATH=
 ```
 
 - If the site is **online on your domain** → GEO can work  
 - If the site is **only on localhost** → AI bots cannot see it  
 
-> **AI validators** often check `https://your-domain.com/llms.txt` (no `/leap-ai`).  
-> Your files live at `https://your-domain.com/leap-ai/llms.txt` today.  
-> Ask your server admin to add the nginx rules in `deploy/nginx-crawler-root.conf` so root URLs redirect to `/leap-ai/…`.
+GEO crawler files (`/llms.txt`, `/robots.txt`, etc.) are served at the **domain root**. Old `/leap-ai/*` links redirect automatically. Server nginx: see `deploy/nginx-root-hosting.conf`.
 
 ---
 
@@ -78,26 +76,23 @@ Replace the domain if yours is different.
 
 | # | Link | What you should see |
 |---|------|---------------------|
-| 1 | `https://leapai-webhook.bab.solutions/leap-ai/llms.txt` | Short text summary about LeapAI |
-| 2 | `https://leapai-webhook.bab.solutions/leap-ai/llms-full.txt` | Summary + FAQ questions |
-| 3 | `https://leapai-webhook.bab.solutions/leap-ai/llms-small.txt` | Compact summary about LeapAI |
-| 4 | `https://leapai-webhook.bab.solutions/leap-ai/robots.txt` | Rules for web crawlers (includes AI bots + LLMs-Txt) |
-| 5 | `https://leapai-webhook.bab.solutions/leap-ai/sitemap.xml` | List of all site pages |
-| 6 | `https://leapai-webhook.bab.solutions/leap-ai/.well-known/ai.txt` | AI crawler guidance file |
+| 1 | `https://leapai-webhook.bab.solutions/llms.txt` | Short text summary about LeapAI |
+| 2 | `https://leapai-webhook.bab.solutions/llms-full.txt` | Summary + FAQ questions |
+| 3 | `https://leapai-webhook.bab.solutions/llms-small.txt` | Compact summary about LeapAI |
+| 4 | `https://leapai-webhook.bab.solutions/robots.txt` | Rules for web crawlers (includes AI bots + LLMs-Txt) |
+| 5 | `https://leapai-webhook.bab.solutions/sitemap.xml` | List of all site pages |
+| 6 | `https://leapai-webhook.bab.solutions/.well-known/ai.txt` | AI crawler guidance file |
 
 **All 6 work?** → GEO is working.  
 **Error page?** → Tell your developer.
 
-> **Note:** The site lives under `/leap-ai`. Tools that check only `https://your-domain.com/llms.txt` (without `/leap-ai`) will show "Not Found" until your server admin adds the redirects in `deploy/nginx-crawler-root.conf`.
+> **Note:** GEO files are at the domain root (e.g. `https://your-domain.com/llms.txt`).
 
 **Verify on production (PowerShell):**
 
 ```powershell
-# Files under /leap-ai (works today)
+# Production GEO check
 powershell -ExecutionPolicy Bypass -File scripts/verify-geo-production.ps1
-
-# Domain root (after nginx redirects)
-powershell -ExecutionPolicy Bypass -File scripts/verify-geo-production-root.ps1
 ```
 
 ---
@@ -146,8 +141,10 @@ Print or save this list:
 
 | Setup | Login URL |
 |-------|-----------|
-| With base path `/leap-ai` | `https://your-domain.com/leap-ai/dashboard/login` |
-| Without base path | `https://your-domain.com/dashboard/login` |
+| Production (root) | `https://your-domain.com/dashboard/login` |
+| Local | `http://localhost:3000/dashboard/login` |
+
+Legacy `/leap-ai/dashboard/login` redirects to `/dashboard/login`.
 
 ---
 
@@ -187,7 +184,7 @@ Use this when you come back days or weeks later to check if GEO still works.
 
 1. Make sure the **website is running** (ask your developer if unsure)
 2. Use **Chrome** or **Edge**
-3. Have your **live website address** ready (example: `https://leapai-webhook.bab.solutions/leap-ai`)
+3. Have your **live website address** ready (example: `https://leapai-webhook.bab.solutions`)
 
 ---
 
@@ -197,10 +194,10 @@ Copy each link into the browser address bar. Press Enter.
 
 | Link to open | Pass if you see… |
 |--------------|------------------|
-| `…/leap-ai/llms.txt` | Plain text about LeapAI (company, products, pricing) |
-| `…/leap-ai/llms-full.txt` | Same text **plus** FAQ questions |
-| `…/leap-ai/robots.txt` | Lines with `Allow`, `Disallow`, and `GPTBot` |
-| `…/leap-ai/sitemap.xml` | A long list of page URLs |
+| `…/llms.txt` | Plain text about LeapAI (company, products, pricing) |
+| `…/llms-full.txt` | Same text **plus** FAQ questions |
+| `…/robots.txt` | Lines with `Allow`, `Disallow`, and `GPTBot` |
+| `…/sitemap.xml` | A long list of page URLs |
 
 **Pass:** All 4 show text (not “404” or “cannot connect”)  
 **Fail:** Any link shows an error → tell your developer
@@ -209,7 +206,7 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 2 — Check the FAQ on the homepage
 
-1. Open the main website: `https://leapai-webhook.bab.solutions/leap-ai`
+1. Open the main website: `https://leapai-webhook.bab.solutions`
 2. Scroll down to the **FAQ** section (or click **FAQ** in the footer)
 3. Click a question — the answer should open
 
@@ -220,7 +217,7 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 3 — Check you can log into the Dashboard
 
-1. Open: `https://leapai-webhook.bab.solutions/leap-ai/dashboard/login`
+1. Open: `https://leapai-webhook.bab.solutions/dashboard/login`
 2. Log in with `admin@leapai.ai` / `admin123`
 3. Open **Settings** — page should load
 

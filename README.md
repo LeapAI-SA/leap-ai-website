@@ -12,9 +12,7 @@ LeapAI monorepo for:
 - `scripts/` — helper scripts (GEO verify, image import, local CMS start)
 - `docker-compose.yml` — MongoDB + Redis + backend + frontend
 
-## Local URLs
-
-Without `NEXT_PUBLIC_BASE_PATH`:
+## Local URLs (default — site at domain root)
 
 - Website: `http://localhost:3000`
 - Dashboard: `http://localhost:3000/dashboard`
@@ -22,11 +20,7 @@ Without `NEXT_PUBLIC_BASE_PATH`:
 - Backend API: `http://localhost:4000`
 - Same-origin proxy: `http://localhost:3000/backend/...`
 
-With `NEXT_PUBLIC_BASE_PATH=/leap-ai`:
-
-- Website: `http://localhost:3000/leap-ai`
-- Dashboard login: `http://localhost:3000/leap-ai/dashboard/login`
-- Same-origin proxy: `http://localhost:3000/leap-ai/backend/...`
+**Legacy:** Old `/leap-ai/*` URLs redirect to `/*`. Optional subpath hosting: set `NEXT_PUBLIC_BASE_PATH=/leap-ai` (not recommended for new deploys).
 
 ## Admin Credentials (default)
 
@@ -71,17 +65,17 @@ ADMIN_EMAIL=admin@leapai.ai
 ADMIN_PASSWORD=admin123
 ```
 
-`frontend/.env` (same-origin proxy + optional subpath):
+`frontend/.env` (same-origin proxy, root hosting):
 
 ```env
 NEXT_PUBLIC_API_URL=/backend
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_BASE_PATH=/leap-ai
+NEXT_PUBLIC_BASE_PATH=
 API_URL=http://localhost:4000
 INTERNAL_API_URL=http://localhost:4000
 ```
 
-For plain local URLs without a subpath, omit `NEXT_PUBLIC_BASE_PATH` and set:
+For direct API calls without the Next.js proxy:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
@@ -134,8 +128,8 @@ pm2 start ecosystem.config.cjs
 
 Verify:
 
-- API health: `http://localhost:3000/leap-ai/backend/api/public/health` (or `/backend/api/public/health` without base path)
-- Login: `http://localhost:3000/leap-ai/dashboard/login`
+- API health: `http://localhost:3000/backend/api/public/health`
+- Login: `http://localhost:3000/dashboard/login`
 
 ---
 
@@ -191,7 +185,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 - Docker browser calls use `/backend` (proxied to the backend container) to avoid CORS issues.
 - With PM2, the frontend proxies `/backend` to `http://localhost:4000` via `frontend/next.config.mjs`.
-- Optional subpath hosting: set `NEXT_PUBLIC_BASE_PATH=/leap-ai` in frontend env/build args.
+- Production site URL: set `NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions` (no subpath). See `deploy/nginx-root-hosting.conf` for nginx.
 - Public assets and logos must use the base path when `NEXT_PUBLIC_BASE_PATH` is set.
 - Content and settings are managed from `/dashboard` when the backend is running.
 
@@ -324,7 +318,7 @@ The script checks:
 - Homepage includes `FAQPage` JSON-LD and `#faq` section
 - A detail page includes `Question` schema
 
-If you use `NEXT_PUBLIC_BASE_PATH=/leap-ai`, open the site at `http://localhost:3000/leap-ai` first, or update the `$base` variable in `scripts/verify-geo.ps1` to include the prefix.
+Open the site at `http://localhost:3000` (or set `GEO_TEST_URL` / `-BaseUrl` in verify scripts).
 
 ### Verify on production
 
