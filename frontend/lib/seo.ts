@@ -223,10 +223,10 @@ export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadat
     },
     icons: {
       icon: [
-        { url: withBasePath("/icon.svg"), type: "image/svg+xml" },
-        { url: withBasePath("/icon-light-32x32.png"), sizes: "32x32" },
+        { url: withBasePath("/icon"), type: "image/png" },
+        { url: withBasePath("/icon"), sizes: "32x32", type: "image/png" },
       ],
-      apple: withBasePath("/apple-icon.png"),
+      apple: withBasePath("/apple-icon"),
     },
   }
 }
