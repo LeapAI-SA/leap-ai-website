@@ -13,11 +13,11 @@ module.exports = {
       interpreter: "node",
       env: {
         NODE_ENV: "development",
-        CORS_ORIGIN: "http://localhost:3000,http://localhost:3000/leap-ai",
+        CORS_ORIGIN: "http://localhost:3000",
       },
       env_production: {
         NODE_ENV: "production",
-        CORS_ORIGIN: `${PRODUCTION_SITE},http://localhost:3000/leap-ai`,
+        CORS_ORIGIN: PRODUCTION_SITE,
         ENFORCE_PROD_SECRETS: "true",
       },
       max_restarts: 10,

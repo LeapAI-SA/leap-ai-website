@@ -55,6 +55,3 @@ export function getBrowserSiteUrl() {
 }
 
 export const PRODUCTION_SITE_URL = "https://leapai-webhook.bab.solutions"
-
-/** Legacy subpath — used for redirects when site is hosted at domain root. */
-export const LEGACY_BASE_PATH = "/leap-ai"

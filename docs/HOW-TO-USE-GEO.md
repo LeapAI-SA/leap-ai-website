@@ -41,7 +41,7 @@ NEXT_PUBLIC_BASE_PATH=
 - If the site is **online on your domain** → GEO can work  
 - If the site is **only on localhost** → AI bots cannot see it  
 
-GEO crawler files (`/llms.txt`, `/robots.txt`, etc.) are served at the **domain root**. Old `/leap-ai/*` links redirect automatically. Server nginx: see `deploy/nginx-root-hosting.conf`.
+GEO crawler files (`/llms.txt`, `/robots.txt`, etc.) are served at the **domain root**. Server nginx: see `deploy/nginx-root-hosting.conf`.
 
 ---
 
@@ -143,8 +143,6 @@ Print or save this list:
 |-------|-----------|
 | Production (root) | `https://your-domain.com/dashboard/login` |
 | Local | `http://localhost:3000/dashboard/login` |
-
-Legacy `/leap-ai/dashboard/login` redirects to `/dashboard/login`.
 
 ---
 

@@ -8,7 +8,7 @@ Root `.env` or server env (Docker Compose):
 NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions
 NEXT_PUBLIC_BASE_PATH=
 NEXT_PUBLIC_API_URL=/backend
-CORS_ORIGIN=https://leapai-webhook.bab.solutions,http://localhost:3000/leap-ai
+CORS_ORIGIN=https://leapai-webhook.bab.solutions
 ```
 
 ## 2. Deploy
@@ -22,7 +22,7 @@ Or PM2: `pm2 restart ecosystem.config.cjs --update-env`
 
 ## 3. Nginx
 
-Apply [`nginx-root-hosting.conf`](nginx-root-hosting.conf): proxy `/` to Next.js; legacy `/leap-ai/*` redirects.
+Apply [`nginx-root-hosting.conf`](nginx-root-hosting.conf): proxy `/` to Next.js.
 
 ## 4. Verify
 

@@ -313,11 +313,6 @@ export default function DashboardGeoPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 rounded-xl border border-amber/30 bg-amber/10 px-4 py-3 text-xs leading-relaxed text-amber-foreground">
-            <strong>Legacy URLs:</strong> Old links under <code className="rounded bg-background/80 px-1">/leap-ai/…</code>{" "}
-            redirect to the same page at the domain root. Production nginx:{" "}
-            <code className="rounded bg-background/80 px-1">deploy/nginx-root-hosting.conf</code>.
-          </p>
         </Panel>
       </div>
     </div>

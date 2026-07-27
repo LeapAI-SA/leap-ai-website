@@ -44,7 +44,7 @@ services:
       MONGODB_URI: mongodb://leap:leapsecret@mongodb:27017/leapai?authSource=admin
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3000/leap-ai,https://leapai-webhook.bab.solutions}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai-webhook.bab.solutions}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       SEED_ON_START: ${SEED_ON_START:-true}

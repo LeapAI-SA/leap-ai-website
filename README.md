@@ -20,8 +20,6 @@ LeapAI monorepo for:
 - Backend API: `http://localhost:4000`
 - Same-origin proxy: `http://localhost:3000/backend/...`
 
-**Legacy:** Old `/leap-ai/*` URLs redirect to `/*`. Optional subpath hosting: set `NEXT_PUBLIC_BASE_PATH=/leap-ai` (not recommended for new deploys).
-
 ## Admin Credentials (default)
 
 - Email: `admin@leapai.ai`
