@@ -37,7 +37,7 @@ if (!siteUrl) {
 }
 if (/localhost|127\.0\.0\.1/i.test(siteUrl)) {
   console.error("NEXT_PUBLIC_SITE_URL must be your live domain in production, not localhost.")
-  console.error("Example: https://leapai-webhook.bab.solutions")
+  console.error("Example: https://leapai.ai")
   process.exit(1)
 }
 if (!process.env.NEXT_PUBLIC_BASE_PATH?.trim()) {

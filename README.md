@@ -183,7 +183,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 - Docker browser calls use `/backend` (proxied to the backend container) to avoid CORS issues.
 - With PM2, the frontend proxies `/backend` to `http://localhost:4000` via `frontend/next.config.mjs`.
-- Production site URL: set `NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions` (no subpath). See `deploy/nginx-root-hosting.conf` for nginx.
+- Production site URL: set `NEXT_PUBLIC_SITE_URL=https://leapai.ai` (no subpath). See `deploy/nginx-root-hosting.conf` for nginx (HTTP→HTTPS, www→apex, HSTS).
 - Public assets and logos must use the base path when `NEXT_PUBLIC_BASE_PATH` is set.
 - Content and settings are managed from `/dashboard` when the backend is running.
 

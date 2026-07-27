@@ -1,7 +1,7 @@
 /** PM2: frontend + backend on the host; MongoDB + Redis via Docker. */
 const path = require("path")
 
-const PRODUCTION_SITE = "https://leapai-webhook.bab.solutions"
+const PRODUCTION_SITE = "https://leapai.ai"
 
 module.exports = {
   apps: [
@@ -17,7 +17,7 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: "production",
-        CORS_ORIGIN: PRODUCTION_SITE,
+        CORS_ORIGIN: `${PRODUCTION_SITE},https://leapai-webhook.bab.solutions`,
         ENFORCE_PROD_SECRETS: "true",
       },
       max_restarts: 10,

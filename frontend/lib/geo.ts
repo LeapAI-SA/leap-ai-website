@@ -82,6 +82,12 @@ export function buildEnhancedOrganizationSchema(settings?: {
   social?: Partial<SocialLinks>
 }) {
   const orgId = `${getSiteUrl()}/#organization`
+  const address = {
+    "@type": "PostalAddress" as const,
+    addressLocality: "Riyadh",
+    addressCountry: "SA",
+    streetAddress: settings?.contact?.address?.en ?? "King Abdulaziz Branch Road, Riyadh, Saudi Arabia",
+  }
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -91,15 +97,11 @@ export function buildEnhancedOrganizationSchema(settings?: {
     url: getSiteUrl(),
     logo: resolveOgImage(settings?.images?.logo ?? "/leapai-logo.png"),
     description: siteConfig.descriptionEn,
+    address,
     foundingLocation: {
       "@type": "Place",
       name: "Riyadh, Saudi Arabia",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Riyadh",
-        addressCountry: "SA",
-        streetAddress: settings?.contact?.address?.en ?? "King Abdulaziz Branch Road",
-      },
+      address,
     },
     areaServed: {
       "@type": "Country",

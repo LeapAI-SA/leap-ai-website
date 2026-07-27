@@ -54,4 +54,4 @@ export function getBrowserSiteUrl() {
   return getPublicSiteUrl()
 }
 
-export const PRODUCTION_SITE_URL = "https://leapai-webhook.bab.solutions"
+export const PRODUCTION_SITE_URL = "https://leapai.ai"
