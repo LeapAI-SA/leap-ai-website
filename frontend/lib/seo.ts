@@ -84,11 +84,29 @@ export function normalizeSeoTitle(title: string, brand = siteConfig.name) {
   return truncateMeta(value, 60)
 }
 
+const DESCRIPTION_CLOSER_AR =
+  "تكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL."
+const DESCRIPTION_CLOSER_EN =
+  "Integrations with Salla, Zid, and Odoo — PDPL-ready local hosting."
+
+function looksArabic(text: string) {
+  return /[\u0600-\u06FF]/.test(text)
+}
+
+/** Prefer 120–160 chars for meta description; pad short CMS copy with a branded closer. */
 export function normalizeSeoDescription(description: string, brand = siteConfig.name) {
   let value = description.replace(/\s+/g, " ").trim()
   if (!containsBrand(value, brand)) {
     value = `${brand} — ${value}`
   }
+
+  if (value.length < 120) {
+    const closer = looksArabic(value) ? DESCRIPTION_CLOSER_AR : DESCRIPTION_CLOSER_EN
+    if (!value.includes(closer.slice(0, 20))) {
+      value = `${value} ${closer}`.replace(/\s+/g, " ").trim()
+    }
+  }
+
   return truncateMeta(value, 160)
 }
 
@@ -138,9 +156,9 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   const ogTitleSource = titleAr ?? pageTitle
   const ogTitle = truncateMeta(
     containsBrand(ogTitleSource) ? ogTitleSource.replace(/\s*\|\s*LeapAI\s*$/i, "").trim() : ogTitleSource,
-    35,
+    60,
   )
-  const ogDescription = truncateMeta(metaDescriptionAr, 65)
+  const ogDescription = truncateMeta(metaDescriptionAr, 160)
   const twitterDescription = truncateMeta(metaDescription, 200)
 
   return {
