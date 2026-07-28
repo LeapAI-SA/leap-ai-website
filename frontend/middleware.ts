@@ -70,7 +70,16 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname, searchParams } = request.nextUrl
+  if (searchParams.has("s")) {
+    const url = request.nextUrl.clone()
+    if (pathname === "/en" || pathname.startsWith("/en/")) {
+      url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
+    }
+    url.search = ""
+    return NextResponse.redirect(url, 308)
+  }
+
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     const url = request.nextUrl.clone()
     url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
