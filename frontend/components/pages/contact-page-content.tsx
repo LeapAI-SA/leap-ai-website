@@ -23,7 +23,7 @@ export function ContactPageContent() {
       title: t("contact.locationTitle"),
       line: address,
       actionLabel: t("contact.mapLink"),
-      href: `https://maps.google.com/maps?q=${mapQuery}`,
+      href: `https://www.google.com/maps?q=${mapQuery}`,
     },
     {
       icon: Mail,
@@ -86,9 +86,10 @@ export function ContactPageContent() {
           <div className="overflow-hidden rounded-3xl border border-border shadow-lg">
             <iframe
               title={t("contact.mapTitle")}
-              src={`https://maps.google.com/maps?q=${mapQuery}&t=m&z=13&output=embed&iwloc=near`}
-              className="h-full min-h-[240px] w-full sm:min-h-[360px] lg:min-h-[450px]"
+              src={`https://www.google.com/maps?q=${mapQuery}&hl=${lang}&z=14&output=embed`}
+              className="h-full min-h-[240px] w-full border-0 sm:min-h-[360px] lg:min-h-[450px]"
               loading="lazy"
+              allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
             />
           </div>

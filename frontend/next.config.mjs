@@ -29,6 +29,8 @@ const nextConfig = {
               "default-src 'self'",
               "base-uri 'self'",
               "frame-ancestors 'none'",
+              "frame-src 'self' https://maps.google.com https://www.google.com https://maps.googleapis.com",
+              "child-src 'self' https://maps.google.com https://www.google.com https://maps.googleapis.com",
               "object-src 'none'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data: https://fonts.gstatic.com",
