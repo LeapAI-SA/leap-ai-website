@@ -34,6 +34,48 @@ export function buildFaqPageSchemaAr(items: GeoFaqItem[] = geoFaqItems) {
   }
 }
 
+export function buildHomeHowToSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to launch customer experience operations with LeapAI",
+    inLanguage: "ar",
+    description:
+      "A practical flow to start with LeapAI: choose a plan, connect channels, automate journeys, and monitor measurable outcomes from one dashboard.",
+    totalTime: "P7D",
+    supply: [
+      { "@type": "HowToSupply", name: "Business goals and service channels list" },
+      { "@type": "HowToSupply", name: "CRM or store data source (optional)" },
+    ],
+    tool: [
+      { "@type": "HowToTool", name: "LeapAI platform" },
+      { "@type": "HowToTool", name: "WhatsApp Business and digital channels" },
+    ],
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Choose the right subscription plan",
+        text: "Select Leap Space 1, 2, or 3 based on your expected conversation volume, channels, and team size.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Connect service channels in one workspace",
+        text: "Connect voice, IVR, WhatsApp Business, and digital channels so all conversations are managed from one dashboard.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Activate automation and AI components",
+        text: "Enable chatbot flows, routing rules, and campaign automations to reduce response time and improve conversion.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Track performance and optimize continuously",
+        text: "Monitor response time, satisfaction, and campaign outcomes; then iterate using real operational data.",
+      },
+    ],
+  }
+}
+
 export function buildSoftwareApplicationSchema() {
   return {
     "@context": "https://schema.org",

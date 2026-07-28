@@ -27,7 +27,6 @@ export function OmniChannel() {
             width={1031}
             height={1069}
             className="mx-auto h-auto w-full max-w-md"
-            unoptimized
           />
         </motion.div>
 

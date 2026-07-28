@@ -43,7 +43,13 @@ export function Addons() {
                   className="flex w-full items-center gap-3 p-4 text-start"
                 >
                   <span className="flex size-11 shrink-0 items-center justify-center">
-                    <Image src={resolveMediaUrl(addon.icon || "/placeholder.svg")} alt="" width={44} height={44} className="size-11" />
+                    <Image
+                      src={resolveMediaUrl(addon.icon || "/placeholder.svg")}
+                      alt={itemTitle}
+                      width={44}
+                      height={44}
+                      className="size-11"
+                    />
                   </span>
                   <span className="flex-1 font-bold text-navy">{itemTitle}</span>
                   <ChevronDown

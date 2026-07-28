@@ -24,8 +24,8 @@ export const translations = {
     en: "is the first advanced local cloud platform for customer experience.",
   },
   "hero.sub1": {
-    ar: "اختر الباقة التي تلبي احتياجك وابدأ مركز خدمة عملائك بكل سهولة وسرعة!",
-    en: "Choose the plan that fits your needs and launch your customer service center easily and quickly!",
+    ar: "LeapAI منصة سحابية سعودية مخصصة لتجربة العملاء تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع PDPL ودعم متخصص لضمان تشغيل مستقر ونمو قابل للقياس.",
+    en: "LeapAI is a Saudi cloud platform for customer experience that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting and dedicated support.",
   },
   "hero.sub2": {
     ar: "منصة LeapAI هي الاختيار الأمثل لخدمة العملاء والاحتفاظ بهم على الأمد البعيد.",
@@ -35,14 +35,17 @@ export const translations = {
 
   /* --------------------------- Services intro --------------------------- */
   "services.label": { ar: "LEAP AI", en: "LEAP AI" },
-  "services.heading": { ar: "نقدم لشركائنا خدمات متكاملة", en: "We provide our partners with integrated services" },
+  "services.heading": {
+    ar: "كيف تقدم LeapAI خدمات متكاملة لتجربة العملاء؟",
+    en: "How does LeapAI deliver integrated customer experience services?",
+  },
   "services.p1": {
-    ar: "ترتكز على تقديم أحدث تقنيات تجربة العملاء من خلال توفير خدمات مثالية شاملة لعملائنا النهائيين!",
-    en: "Built on the latest customer experience technologies to deliver ideal, comprehensive services to our end customers!",
+    ar: "تعتمد المنصة على تشغيل القنوات الصوتية والرقمية في لوحة واحدة لتمكين فرقك من إدارة المكالمات، واتساب، والدردشة المباشرة بسرعة أعلى وجودة أكثر اتساقًا.",
+    en: "The platform runs voice and digital channels in one dashboard so your teams can manage calls, WhatsApp, and live chat with faster response times and more consistent quality.",
   },
   "services.p2": {
-    ar: "كل ذلك لتتمكن من تسهيل وتسريع أعمالك بالإضافة إلى تمكين عميلك النهائي من الوصول إليك عبر قنوات متعددة تتوافق مع احتياجاته، وتعزز ولاءه لمنتجاتك وخدماتك.",
-    en: "All this lets you simplify and accelerate your business, while enabling your end customer to reach you across multiple channels that suit their needs and strengthen loyalty to your products and services.",
+    ar: "تدعم LeapAI أتمتة الرحلات وقياس الأداء الفعلي عبر مؤشرات مثل زمن الاستجابة ومعدلات التحويل، مع ربط النتائج مباشرة بباقات 149 و199 و299 ريال لكل مستخدم شهريًا لقياس العائد التشغيلي بشكل واضح.",
+    en: "LeapAI supports journey automation and real performance measurement through metrics such as response time and conversion rate, while aligning outcomes with the 149, 199, and 299 SAR plans to track operational ROI clearly.",
   },
 
   /* ----------------------------- Omni-channel --------------------------- */
@@ -52,16 +55,19 @@ export const translations = {
     en: "The LEAP SPACE OMNI-CHANNEL contact center covers all inbound and outbound campaigns across every voice and digital service channel",
   },
   "omni.p1": {
-    ar: "مثل المكالمات الصوتية، الرد الصوتي التفاعلي (IVR)، خدمة الواتساب للأعمال، الدردشة المباشرة على موقع الويب الخاص بك، بالإضافة إلى جميع قنوات التواصل الاجتماعي!",
-    en: "Such as voice calls, interactive voice response (IVR), WhatsApp Business, live chat on your website, plus all social media channels!",
+    ar: "تشمل القنوات المكالمات الصوتية، IVR، واتساب للأعمال، الدردشة المباشرة، وقنوات التواصل الاجتماعي، بحيث تصل كل محادثة إلى الفريق المناسب دون تكرار أو فقدان للسياق.",
+    en: "Channels include voice calls, IVR, WhatsApp Business, live chat, and social media, so each conversation reaches the right team without duplication or context loss.",
   },
   "omni.p2": {
-    ar: "كل هذا يهدف إلى ترتيب أعمالك والتنسيق مع عملائك باستخدام بيانات حقيقية للحفاظ على جودة الخدمة المقدمة لعميلك النهائي وتقليل مصادر الهدر والتكلفة.",
-    en: "All this aims to organize your business and coordinate with your customers using real data to maintain service quality for your end customer and reduce waste and cost.",
+    ar: "عند توحيد هذه القنوات في نظام واحد، يمكنك متابعة كفاءة الوكلاء، تقليل وقت الانتظار، وتحسين جودة الخدمة بالاعتماد على بيانات تشغيل حقيقية يومًا بعد يوم.",
+    en: "When these channels are unified in one system, you can track agent efficiency, reduce wait time, and improve service quality using real operational data day by day.",
   },
 
   /* ------------------------------- Pricing ------------------------------ */
-  "pricing.heading": { ar: "باقات الاشتراك", en: "Subscription Plans" },
+  "pricing.heading": {
+    ar: "ما هي باقات الاشتراك المناسبة لاحتياجك؟",
+    en: "Which subscription plan fits your needs?",
+  },
   "pricing.subtitle": {
     ar: "اختر الباقة الأنسب لاحتياجك وابدأ بتقديم تجربة عملاء استثنائية اليوم.",
     en: "Choose the plan that best fits your needs and start delivering an exceptional customer experience today.",
@@ -119,7 +125,7 @@ export const translations = {
   "acquire.cta": { ar: "القيمة المضافة من ليب", en: "Added Value by Leap" },
 
   /* ------------------------------ Partners ------------------------------ */
-  "partners.heading": { ar: "شركاء التقنية", en: "Technology Partners" },
+  "partners.heading": { ar: "من هم شركاء التقنية في منظومة LeapAI؟", en: "Who are LeapAI technology partners?" },
 
   /* ------------------------------- Stats -------------------------------- */
   "stats.heading": { ar: "أرقام تتحدث عنا", en: "Numbers That Speak for Us" },

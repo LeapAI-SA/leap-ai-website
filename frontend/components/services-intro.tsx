@@ -27,7 +27,6 @@ export function ServicesIntro() {
             width={1024}
             height={770}
             className="h-auto w-full"
-            unoptimized
           />
         </motion.div>
 

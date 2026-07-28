@@ -7,7 +7,8 @@ const nextConfig = {
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   poweredByHeader: false,
   images: {
-    unoptimized: true,
+    unoptimized: false,
+    formats: ["image/avif", "image/webp"],
   },
   async headers() {
     return [
@@ -40,6 +41,12 @@ const nextConfig = {
           },
         ],
       },
+    ]
+  },
+  async redirects() {
+    return [
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/:path*", destination: "/:path*", permanent: true },
     ]
   },
   async rewrites() {

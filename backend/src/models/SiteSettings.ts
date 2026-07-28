@@ -135,8 +135,8 @@ const siteSettingsSchema = new Schema(
       sub1: {
         type: localizedSchema,
         default: () => ({
-          ar: "اختر الباقة التي تلبي احتياجك وابدأ مركز خدمة عملائك بكل سهولة وسرعة!",
-          en: "Choose the plan that fits your needs and launch your customer service center easily and quickly!",
+          ar: "LeapAI منصة سحابية سعودية مخصصة لتجربة العملاء تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع PDPL ودعم متخصص لضمان تشغيل مستقر ونمو قابل للقياس.",
+          en: "LeapAI is a Saudi cloud platform for customer experience that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting and dedicated support.",
         }),
       },
       sub2: {

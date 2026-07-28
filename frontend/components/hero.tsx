@@ -92,7 +92,6 @@ export function Hero() {
               height={620}
               priority
               className="h-auto w-full drop-shadow-2xl"
-              unoptimized
             />
           </motion.div>
         </motion.div>

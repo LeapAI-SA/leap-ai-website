@@ -20,7 +20,7 @@ export function GeoFaqSection() {
             {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
           </span>
           <h2 id="faq-heading" className="mt-3 text-3xl font-extrabold text-navy md:text-4xl">
-            {lang === "ar" ? "كل ما تحتاج معرفته عن LeapAI" : "Everything you need to know about LeapAI"}
+            {lang === "ar" ? "ما الذي تحتاج معرفته عن LeapAI قبل البدء؟" : "What do you need to know about LeapAI before you start?"}
           </h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">
             {lang === "ar"

@@ -70,10 +70,17 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  if (pathname === "/en" || pathname.startsWith("/en/")) {
+    const url = request.nextUrl.clone()
+    url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
+    return NextResponse.redirect(url, 308)
+  }
+
   const basePathRedirect = redirectBarePathToBasePath(request)
   if (basePathRedirect) return basePathRedirect
 
-  const { pathname, basePath } = request.nextUrl
+  const { basePath } = request.nextUrl
   const maintenance = await isMaintenanceModeEnabled()
   const maintenancePath = `${basePath}/maintenance`
   const homePath = `${basePath}/` || "/"

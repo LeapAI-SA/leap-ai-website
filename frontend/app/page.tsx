@@ -15,7 +15,7 @@ import { GeoFaqSection } from "@/components/geo/faq-section"
 import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
 import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig } from "@/lib/seo"
-import { buildFaqPageSchema, buildFaqPageSchemaAr } from "@/lib/geo"
+import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema } from "@/lib/geo"
 import { geoFaqItems } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,7 +45,7 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={[homeSchema, buildFaqPageSchema(faqItems), buildFaqPageSchemaAr(faqItems)]} />
+      <JsonLd data={[homeSchema, buildFaqPageSchema(faqItems), buildFaqPageSchemaAr(faqItems), buildHomeHowToSchema()]} />
       <SiteHeader />
       <main>
         <Hero />

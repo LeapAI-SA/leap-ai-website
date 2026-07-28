@@ -77,7 +77,7 @@ export function SiteHeader() {
           {/* Logo */}
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
             <Link href="/" className="flex shrink-0 items-center">
-              <Image src={logoSrc} alt="LeapAI" width={150} height={48} priority className="h-8 w-auto sm:h-10" unoptimized />
+              <Image src={logoSrc} alt="LeapAI" width={150} height={48} priority className="h-8 w-auto sm:h-10" />
             </Link>
           </motion.div>
 
