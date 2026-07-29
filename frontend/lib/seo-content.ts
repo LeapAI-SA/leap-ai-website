@@ -115,22 +115,33 @@ export function buildListPageJsonLd(input: {
   path: string
   items: NavItem[]
 }) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: input.title,
-    description: input.description,
-    url: absoluteUrl(input.path),
-    inLanguage: ["ar", "en"],
-    isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: input.items.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.title.en || item.title.ar,
-        url: absoluteUrl(`${input.path}/${item.slug}`),
-      })),
+  const listUrl = absoluteUrl(input.path)
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: input.title,
+      description: input.description,
+      url: listUrl,
+      inLanguage: ["ar", "en"],
+      isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: input.items.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.title.en || item.title.ar,
+          url: absoluteUrl(`${input.path}/${item.slug}`),
+        })),
+      },
     },
-  }
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: input.title, item: listUrl },
+      ],
+    },
+  ]
 }

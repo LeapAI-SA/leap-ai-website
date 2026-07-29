@@ -26,6 +26,13 @@ export function SiteFooter() {
   const navigation = mergeNavigation(settings?.navigation)
   const footerLinks = activeNavLinks(navigation.footerLinks)
   const footerLegal = activeNavLinks(navigation.footerLegal)
+  const coreExploreLinks = [
+    { href: "/about-us", label: { ar: "معلومات عنا", en: "About Us" } },
+    { href: "/use-cases", label: { ar: "حالات الاستخدام", en: "Use Cases" } },
+    { href: "/products", label: { ar: "منتجاتنا", en: "Products" } },
+    { href: "/contact-us", label: { ar: "اتصل بنا", en: "Contact Us" } },
+    { href: "/become-a-partner", label: { ar: "كن شريكنا", en: "Become a Partner" } },
+  ] as const
 
   return (
     <footer id="contact" className="bg-navy text-navy-foreground">
@@ -34,7 +41,7 @@ export function SiteFooter() {
           {mission}
         </h2>
 
-        <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-5">
           <div>
             <Link href="/" className="inline-block">
               <Image src={resolveMediaUrl("/leapai-logo-white.png")} alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
@@ -81,6 +88,19 @@ export function SiteFooter() {
               <MapPin className="mt-1 size-4 shrink-0 text-amber" />
               {settings?.contact.address?.[lang] ?? t("footer.locationDetail")}
             </p>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-bold">{lang === "ar" ? "روابط مهمة" : "Explore"}</h3>
+            <ul className="mt-5 flex flex-col gap-2.5">
+              {coreExploreLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                    {link.label[lang]}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>

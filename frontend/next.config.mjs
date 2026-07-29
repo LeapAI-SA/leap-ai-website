@@ -48,6 +48,12 @@ const nextConfig = {
   async redirects() {
     return [
       { source: "/healthcare-use-case", destination: "/use-cases/healthcare", permanent: true },
+      { source: "/complaints-automation-use-case", destination: "/use-cases/complaints-automation", permanent: true },
+      { source: "/retail-use-case", destination: "/use-cases/retail", permanent: true },
+      { source: "/telecom-use-case", destination: "/use-cases/telecom", permanent: true },
+      { source: "/banking-use-case", destination: "/use-cases/banking", permanent: true },
+      { source: "/insurance-use-case", destination: "/use-cases/insurance", permanent: true },
+      { source: "/travel-hospitality-use-case", destination: "/use-cases/travel-hospitality", permanent: true },
       { source: "/en", destination: "/", permanent: true },
       { source: "/en/:path*", destination: "/:path*", permanent: true },
     ]

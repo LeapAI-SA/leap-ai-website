@@ -298,14 +298,25 @@ export function buildStaticPageJsonLd(input: {
   path: string
   image?: string
 }) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: input.title,
-    description: input.description,
-    url: absoluteUrl(input.path),
-    inLanguage: ["ar", "en"],
-    isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
-    ...(input.image ? { primaryImageOfPage: resolveOgImage(input.image) } : {}),
-  }
+  const pageUrl = absoluteUrl(input.path)
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: input.title,
+      description: input.description,
+      url: pageUrl,
+      inLanguage: ["ar", "en"],
+      isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
+      ...(input.image ? { primaryImageOfPage: resolveOgImage(input.image) } : {}),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: input.title, item: pageUrl },
+      ],
+    },
+  ]
 }
