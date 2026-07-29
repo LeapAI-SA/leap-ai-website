@@ -76,6 +76,44 @@ export function buildHomeHowToSchema() {
   }
 }
 
+export function buildContactPageSchema(settings?: {
+  contact?: { phone?: string; email?: string; address?: { ar?: string; en?: string } }
+}) {
+  const url = absoluteUrl("/contact-us")
+  const orgId = `${getSiteUrl()}/#organization`
+  const address = settings?.contact?.address?.en ?? "King Abdulaziz Branch Road, Riyadh, Saudi Arabia"
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${url}#contact-page`,
+    url,
+    name: "Contact Us",
+    inLanguage: ["ar", "en"],
+    isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
+    about: { "@id": orgId },
+    mainEntity: {
+      "@type": "Organization",
+      "@id": orgId,
+      name: siteConfig.name,
+      url: getSiteUrl(),
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: settings?.contact?.phone ?? "+966-53-553-3627",
+        email: settings?.contact?.email ?? "info@leapai.ai",
+        contactType: "customer service",
+        availableLanguage: ["Arabic", "English"],
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Riyadh",
+        addressCountry: "SA",
+        streetAddress: address,
+      },
+    },
+  }
+}
+
 export function buildSoftwareApplicationSchema() {
   return {
     "@context": "https://schema.org",

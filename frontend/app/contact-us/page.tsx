@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { ContactPageContent } from "@/components/pages/contact-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { buildPageMetadata, buildStaticPageJsonLd } from "@/lib/seo"
+import { buildContactPageSchema } from "@/lib/geo"
+import { fetchPublicSettings } from "@/lib/api"
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Contact Us",
@@ -22,10 +24,11 @@ const pageSchema = buildStaticPageJsonLd({
   image: "/hero-dashboard.png",
 })
 
-export default function ContactUsPage() {
+export default async function ContactUsPage() {
+  const settings = await fetchPublicSettings()
   return (
     <>
-      <JsonLd data={pageSchema} />
+      <JsonLd data={[...pageSchema, buildContactPageSchema(settings ?? undefined)]} />
       <ContactPageContent />
     </>
   )
