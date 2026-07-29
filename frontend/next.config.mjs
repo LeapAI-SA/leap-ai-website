@@ -47,6 +47,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: "/healthcare-use-case", destination: "/use-cases/healthcare", permanent: true },
       { source: "/en", destination: "/", permanent: true },
       { source: "/en/:path*", destination: "/:path*", permanent: true },
     ]
