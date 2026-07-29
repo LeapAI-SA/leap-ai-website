@@ -8,12 +8,14 @@ import type { NavItem } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
 import { resolveContentImage } from "@/lib/page-images"
+import { resolveContentExternalUrl } from "@/lib/content-external-urls"
 
 export function DetailBody({ item, related, basePath }: { item: NavItem; related: NavItem[]; basePath: string }) {
   const { t, tr } = useLanguage()
   const description = tr(item.description)
   const features = tr(item.features)
   const imageSrc = resolveMediaUrl(resolveContentImage(item.slug, item.image))
+  const externalUrl = resolveContentExternalUrl(item.slug)
 
   return (
     <PageSection>
@@ -53,12 +55,28 @@ export function DetailBody({ item, related, basePath }: { item: NavItem; related
             <div className="relative">
               <h3 className="text-xl font-bold">{t("detail.ctaTitle")}</h3>
               <p className="mt-2 leading-relaxed text-navy-foreground/80">{t("detail.ctaTextAlt")}</p>
-              <Link
-                href="/contact-us"
-                className="mt-5 inline-block rounded-full bg-amber px-6 py-3 text-sm font-bold text-amber-foreground transition-transform hover:scale-105"
-              >
-                {t("detail.demoBtn")}
-              </Link>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {externalUrl ? (
+                  <a
+                    href={externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block rounded-full bg-amber px-6 py-3 text-sm font-bold text-amber-foreground transition-transform hover:scale-105"
+                  >
+                    {t("detail.tryLiveBtn")}
+                  </a>
+                ) : null}
+                <Link
+                  href="/contact-us"
+                  className={`inline-block rounded-full px-6 py-3 text-sm font-bold transition-transform hover:scale-105 ${
+                    externalUrl
+                      ? "border border-navy-foreground/30 bg-transparent text-navy-foreground"
+                      : "bg-amber text-amber-foreground"
+                  }`}
+                >
+                  {t("detail.demoBtn")}
+                </Link>
+              </div>
             </div>
           </div>
         </article>

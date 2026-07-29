@@ -379,6 +379,7 @@ export const translations = {
 
   /* ----------------------------- Detail extras -------------------------- */
   "detail.demoBtn": { ar: "اطلب عرضًا توضيحيًا", en: "Request a demo" },
+  "detail.tryLiveBtn": { ar: "جرّب البوت الصوتي", en: "Try the Voice Bot" },
   "detail.ctaTextAlt": {
     ar: "تحدث إلى فريقنا واكتشف كيف يساعدك هذا الحل على تقديم تجربة عملاء استثنائية.",
     en: "Talk to our team and discover how this solution helps you deliver an exceptional customer experience.",
