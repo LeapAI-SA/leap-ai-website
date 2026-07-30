@@ -88,8 +88,6 @@ const DESCRIPTION_CLOSER_AR =
   "تكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL."
 const DESCRIPTION_CLOSER_EN =
   "Integrations with Salla, Zid, and Odoo — PDPL-ready local hosting."
-const OG_DESCRIPTION_CLOSER_AR = "حلول سعودية متوافقة مع PDPL."
-const OG_DESCRIPTION_CLOSER_EN = "Saudi, PDPL-ready CX solutions."
 
 function looksArabic(text: string) {
   return /[\u0600-\u06FF]/.test(text)
@@ -121,7 +119,7 @@ export function normalizeOgTitle(title: string, brand = siteConfig.name) {
   if (!containsBrand(value, brand)) {
     value = `${brand} — ${value}`
   }
-  return truncateMeta(value, 45)
+  return truncateMeta(value, 35)
 }
 
 /** Keep social descriptions concise without changing SEO meta descriptions. */
@@ -131,14 +129,7 @@ export function normalizeOgDescription(description: string, brand = siteConfig.n
     value = `${brand} — ${value}`
   }
 
-  if (value.length < 90) {
-    const closer = looksArabic(value) ? OG_DESCRIPTION_CLOSER_AR : OG_DESCRIPTION_CLOSER_EN
-    if (!value.includes(closer.slice(0, 12))) {
-      value = `${value} ${closer}`.replace(/\s+/g, " ").trim()
-    }
-  }
-
-  return truncateMeta(value, 140)
+  return truncateMeta(value, 65)
 }
 
 function buildHreflangAlternates(path: string) {
