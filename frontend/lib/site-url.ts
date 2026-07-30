@@ -16,15 +16,26 @@ function localDevSiteUrl() {
 /** Canonical public site URL (SEO, GEO, sitemap, metadata). */
 export function getPublicSiteUrl() {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "")
+  const productionHost = getHost(PRODUCTION_SITE_URL)
 
-  if (fromEnv && !(isProduction() && isLocalhostUrl(fromEnv))) {
+  if (
+    fromEnv &&
+    !(
+      isProduction() &&
+      (isLocalhostUrl(fromEnv) || getHost(fromEnv) !== productionHost)
+    )
+  ) {
     return fromEnv
   }
 
   if (isProduction()) {
-    if (fromEnv) {
+    if (fromEnv && isLocalhostUrl(fromEnv)) {
       console.warn(
         `[site-url] NEXT_PUBLIC_SITE_URL is localhost in production; using ${PRODUCTION_SITE_URL}`,
+      )
+    } else if (fromEnv) {
+      console.warn(
+        `[site-url] NEXT_PUBLIC_SITE_URL host must be ${productionHost} in production; using ${PRODUCTION_SITE_URL}`,
       )
     } else {
       console.warn(
@@ -44,6 +55,14 @@ export function getSiteUrl() {
 
 export function isLocalhostUrl(url: string) {
   return /localhost|127\.0\.0\.1/i.test(url)
+}
+
+function getHost(url: string) {
+  try {
+    return new URL(url).host.toLowerCase()
+  } catch {
+    return ""
+  }
 }
 
 /** Browser origin + base path when env is unset (client-only). */

@@ -29,6 +29,15 @@ loadEnvFile(".env.production.local")
 loadEnvFile(".env.local")
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? ""
+const productionUrl = "https://leapai.ai"
+
+function hostOf(url) {
+  try {
+    return new URL(url).host.toLowerCase()
+  } catch {
+    return ""
+  }
+}
 
 if (!siteUrl) {
   console.error("NEXT_PUBLIC_SITE_URL is required for production builds.")
@@ -38,6 +47,11 @@ if (!siteUrl) {
 if (/localhost|127\.0\.0\.1/i.test(siteUrl)) {
   console.error("NEXT_PUBLIC_SITE_URL must be your live domain in production, not localhost.")
   console.error("Example: https://leapai.ai")
+  process.exit(1)
+}
+if (hostOf(siteUrl) !== hostOf(productionUrl)) {
+  console.error(`NEXT_PUBLIC_SITE_URL must use ${productionUrl} in production builds.`)
+  console.error(`Current value: ${siteUrl}`)
   process.exit(1)
 }
 if (!process.env.NEXT_PUBLIC_BASE_PATH?.trim()) {
