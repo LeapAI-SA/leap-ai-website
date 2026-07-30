@@ -79,6 +79,14 @@ export function buildContentJsonLd(
 
   if (schemaType === "Product") {
     mainEntity.brand = { "@type": "Brand", name: siteConfig.name }
+    mainEntity.offers = {
+      "@type": "Offer",
+      url: absoluteUrl("/contact-us"),
+      availability: "https://schema.org/InStock",
+      priceCurrency: "SAR",
+      price: "0",
+      description: "Contact LeapAI for pricing",
+    }
   }
 
   const featureFaq = buildFeatureFaqSchema(item)

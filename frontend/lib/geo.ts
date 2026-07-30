@@ -336,7 +336,8 @@ export function buildContentGeoSchema(
       url,
     },
     about: {
-      "@type": contentType === "product" ? "Product" : "Service",
+      // Use Service for nested about so Google does not validate a second incomplete Product.
+      "@type": "Service",
       name: item.title.en,
       alternateName: item.title.ar,
       description,
