@@ -88,6 +88,8 @@ const DESCRIPTION_CLOSER_AR =
   "تكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL."
 const DESCRIPTION_CLOSER_EN =
   "Integrations with Salla, Zid, and Odoo — PDPL-ready local hosting."
+const OG_DESCRIPTION_CLOSER_AR = "حلول سعودية متوافقة مع PDPL."
+const OG_DESCRIPTION_CLOSER_EN = "Saudi, PDPL-ready CX solutions."
 
 function looksArabic(text: string) {
   return /[\u0600-\u06FF]/.test(text)
@@ -108,6 +110,35 @@ export function normalizeSeoDescription(description: string, brand = siteConfig.
   }
 
   return truncateMeta(value, 160)
+}
+
+/** Keep social titles compact for cleaner Open Graph cards. */
+export function normalizeOgTitle(title: string, brand = siteConfig.name) {
+  let value = title.replace(/\s+/g, " ").trim()
+  value = value.replace(/\s*\|\s*LeapAI\s*$/i, "").trim()
+  value = value.replace(/^LeapAI\s*[—–-]\s*Leap AI\s*[—–-]\s*/i, "Leap AI — ")
+  value = value.replace(/^LeapAI\s*[—–-]\s*LeapAI\s*[—–-]\s*/i, "LeapAI — ")
+  if (!containsBrand(value, brand)) {
+    value = `${brand} — ${value}`
+  }
+  return truncateMeta(value, 45)
+}
+
+/** Keep social descriptions concise without changing SEO meta descriptions. */
+export function normalizeOgDescription(description: string, brand = siteConfig.name) {
+  let value = description.replace(/\s+/g, " ").trim()
+  if (!containsBrand(value, brand)) {
+    value = `${brand} — ${value}`
+  }
+
+  if (value.length < 90) {
+    const closer = looksArabic(value) ? OG_DESCRIPTION_CLOSER_AR : OG_DESCRIPTION_CLOSER_EN
+    if (!value.includes(closer.slice(0, 12))) {
+      value = `${value} ${closer}`.replace(/\s+/g, " ").trim()
+    }
+  }
+
+  return truncateMeta(value, 140)
 }
 
 function buildHreflangAlternates(path: string) {
@@ -153,12 +184,9 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   const pageTitle = normalizeSeoTitle(title)
   const metaDescription = normalizeSeoDescription(description)
   const metaDescriptionAr = normalizeSeoDescription(descriptionAr ?? description)
-  const ogTitleSource = titleAr ?? pageTitle
-  const ogTitle = truncateMeta(
-    containsBrand(ogTitleSource) ? ogTitleSource.replace(/\s*\|\s*LeapAI\s*$/i, "").trim() : ogTitleSource,
-    60,
-  )
-  const ogDescription = truncateMeta(metaDescriptionAr, 160)
+  const ogTitleSource = titleAr ?? title
+  const ogTitle = normalizeOgTitle(ogTitleSource)
+  const ogDescription = normalizeOgDescription(descriptionAr ?? description)
   const twitterDescription = truncateMeta(metaDescription, 200)
 
   return {
