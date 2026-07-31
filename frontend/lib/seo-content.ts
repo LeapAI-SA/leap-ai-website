@@ -83,9 +83,15 @@ export function buildContentJsonLd(
       "@type": "Offer",
       url: absoluteUrl("/contact-us"),
       availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
       priceCurrency: "SAR",
       price: "0",
       description: "Contact LeapAI for pricing",
+      seller: {
+        "@type": "Organization",
+        name: siteConfig.name,
+        url: getSiteUrl(),
+      },
     }
   }
 
