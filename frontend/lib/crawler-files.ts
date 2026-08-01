@@ -33,11 +33,8 @@ export function buildRobotsTxt() {
 
   lines.push(
     `# AI / LLM crawler guidance`,
-    `LLMs-Txt: ${absoluteUrl("/llms.txt")}`,
-    `LLMs-Full-Txt: ${absoluteUrl("/llms-full.txt")}`,
-    `LLMs-Small-Txt: ${absoluteUrl("/llms-small.txt")}`,
+    `# See also: /llms.txt, /llms-full.txt, /llms-small.txt, /.well-known/ai.txt`,
     `Sitemap: ${absoluteUrl("/sitemap.xml")}`,
-    `Host: ${getSiteUrl()}`,
   )
 
   return `${lines.join("\n")}\n`

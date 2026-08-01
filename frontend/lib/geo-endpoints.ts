@@ -38,7 +38,7 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     id: "robots",
     path: "/robots.txt",
     label: "robots.txt",
-    description: "Crawler rules and LLMs-Txt pointers",
+    description: "Crawler rules and sitemap",
     expect: "GPTBot",
   },
   {
