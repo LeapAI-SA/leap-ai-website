@@ -311,6 +311,46 @@ export function buildWebsiteSchema() {
   }
 }
 
+/** Primary hub destinations to strengthen brand sitelinks signals. */
+export function buildSiteNavigationSchema() {
+  const destinations = [
+    { name: "About Us", nameAr: "معلومات عنا", path: "/about-us" },
+    { name: "Solutions", nameAr: "حلولنا", path: "/solutions" },
+    { name: "Products", nameAr: "منتجاتنا", path: "/products" },
+    { name: "Use Cases", nameAr: "حالات الاستخدام", path: "/use-cases" },
+    { name: "Become a Partner", nameAr: "كن شريكنا", path: "/become-a-partner" },
+    { name: "Contact Us", nameAr: "اتصل بنا", path: "/contact-us" },
+    {
+      name: "Connect Digital Chat & Social Messaging Channels",
+      nameAr: "ربط قنوات الدردشة الرقمية ورسائل التواصل الاجتماعي",
+      path: "/solutions/digital-channels",
+    },
+    {
+      name: "WhatsApp Business",
+      nameAr: "واتساب أعمال",
+      path: "/solutions/whatsapp-business",
+    },
+    {
+      name: "Generative AI Chatbot (GenAI)",
+      nameAr: "شات بوت الذكاء الاصطناعي التوليدي GenAI",
+      path: "/solutions/genai-chatbot",
+    },
+  ]
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${siteConfig.name} primary navigation`,
+    itemListElement: destinations.map((item, index) => ({
+      "@type": "SiteNavigationElement",
+      position: index + 1,
+      name: item.name,
+      alternateName: item.nameAr,
+      url: absoluteUrl(item.path),
+    })),
+  }
+}
+
 export function buildStaticPageJsonLd(input: {
   title: string
   description: string

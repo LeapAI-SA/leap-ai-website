@@ -92,6 +92,9 @@ const defaultNavigation = () => ({
   footerLinks: [
     { label: { ar: "الرئيسية", en: "Home" }, href: "/", enabled: true },
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us", enabled: true },
+    { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions", enabled: true },
+    { label: { ar: "منتجاتنا", en: "Products" }, href: "/products", enabled: true },
+    { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
   ],

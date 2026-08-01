@@ -15,7 +15,7 @@ import { WhatsappFab } from "@/components/whatsapp-fab"
 import { GeoFaqSection } from "@/components/geo/faq-section"
 import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
-import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig } from "@/lib/seo"
+import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig, buildSiteNavigationSchema } from "@/lib/seo"
 import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema } from "@/lib/geo"
 import { geoFaqItems } from "@/lib/geo-faq"
 
@@ -29,10 +29,11 @@ export default async function Page() {
   const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
   const exploreLinks = [
     { href: "/about-us", ar: "معلومات عنا", en: "About Us" },
-    { href: "/use-cases", ar: "حالات الاستخدام", en: "Use Cases" },
+    { href: "/solutions", ar: "حلولنا", en: "Solutions" },
     { href: "/products", ar: "منتجاتنا", en: "Products" },
-    { href: "/contact-us", ar: "اتصل بنا", en: "Contact Us" },
+    { href: "/use-cases", ar: "حالات الاستخدام", en: "Use Cases" },
     { href: "/become-a-partner", ar: "كن شريكنا", en: "Become a Partner" },
+    { href: "/contact-us", ar: "اتصل بنا", en: "Contact Us" },
   ] as const
 
   const homeSchema = {
@@ -51,9 +52,19 @@ export default async function Page() {
     },
   }
 
+  const siteNavigationSchema = buildSiteNavigationSchema()
+
   return (
     <div className="min-h-screen bg-background">
-      <JsonLd data={[homeSchema, buildFaqPageSchema(faqItems), buildFaqPageSchemaAr(faqItems), buildHomeHowToSchema()]} />
+      <JsonLd
+        data={[
+          homeSchema,
+          siteNavigationSchema,
+          buildFaqPageSchema(faqItems),
+          buildFaqPageSchemaAr(faqItems),
+          buildHomeHowToSchema(),
+        ]}
+      />
       <SiteHeader />
       <main>
         <Hero />
@@ -72,9 +83,9 @@ export default async function Page() {
               استكشف الصفحات الأساسية في LeapAI
             </h2>
             <p className="mx-auto mt-3 max-w-3xl text-center text-sm text-muted-foreground sm:text-base">
-              Explore LeapAI key sections for products, use cases, partnership, and direct contact with the team.
+              Explore LeapAI key sections for solutions, products, use cases, partnership, and direct contact with the team.
             </p>
-            <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <ul className="mx-auto mt-8 grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {exploreLinks.map((item) => (
                 <li key={item.href}>
                   <Link

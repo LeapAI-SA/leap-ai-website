@@ -28,8 +28,9 @@ export function SiteFooter() {
   const footerLegal = activeNavLinks(navigation.footerLegal)
   const coreExploreLinks = [
     { href: "/about-us", label: { ar: "معلومات عنا", en: "About Us" } },
-    { href: "/use-cases", label: { ar: "حالات الاستخدام", en: "Use Cases" } },
+    { href: "/solutions", label: { ar: "حلولنا", en: "Solutions" } },
     { href: "/products", label: { ar: "منتجاتنا", en: "Products" } },
+    { href: "/use-cases", label: { ar: "حالات الاستخدام", en: "Use Cases" } },
     { href: "/contact-us", label: { ar: "اتصل بنا", en: "Contact Us" } },
     { href: "/become-a-partner", label: { ar: "كن شريكنا", en: "Become a Partner" } },
   ] as const

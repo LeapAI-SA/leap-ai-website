@@ -25,6 +25,9 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
   footerLinks: [
     { label: { ar: "الرئيسية", en: "Home" }, href: "/" },
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us" },
+    { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions" },
+    { label: { ar: "منتجاتنا", en: "Products" }, href: "/products" },
+    { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
