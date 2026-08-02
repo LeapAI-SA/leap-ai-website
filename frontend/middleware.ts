@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
 import { GEO_ROOT_PATHS } from "@/lib/geo-paths"
-import { getBasePath } from "@/lib/site-url"
+import {
+  getBasePath,
+  isCanonicalSiteHost,
+  isLocalDevHost,
+  isProduction,
+  PRODUCTION_SITE_URL,
+} from "@/lib/site-url"
 
 const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt"]
 const BYPASS_EXACT = [
@@ -17,6 +23,9 @@ const BYPASS_EXACT = [
   "/robots.txt",
   "/sitemap.xml",
 ]
+
+/** Paths that may stay on a non-canonical deploy host (CMS / assets). */
+const NON_CANONICAL_STAY_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend"]
 
 function redirectBarePathToBasePath(request: NextRequest) {
   const basePath = getBasePath()
@@ -54,6 +63,34 @@ function shouldBypass(pathname: string) {
   return BYPASS_PREFIXES.some((prefix) => path.startsWith(prefix))
 }
 
+function shouldStayOnNonCanonicalHost(pathname: string) {
+  const path = stripBasePath(pathname)
+  return NON_CANONICAL_STAY_PREFIXES.some((prefix) => path.startsWith(prefix))
+}
+
+/** Send public + GEO traffic from deploy aliases (e.g. webhook) to leapai.ai. */
+function redirectNonCanonicalHost(request: NextRequest) {
+  if (!isProduction()) return null
+
+  const host = request.headers.get("host")
+  if (isLocalDevHost(host) || isCanonicalSiteHost(host)) return null
+  if (shouldStayOnNonCanonicalHost(request.nextUrl.pathname)) return null
+
+  const { pathname, search } = request.nextUrl
+  const target = new URL(`${pathname}${search}`, PRODUCTION_SITE_URL)
+  return NextResponse.redirect(target, 301)
+}
+
+function withNoIndexIfNonCanonical(request: NextRequest, response: NextResponse) {
+  if (!isProduction()) return response
+
+  const host = request.headers.get("host")
+  if (isLocalDevHost(host) || isCanonicalSiteHost(host)) return response
+
+  response.headers.set("X-Robots-Tag", "noindex, nofollow")
+  return response
+}
+
 async function isMaintenanceModeEnabled() {
   try {
     const res = await fetch(`${getApiUrl()}/api/public/maintenance`, {
@@ -70,6 +107,9 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
+  const canonicalRedirect = redirectNonCanonicalHost(request)
+  if (canonicalRedirect) return canonicalRedirect
+
   const { pathname, searchParams } = request.nextUrl
   if (searchParams.has("s")) {
     const url = request.nextUrl.clone()
@@ -77,17 +117,17 @@ export async function middleware(request: NextRequest) {
       url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
     }
     url.search = ""
-    return NextResponse.redirect(url, 308)
+    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     const url = request.nextUrl.clone()
     url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
-    return NextResponse.redirect(url, 308)
+    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 
   const basePathRedirect = redirectBarePathToBasePath(request)
-  if (basePathRedirect) return basePathRedirect
+  if (basePathRedirect) return withNoIndexIfNonCanonical(request, basePathRedirect)
 
   const { basePath } = request.nextUrl
   const maintenance = await isMaintenanceModeEnabled()
@@ -95,14 +135,20 @@ export async function middleware(request: NextRequest) {
   const homePath = `${basePath}/` || "/"
 
   if (!maintenance && pathname === "/maintenance") {
-    return NextResponse.redirect(new URL(homePath, request.url))
+    return withNoIndexIfNonCanonical(
+      request,
+      NextResponse.redirect(new URL(homePath, request.url)),
+    )
   }
 
   if (!maintenance || shouldBypass(pathname)) {
-    return NextResponse.next()
+    return withNoIndexIfNonCanonical(request, NextResponse.next())
   }
 
-  return NextResponse.redirect(new URL(maintenancePath, request.url))
+  return withNoIndexIfNonCanonical(
+    request,
+    NextResponse.redirect(new URL(maintenancePath, request.url)),
+  )
 }
 
 export const config = {
@@ -116,4 +162,3 @@ export const config = {
     "/.well-known/ai.txt",
   ],
 }
-

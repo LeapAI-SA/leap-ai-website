@@ -13,7 +13,7 @@ import {
   XCircle,
   Sparkles,
 } from "lucide-react"
-import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
+import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoDisplayUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
 import { PageHeader, Panel, StatCard, DashButton, Badge, Alert } from "@/components/dashboard/ui"
 
 type CheckStatus = "idle" | "checking" | "ok" | "fail"
@@ -37,7 +37,7 @@ export default function DashboardGeoPage() {
   useEffect(() => {
     setSiteUrl(geoPublicSiteUrl())
     setFileUrls(
-      Object.fromEntries(GEO_ENDPOINT_CHECKS.map((item) => [item.id, geoBrowserUrl(item.path)])),
+      Object.fromEntries(GEO_ENDPOINT_CHECKS.map((item) => [item.id, geoDisplayUrl(item.path)])),
     )
   }, [])
 

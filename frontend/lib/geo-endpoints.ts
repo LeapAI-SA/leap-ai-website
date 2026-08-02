@@ -1,7 +1,7 @@
 import { GEO_ROOT_PATHS } from "./geo-paths"
 import { withBasePath } from "./media"
 import { absoluteUrl } from "./seo"
-import { getBrowserSiteUrl, getPublicSiteUrl } from "./site-url"
+import { getPublicSiteUrl } from "./site-url"
 
 export type GeoEndpointCheck = {
   id: string
@@ -60,7 +60,7 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
 /** Paths AI validators check at the domain root. */
 export { GEO_ROOT_PATHS } from "./geo-paths"
 
-/** Browser URL for a GEO file on the current host (respects base path). */
+/** Same-origin URL for health-check fetches on the current deploy host. */
 export function geoBrowserUrl(path: string) {
   if (typeof window !== "undefined") {
     return `${window.location.origin}${withBasePath(path)}`
@@ -68,9 +68,12 @@ export function geoBrowserUrl(path: string) {
   return absoluteUrl(path)
 }
 
+/** Canonical public URL for display / “Open” links (always leapai.ai in production). */
+export function geoDisplayUrl(path: string) {
+  return absoluteUrl(path)
+}
+
+/** Canonical public site origin for GEO dashboard labels. */
 export function geoPublicSiteUrl() {
-  if (typeof window !== "undefined") {
-    return getBrowserSiteUrl()
-  }
   return getPublicSiteUrl()
 }

@@ -57,12 +57,29 @@ export function isLocalhostUrl(url: string) {
   return /localhost|127\.0\.0\.1/i.test(url)
 }
 
-function getHost(url: string) {
+export function getHost(url: string) {
   try {
     return new URL(url).host.toLowerCase()
   } catch {
     return ""
   }
+}
+
+/** Hostname only (no port), lowercased. */
+export function normalizeHostname(hostHeader: string | null | undefined) {
+  return (hostHeader ?? "").split(":")[0].toLowerCase()
+}
+
+export function isLocalDevHost(hostHeader: string | null | undefined) {
+  const host = normalizeHostname(hostHeader)
+  return host === "localhost" || host === "127.0.0.1"
+}
+
+/** True for leapai.ai and www.leapai.ai. */
+export function isCanonicalSiteHost(hostHeader: string | null | undefined) {
+  const host = normalizeHostname(hostHeader)
+  const productionHost = getHost(PRODUCTION_SITE_URL)
+  return host === productionHost || host === `www.${productionHost}`
 }
 
 /** Browser origin + base path when env is unset (client-only). */
