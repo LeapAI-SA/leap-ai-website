@@ -1,4 +1,3 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Viewport } from 'next'
 import { Tajawal, Geist_Mono } from 'next/font/google'
 import { AppProviders } from '@/components/app-providers'
@@ -60,7 +59,6 @@ export default async function RootLayout({
       <body className="font-sans antialiased" suppressHydrationWarning>
         <JsonLd data={globalGeoSchemas} />
         <AppProviders initialSettings={settings} nav={nav}>{children}</AppProviders>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
