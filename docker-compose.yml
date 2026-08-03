@@ -44,7 +44,7 @@ services:
       MONGODB_URI: mongodb://leap:leapsecret@mongodb:27017/leapai?authSource=admin
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001,https://leapai.ai,https://leapai-webhook.bab.solutions}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai.ai,https://leapai-webhook.bab.solutions}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       SEED_ON_START: ${SEED_ON_START:-true}
@@ -68,8 +68,8 @@ services:
     container_name: leap-frontend
     restart: unless-stopped
     ports:
-      # Host 3001 only. Nginx must proxy_pass http://127.0.0.1:3001
-      - "3001:3000"
+      # Host 3000 only. Nginx must proxy_pass http://127.0.0.1:3000
+      - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: /backend
       NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-}

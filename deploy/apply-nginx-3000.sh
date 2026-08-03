@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Apply LeapAI nginx upstream to host port 3001 (Docker frontend).
+# Ensure LeapAI nginx upstream is host port 3000 (Docker frontend).
 # Run on the Ubuntu host that terminates TLS for leapai.ai:
-#   sudo bash deploy/apply-nginx-3001.sh
+#   sudo bash deploy/apply-nginx-3000.sh
 set -euo pipefail
 
 CONF_SRC="$(cd "$(dirname "$0")" && pwd)/nginx-root-hosting.conf"
@@ -11,6 +11,20 @@ if [[ ! -f "$CONF_SRC" ]]; then
   echo "Missing $CONF_SRC" >&2
   exit 1
 fi
+
+patch_file() {
+  local f="$1"
+  if grep -q 'proxy_pass http://127.0.0.1:3001;' "$f"; then
+    echo "Patching $f :3001 → :3000"
+    sudo sed -i 's|proxy_pass http://127.0.0.1:3001;|proxy_pass http://127.0.0.1:3000;|g' "$f"
+  elif grep -q 'proxy_pass http://127.0.0.1:3000;' "$f"; then
+    echo "$f already points to :3000"
+  else
+    echo "No matching proxy_pass in $f — review manually." >&2
+    grep -n 'proxy_pass' "$f" || true
+    return 1
+  fi
+}
 
 if [[ ! -f "$TARGET" ]]; then
   echo "Target $TARGET not found."
@@ -23,25 +37,14 @@ if [[ ! -f "$TARGET" ]]; then
     exit 1
   fi
   while IFS= read -r f; do
-    echo "Updating $f"
-    sudo sed -i 's|proxy_pass http://127.0.0.1:3000;|proxy_pass http://127.0.0.1:3001;|g' "$f"
+    patch_file "$f"
   done <<< "$matches"
 else
-  # Prefer in-place upstream fix so existing SSL paths stay intact
-  if grep -q 'proxy_pass http://127.0.0.1:3000;' "$TARGET"; then
-    echo "Patching $TARGET :3000 → :3001"
-    sudo sed -i 's|proxy_pass http://127.0.0.1:3000;|proxy_pass http://127.0.0.1:3001;|g' "$TARGET"
-  elif grep -q 'proxy_pass http://127.0.0.1:3001;' "$TARGET"; then
-    echo "$TARGET already points to :3001"
-  else
-    echo "No matching proxy_pass in $TARGET — review manually." >&2
-    grep -n 'proxy_pass' "$TARGET" || true
-    exit 1
-  fi
+  patch_file "$TARGET"
 fi
 
 sudo nginx -t
 sudo systemctl reload nginx
 echo "nginx reloaded. Checking upstream..."
-curl -sI "http://127.0.0.1:3001/" | head -n 5 || true
+curl -sI "http://127.0.0.1:3000/" | head -n 5 || true
 curl -sI "https://leapai.ai/" | head -n 8 || true

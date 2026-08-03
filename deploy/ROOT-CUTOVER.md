@@ -24,20 +24,20 @@ Or PM2: `pm2 restart ecosystem.config.cjs --update-env`
 
 ## 3. Nginx
 
-Docker frontend publishes on **host port 3001** only. Live nginx must use:
+Docker frontend publishes on **host port 3000** only. Live nginx must use:
 
 ```nginx
-proxy_pass http://127.0.0.1:3001;
+proxy_pass http://127.0.0.1:3000;
 ```
 
 Apply sample [`nginx-root-hosting.conf`](nginx-root-hosting.conf), or patch an existing site config:
 
 ```bash
-sudo bash deploy/apply-nginx-3001.sh
+sudo bash deploy/apply-nginx-3000.sh
 # or: sudo nginx -t && sudo systemctl reload nginx
 ```
 
-If nginx still points at `:3000`, `https://leapai.ai` will return **502**.
+If nginx still points at `:3001` while Docker is on `:3000` (or the reverse), `https://leapai.ai` will return **502**.
 
 ## 4. Verify
 
