@@ -1,28 +1,63 @@
 /**
- * POST /api/indexnow
- * Optional deploy hook: submit sitemap URLs to IndexNow.
+ * POST /api/indexnow — submit sitemap URLs to IndexNow (Bing / Yandex / Seznam / Naver).
  *
- * Auth: Authorization: Bearer $INDEXNOW_SUBMIT_SECRET
- * (or ?secret= when INDEXNOW_SUBMIT_SECRET is set)
+ * Auth (either):
+ * - Admin JWT: Authorization: Bearer <dashboard token> (verified via backend /api/auth/me)
+ * - Deploy secret: Authorization: Bearer $INDEXNOW_SUBMIT_SECRET or ?secret=
  */
 import { NextResponse } from "next/server"
+import { getApiUrl } from "@/lib/api-url"
 import { submitIndexNow, INDEXNOW_KEY, indexNowKeyLocation } from "@/lib/indexnow"
 import { getSitemapUrls } from "@/lib/sitemap-urls"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
-function authorized(request: Request) {
-  const secret = process.env.INDEXNOW_SUBMIT_SECRET?.trim()
-  if (!secret) return false
+async function isAdminToken(token: string) {
+  try {
+    const res = await fetch(`${getApiUrl()}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      cache: "no-store",
+    })
+    if (!res.ok) return false
+    const json = (await res.json()) as { user?: { role?: string } }
+    return json.user?.role === "admin"
+  } catch {
+    return false
+  }
+}
+
+async function authorized(request: Request) {
   const header = request.headers.get("authorization")
-  if (header === `Bearer ${secret}`) return true
+  const bearer = header?.startsWith("Bearer ") ? header.slice(7).trim() : ""
   const url = new URL(request.url)
-  return url.searchParams.get("secret") === secret
+  const querySecret = url.searchParams.get("secret")?.trim() ?? ""
+  const deploySecret = process.env.INDEXNOW_SUBMIT_SECRET?.trim()
+
+  if (deploySecret && (bearer === deploySecret || querySecret === deploySecret)) {
+    return true
+  }
+
+  if (bearer && (await isAdminToken(bearer))) {
+    return true
+  }
+
+  return false
+}
+
+async function keyFileLive() {
+  const keyLocation = indexNowKeyLocation()
+  try {
+    const res = await fetch(keyLocation, { cache: "no-store" })
+    const text = (await res.text()).trim()
+    return { keyLocation, live: res.ok && text === INDEXNOW_KEY, status: res.status }
+  } catch {
+    return { keyLocation, live: false, status: 0 }
+  }
 }
 
 export async function POST(request: Request) {
-  if (!authorized(request)) {
+  if (!(await authorized(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -34,25 +69,35 @@ export async function POST(request: Request) {
     /* use default sitemap list */
   }
 
+  const key = await keyFileLive()
   const result = await submitIndexNow(urls)
+
   return NextResponse.json(
     {
       ...result,
       key: INDEXNOW_KEY,
-      keyLocation: indexNowKeyLocation(),
+      keyLocation: key.keyLocation,
+      keyLive: key.live,
+      keyHttpStatus: key.status,
+      googleNote:
+        "IndexNow notifies Bing/Yandex/Seznam/Naver. Google requires Search Console sitemap submit / URL Inspection.",
     },
     { status: result.ok ? 200 : 502 },
   )
 }
 
 export async function GET(request: Request) {
-  // Health: confirm key config without submitting
-  if (!authorized(request)) {
+  if (!(await authorized(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
+
+  const key = await keyFileLive()
   return NextResponse.json({
     key: INDEXNOW_KEY,
-    keyLocation: indexNowKeyLocation(),
+    keyLocation: key.keyLocation,
+    keyLive: key.live,
+    keyHttpStatus: key.status,
     urlCount: getSitemapUrls().length,
+    sitemapUrl: `${indexNowKeyLocation().replace(`/${INDEXNOW_KEY}.txt`, "")}/sitemap.xml`,
   })
 }

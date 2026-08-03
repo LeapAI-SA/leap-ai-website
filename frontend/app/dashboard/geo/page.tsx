@@ -12,8 +12,12 @@ import {
   FileText,
   XCircle,
   Sparkles,
+  Search,
+  Send,
 } from "lucide-react"
 import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoDisplayUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
+import { getToken } from "@/lib/api"
+import { getBasePath } from "@/lib/site-url"
 import { PageHeader, Panel, StatCard, DashButton, Badge, Alert } from "@/components/dashboard/ui"
 
 type CheckStatus = "idle" | "checking" | "ok" | "fail"
@@ -23,9 +27,31 @@ type CheckResult = {
   detail?: string
 }
 
+type IndexNowStatus = {
+  keyLive: boolean
+  keyLocation: string
+  urlCount: number
+  sitemapUrl: string
+}
+
+type IndexNowSubmitResult = {
+  ok: boolean
+  status: number
+  submitted: number
+  keyLive?: boolean
+  keyLocation?: string
+  body?: string
+  googleNote?: string
+  error?: string
+}
+
 function matchesExpect(content: string, expect?: string) {
   if (!expect) return true
   return content.includes(expect)
+}
+
+function indexNowApiUrl() {
+  return `${getBasePath()}/api/indexnow`
 }
 
 export default function DashboardGeoPage() {
@@ -33,12 +59,92 @@ export default function DashboardGeoPage() {
   const [fileUrls, setFileUrls] = useState<Record<string, string>>({})
   const [results, setResults] = useState<Record<string, CheckResult>>({})
   const [checkingAll, setCheckingAll] = useState(false)
+  const [indexNow, setIndexNow] = useState<IndexNowStatus | null>(null)
+  const [indexNowLoading, setIndexNowLoading] = useState(false)
+  const [indexNowSubmitting, setIndexNowSubmitting] = useState(false)
+  const [indexNowMessage, setIndexNowMessage] = useState<{
+    variant: "success" | "info" | "error"
+    text: string
+  } | null>(null)
 
   useEffect(() => {
     setSiteUrl(geoPublicSiteUrl())
     setFileUrls(
       Object.fromEntries(GEO_ENDPOINT_CHECKS.map((item) => [item.id, geoDisplayUrl(item.path)])),
     )
+  }, [])
+
+  const loadIndexNowStatus = useCallback(async () => {
+    const token = getToken()
+    if (!token) return
+    setIndexNowLoading(true)
+    try {
+      const res = await fetch(indexNowApiUrl(), {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        cache: "no-store",
+      })
+      const data = (await res.json().catch(() => ({}))) as IndexNowStatus & { error?: string }
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+      setIndexNow(data)
+    } catch (err) {
+      setIndexNow(null)
+      setIndexNowMessage({
+        variant: "error",
+        text: err instanceof Error ? err.message : "Could not load IndexNow status",
+      })
+    } finally {
+      setIndexNowLoading(false)
+    }
+  }, [])
+
+  const submitIndexNow = useCallback(async () => {
+    const token = getToken()
+    if (!token) {
+      setIndexNowMessage({ variant: "error", text: "Sign in again to submit IndexNow." })
+      return
+    }
+    setIndexNowSubmitting(true)
+    setIndexNowMessage(null)
+    try {
+      const res = await fetch(indexNowApiUrl(), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: "{}",
+      })
+      const data = (await res.json().catch(() => ({}))) as IndexNowSubmitResult
+      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+
+      setIndexNow((prev) =>
+        prev
+          ? {
+              ...prev,
+              keyLive: data.keyLive ?? prev.keyLive,
+              keyLocation: data.keyLocation ?? prev.keyLocation,
+            }
+          : prev,
+      )
+
+      const keyHint = data.keyLive
+        ? ""
+        : " Key file is not live yet — deploy the site, then submit again."
+      setIndexNowMessage({
+        variant: data.ok ? "success" : "error",
+        text: data.ok
+          ? `Submitted ${data.submitted} sitemap URLs to IndexNow (HTTP ${data.status}).${keyHint} Google still needs Search Console.`
+          : `IndexNow failed (HTTP ${data.status}).${data.body ? ` ${data.body}` : ""}${keyHint}`,
+      })
+    } catch (err) {
+      setIndexNowMessage({
+        variant: "error",
+        text: err instanceof Error ? err.message : "IndexNow submit failed",
+      })
+    } finally {
+      setIndexNowSubmitting(false)
+    }
   }, [])
 
   const runCheck = useCallback(async (id: string, path: string, expect?: string) => {
@@ -81,7 +187,8 @@ export default function DashboardGeoPage() {
 
   useEffect(() => {
     checkAll()
-  }, [checkAll])
+    loadIndexNowStatus()
+  }, [checkAll, loadIndexNowStatus])
 
   const passedCount = useMemo(
     () => Object.values(results).filter((r) => r.status === "ok").length,
@@ -138,9 +245,104 @@ export default function DashboardGeoPage() {
       </div>
 
       <Panel
-        title="What is GEO?"
-        description="Simple explanation — no extra setup required"
+        title="Search engines — IndexNow"
+        description="Push the sitemap to Bing (and partners). Same action as npm run seo:submit-indexnow."
       >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p className="flex items-start gap-2">
+              <Search className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>
+                Submits all sitemap URLs via IndexNow. Covers <strong className="text-foreground">Bing</strong>,
+                Yandex, Seznam, and Naver — not Google.
+              </span>
+            </p>
+            <p>
+              Sitemap:{" "}
+              <a
+                href={indexNow?.sitemapUrl || `${siteUrl}/sitemap.xml`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-primary hover:underline"
+              >
+                {indexNow?.sitemapUrl || `${siteUrl}/sitemap.xml`}
+              </a>
+              {indexNow ? ` · ${indexNow.urlCount} URLs` : null}
+            </p>
+            <p>
+              Key file:{" "}
+              {indexNowLoading ? (
+                "Checking…"
+              ) : indexNow ? (
+                <>
+                  <Badge variant={indexNow.keyLive ? "success" : "warning"}>
+                    {indexNow.keyLive ? "Live" : "Not live"}
+                  </Badge>{" "}
+                  <a
+                    href={indexNow.keyLocation}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all font-mono text-xs text-primary hover:underline"
+                  >
+                    {indexNow.keyLocation}
+                  </a>
+                </>
+              ) : (
+                "—"
+              )}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <DashButton
+              type="button"
+              variant="secondary"
+              onClick={() => loadIndexNowStatus()}
+              disabled={indexNowLoading || indexNowSubmitting}
+            >
+              <RefreshCw className={`size-4 ${indexNowLoading ? "animate-spin" : ""}`} />
+              Refresh status
+            </DashButton>
+            <DashButton
+              type="button"
+              onClick={() => submitIndexNow()}
+              disabled={indexNowSubmitting || indexNowLoading}
+            >
+              <Send className={`size-4 ${indexNowSubmitting ? "animate-pulse" : ""}`} />
+              {indexNowSubmitting ? "Submitting…" : "Submit sitemap (IndexNow)"}
+            </DashButton>
+          </div>
+        </div>
+        {indexNowMessage ? (
+          <div className="mt-4">
+            <Alert
+              variant={
+                indexNowMessage.variant === "success"
+                  ? "success"
+                  : indexNowMessage.variant === "error"
+                    ? "error"
+                    : "info"
+              }
+            >
+              {indexNowMessage.text}
+            </Alert>
+          </div>
+        ) : null}
+        <p className="mt-4 text-xs text-muted-foreground">
+          For Google: open{" "}
+          <a
+            href="https://search.google.com/search-console"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            Search Console
+          </a>{" "}
+          → Sitemaps → submit <span className="font-mono">sitemap.xml</span>, then use URL Inspection on priority
+          pages.
+        </p>
+      </Panel>
+
+      <Panel title="What is GEO?" description="Simple explanation — no extra setup required">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-border/60 bg-muted/20 p-4 text-sm leading-relaxed text-muted-foreground">
             <p className="font-semibold text-navy">SEO vs GEO</p>
@@ -305,6 +507,7 @@ export default function DashboardGeoPage() {
               "Keep SEO title and description accurate",
               "Publish solutions, products, and use cases in Content Library",
               "All 6 crawler files above should show OK",
+              "Use Submit sitemap (IndexNow) after deploy to notify Bing",
               "Be patient — AI may take days or weeks to mention LeapAI",
             ].map((line) => (
               <li key={line} className="flex gap-2">
