@@ -68,7 +68,9 @@ services:
     container_name: leap-frontend
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      # Production nginx proxies to 127.0.0.1:3000 — keep default 3000.
+      # Local override example: FRONTEND_HOST_PORT=3001 docker compose up -d
+      - "${FRONTEND_HOST_PORT:-3000}:3000"
     environment:
       NEXT_PUBLIC_API_URL: /backend
       NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-}
