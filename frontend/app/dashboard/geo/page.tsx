@@ -41,9 +41,10 @@ type IndexNowSubmitResult = {
   keyLive?: boolean
   keyLocation?: string
   body?: string
-  googleNote?: string
   error?: string
+  googleNote?: string
 }
+
 
 function matchesExpect(content: string, expect?: string) {
   if (!expect) return true
@@ -116,7 +117,9 @@ export default function DashboardGeoPage() {
         body: "{}",
       })
       const data = (await res.json().catch(() => ({}))) as IndexNowSubmitResult
-      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+      if (res.status === 401) {
+        throw new Error(data.error || "Unauthorized — sign in again.")
+      }
 
       setIndexNow((prev) =>
         prev
@@ -131,11 +134,22 @@ export default function DashboardGeoPage() {
       const keyHint = data.keyLive
         ? ""
         : " Key file is not live yet — deploy the site, then submit again."
+      const detail =
+        data.error ||
+        (typeof data.body === "string" && data.body ? data.body : "") ||
+        (!res.ok ? `HTTP ${res.status}` : "")
+
+      if (data.ok) {
+        setIndexNowMessage({
+          variant: "success",
+          text: `Submitted ${data.submitted} sitemap URLs to IndexNow (HTTP ${data.status}).${keyHint} Google still needs Search Console.`,
+        })
+        return
+      }
+
       setIndexNowMessage({
-        variant: data.ok ? "success" : "error",
-        text: data.ok
-          ? `Submitted ${data.submitted} sitemap URLs to IndexNow (HTTP ${data.status}).${keyHint} Google still needs Search Console.`
-          : `IndexNow failed (HTTP ${data.status}).${data.body ? ` ${data.body}` : ""}${keyHint}`,
+        variant: "error",
+        text: `IndexNow failed${data.status ? ` (provider HTTP ${data.status})` : ""}.${detail ? ` ${detail}` : ""}${keyHint}`,
       })
     } catch (err) {
       setIndexNowMessage({

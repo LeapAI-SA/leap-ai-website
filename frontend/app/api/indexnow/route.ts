@@ -7,7 +7,12 @@
  */
 import { NextResponse } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
-import { submitIndexNow, INDEXNOW_KEY, indexNowKeyLocation } from "@/lib/indexnow"
+import {
+  submitIndexNow,
+  INDEXNOW_KEY,
+  indexNowKeyLocation,
+  checkIndexNowKeyLive,
+} from "@/lib/indexnow"
 import { getSitemapUrls } from "@/lib/sitemap-urls"
 
 export const dynamic = "force-dynamic"
@@ -45,15 +50,11 @@ async function authorized(request: Request) {
   return false
 }
 
-async function keyFileLive() {
-  const keyLocation = indexNowKeyLocation()
-  try {
-    const res = await fetch(keyLocation, { cache: "no-store" })
-    const text = (await res.text()).trim()
-    return { keyLocation, live: res.ok && text === INDEXNOW_KEY, status: res.status }
-  } catch {
-    return { keyLocation, live: false, status: 0 }
-  }
+function httpStatusForIndexNow(result: { ok: boolean; status: number }) {
+  if (result.ok) return 200
+  if (result.status === 0) return 503
+  // Provider rejections (422, 403, etc.) — not a reverse-proxy failure
+  return 422
 }
 
 export async function POST(request: Request) {
@@ -69,8 +70,9 @@ export async function POST(request: Request) {
     /* use default sitemap list */
   }
 
-  const key = await keyFileLive()
+  const key = await checkIndexNowKeyLive()
   const result = await submitIndexNow(urls)
+  const status = httpStatusForIndexNow(result)
 
   return NextResponse.json(
     {
@@ -79,10 +81,15 @@ export async function POST(request: Request) {
       keyLocation: key.keyLocation,
       keyLive: key.live,
       keyHttpStatus: key.status,
+      error:
+        result.error ||
+        (result.ok
+          ? undefined
+          : result.body || `IndexNow provider returned HTTP ${result.status}`),
       googleNote:
         "IndexNow notifies Bing/Yandex/Seznam/Naver. Google requires Search Console sitemap submit / URL Inspection.",
     },
-    { status: result.ok ? 200 : 502 },
+    { status },
   )
 }
 
@@ -91,7 +98,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const key = await keyFileLive()
+  const key = await checkIndexNowKeyLive()
   return NextResponse.json({
     key: INDEXNOW_KEY,
     keyLocation: key.keyLocation,

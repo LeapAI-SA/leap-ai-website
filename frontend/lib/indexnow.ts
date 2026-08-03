@@ -19,11 +19,13 @@ export type IndexNowResult = {
   endpoint: string
   submitted: number
   body: string
+  error?: string
 }
 
 /**
  * Submit URLs to IndexNow (Bing, Yandex, Seznam, Naver).
  * Google does not consume IndexNow — use Search Console for Google.
+ * Never throws — network failures return ok:false with status 0.
  */
 export async function submitIndexNow(
   urls: string[] = getSitemapUrls(),
@@ -40,14 +42,57 @@ export async function submitIndexNow(
     urlList: urls,
   }
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-    body: JSON.stringify(payload),
-  })
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify(payload),
+    })
 
-  const body = await res.text().catch(() => "")
-  // 200 OK, 202 Accepted are success; 422 often means key not yet crawlable
-  const ok = res.status === 200 || res.status === 202
-  return { ok, status: res.status, endpoint, submitted: urls.length, body }
+    const body = await res.text().catch(() => "")
+    const ok = res.status === 200 || res.status === 202
+    return {
+      ok,
+      status: res.status,
+      endpoint,
+      submitted: urls.length,
+      body,
+      error: ok
+        ? undefined
+        : body || `IndexNow provider returned HTTP ${res.status}`,
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "IndexNow network error"
+    return {
+      ok: false,
+      status: 0,
+      endpoint,
+      submitted: urls.length,
+      body: message,
+      error: `Could not reach IndexNow: ${message}`,
+    }
+  }
+}
+
+/** Prefer same-container key check to avoid LB hairpin; fall back to public URL. */
+export async function checkIndexNowKeyLive(key = INDEXNOW_KEY) {
+  const publicLocation = indexNowKeyLocation()
+  const candidates = [
+    `http://127.0.0.1:${process.env.PORT || "3000"}/${key}.txt`,
+    publicLocation,
+  ]
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: "no-store" })
+      const text = (await res.text()).trim()
+      if (res.ok && text === key) {
+        return { keyLocation: publicLocation, live: true, status: res.status, checkedVia: url }
+      }
+    } catch {
+      /* try next candidate */
+    }
+  }
+
+  return { keyLocation: publicLocation, live: false, status: 0, checkedVia: null as string | null }
 }
