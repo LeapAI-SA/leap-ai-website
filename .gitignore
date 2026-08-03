@@ -38,3 +38,4 @@ __v0_jsx-dev-runtime.ts
 # Local scratch / debug output
 tmp-*
 frontend/[0-9]*
+frontend/scripts/output/

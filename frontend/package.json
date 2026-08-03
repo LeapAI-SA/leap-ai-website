@@ -8,7 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seo:submit-indexnow": "node scripts/submit-indexnow.mjs",
+    "seo:verify-index": "node scripts/verify-sitemap-index.mjs",
+    "seo:prepare-webmaster": "node scripts/prepare-webmaster-submission.mjs",
+    "seo:coverage-report": "node scripts/finalize-coverage-report.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

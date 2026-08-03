@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
 import { GEO_ROOT_PATHS } from "@/lib/geo-paths"
+import { resolveLegacyPath } from "@/lib/legacy-path-map"
 import {
   getBasePath,
   isCanonicalSiteHost,
@@ -113,10 +114,22 @@ export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
   if (searchParams.has("s")) {
     const url = request.nextUrl.clone()
-    if (pathname === "/en" || pathname.startsWith("/en/")) {
+    const legacy = resolveLegacyPath(pathname)
+    if (legacy) {
+      url.pathname = legacy
+    } else if (pathname === "/en" || pathname.startsWith("/en/")) {
       url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
     }
     url.search = ""
+    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+  }
+
+  // Map legacy WordPress /en/* and old slugs to canonical destinations in one hop.
+  const legacyTarget = resolveLegacyPath(pathname)
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/"
+  if (legacyTarget && legacyTarget !== normalizedPath) {
+    const url = request.nextUrl.clone()
+    url.pathname = legacyTarget
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 
