@@ -24,7 +24,20 @@ Or PM2: `pm2 restart ecosystem.config.cjs --update-env`
 
 ## 3. Nginx
 
-Apply [`nginx-root-hosting.conf`](nginx-root-hosting.conf): HTTP→HTTPS, www→apex, HSTS, proxy `/` to Next.js. Then `nginx -t && systemctl reload nginx`.
+Docker frontend publishes on **host port 3001** only. Live nginx must use:
+
+```nginx
+proxy_pass http://127.0.0.1:3001;
+```
+
+Apply sample [`nginx-root-hosting.conf`](nginx-root-hosting.conf), or patch an existing site config:
+
+```bash
+sudo bash deploy/apply-nginx-3001.sh
+# or: sudo nginx -t && sudo systemctl reload nginx
+```
+
+If nginx still points at `:3000`, `https://leapai.ai` will return **502**.
 
 ## 4. Verify
 
