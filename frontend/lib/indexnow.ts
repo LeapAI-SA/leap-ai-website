@@ -85,14 +85,27 @@ export async function checkIndexNowKeyLive(key = INDEXNOW_KEY) {
   for (const url of candidates) {
     try {
       const res = await fetch(url, { cache: "no-store" })
-      const text = (await res.text()).trim()
-      if (res.ok && text === key) {
-        return { keyLocation: publicLocation, live: true, status: res.status, checkedVia: url }
+      const text = await res.text()
+      // Prefer exact match (no trailing newline); accept trimmed as fallback.
+      if (res.ok && (text === key || text.trim() === key)) {
+        return {
+          keyLocation: publicLocation,
+          live: true,
+          status: res.status,
+          checkedVia: url,
+          exact: text === key,
+        }
       }
     } catch {
       /* try next candidate */
     }
   }
 
-  return { keyLocation: publicLocation, live: false, status: 0, checkedVia: null as string | null }
+  return {
+    keyLocation: publicLocation,
+    live: false,
+    status: 0,
+    checkedVia: null as string | null,
+    exact: false,
+  }
 }

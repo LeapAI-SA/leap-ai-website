@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+  Bing Webmaster Tools site ownership (XML method).
+
+  1. Open https://www.bing.com/webmasters
+  2. Add property https://leapai.ai (do NOT import from Google Search Console)
+  3. Choose verification method: "XML file"
+  4. Download BingSiteAuth.xml from Bing (it contains your unique <user> token)
+  5. Copy that file next to this example as:
+       frontend/public/BingSiteAuth.xml
+     (This file is public at /BingSiteAuth.xml — same idea as Google's HTML verification file.)
+  6. Deploy the frontend, then click Verify in Bing Webmaster Tools
+  7. Retry GEO → Submit sitemap (IndexNow)
+
+  Replace YOUR_BING_USER_TOKEN below only if you hand-edit; prefer Bing's downloaded file.
+-->
+<users>
+  <user>YOUR_BING_USER_TOKEN</user>
+</users>

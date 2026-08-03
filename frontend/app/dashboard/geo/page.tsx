@@ -51,6 +51,33 @@ function matchesExpect(content: string, expect?: string) {
   return content.includes(expect)
 }
 
+/** Bing returns this when the key file is fine but domain ownership is not bound yet. */
+function isIndexNowOwnershipForbidden(detail: string) {
+  return /UserForbiddedToAccessSite|unauthorized to access the site|verify the site using the key/i.test(
+    detail,
+  )
+}
+
+function indexNowFailureText(data: IndexNowSubmitResult, keyHint: string) {
+  const detail =
+    data.error ||
+    (typeof data.body === "string" && data.body ? data.body : "") ||
+    ""
+
+  if (isIndexNowOwnershipForbidden(detail)) {
+    return (
+      "IndexNow rejected ownership (Bing 403). The key file can be live while Bing still lacks a domain–key binding. " +
+      "Fix: open https://www.bing.com/webmasters → add https://leapai.ai → verify with XML file (not Google Search Console import) → " +
+      "save BingSiteAuth.xml into frontend/public/ → deploy → click Verify in Bing → retry Submit. " +
+      "Then check URL Submission / IndexNow in Bing Webmaster Tools." +
+      keyHint
+    )
+  }
+
+  const fallback = detail || (data.status ? `Provider HTTP ${data.status}` : "Unknown error")
+  return `IndexNow failed${data.status ? ` (provider HTTP ${data.status})` : ""}. ${fallback}${keyHint}`
+}
+
 function indexNowApiUrl() {
   return `${getBasePath()}/api/indexnow`
 }
@@ -134,10 +161,6 @@ export default function DashboardGeoPage() {
       const keyHint = data.keyLive
         ? ""
         : " Key file is not live yet — deploy the site, then submit again."
-      const detail =
-        data.error ||
-        (typeof data.body === "string" && data.body ? data.body : "") ||
-        (!res.ok ? `HTTP ${res.status}` : "")
 
       if (data.ok) {
         setIndexNowMessage({
@@ -149,7 +172,7 @@ export default function DashboardGeoPage() {
 
       setIndexNowMessage({
         variant: "error",
-        text: `IndexNow failed${data.status ? ` (provider HTTP ${data.status})` : ""}.${detail ? ` ${detail}` : ""}${keyHint}`,
+        text: indexNowFailureText(data, keyHint),
       })
     } catch (err) {
       setIndexNowMessage({
@@ -342,6 +365,21 @@ export default function DashboardGeoPage() {
           </div>
         ) : null}
         <p className="mt-4 text-xs text-muted-foreground">
+          For Bing ownership (required before IndexNow accepts URLs): open{" "}
+          <a
+            href="https://www.bing.com/webmasters"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            Bing Webmaster Tools
+          </a>{" "}
+          → add <span className="font-mono">https://leapai.ai</span> → verify with{" "}
+          <strong className="text-foreground">XML file</strong> (not Google import) → place{" "}
+          <span className="font-mono">BingSiteAuth.xml</span> in <span className="font-mono">frontend/public/</span>{" "}
+          → deploy → Verify. See <span className="font-mono">BingSiteAuth.xml.example</span>.
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
           For Google: open{" "}
           <a
             href="https://search.google.com/search-console"
@@ -521,7 +559,8 @@ export default function DashboardGeoPage() {
               "Keep SEO title and description accurate",
               "Publish solutions, products, and use cases in Content Library",
               "All 6 crawler files above should show OK",
-              "Use Submit sitemap (IndexNow) after deploy to notify Bing",
+              "Verify https://leapai.ai in Bing Webmaster Tools with BingSiteAuth.xml (XML method)",
+              "Use Submit sitemap (IndexNow) after Bing ownership + deploy",
               "Be patient — AI may take days or weeks to mention LeapAI",
             ].map((line) => (
               <li key={line} className="flex gap-2">

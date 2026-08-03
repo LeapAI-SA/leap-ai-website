@@ -76,6 +76,16 @@ async function main() {
   const result = await submitIndexNow(HOST, INDEXNOW_KEY, urls)
   console.log(`IndexNow status: ${result.status} ok=${result.ok}`)
   if (result.body) console.log(`Body: ${result.body}`)
+  if (/UserForbiddedToAccessSite|unauthorized to access the site/i.test(result.body || "")) {
+    console.warn(
+      "\nBing rejected ownership (UserForbiddedToAccessSite).\n" +
+        "Key file can be live while Bing still lacks a domain–key binding.\n" +
+        "1) https://www.bing.com/webmasters → add https://leapai.ai\n" +
+        "2) Verify with XML file (not Google import)\n" +
+        "3) Save BingSiteAuth.xml to frontend/public/ (see BingSiteAuth.xml.example)\n" +
+        "4) Deploy → Verify in Bing → re-run this script / GEO Submit\n",
+    )
+  }
 
   const outDir = join(__dirname, "output")
   mkdirSync(outDir, { recursive: true })
