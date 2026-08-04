@@ -259,6 +259,19 @@ export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadat
       default: titleDefault,
       template: `%s | ${brand}`,
     },
+    verification: {
+      ...(typeof home.verification === "object" && home.verification ? home.verification : {}),
+      other: {
+        ...((typeof home.verification === "object" &&
+        home.verification &&
+        "other" in home.verification &&
+        typeof home.verification.other === "object" &&
+        home.verification.other
+          ? home.verification.other
+          : {}) as Record<string, string | number | (string | number)[]>),
+        "msvalidate.01": "877C499DA34F5945E4D93D5E4A752DA4",
+      },
+    },
     applicationName: brand,
     category: "technology",
     other: {
