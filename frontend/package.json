@@ -12,7 +12,8 @@
     "seo:submit-indexnow": "node scripts/submit-indexnow.mjs",
     "seo:verify-index": "node scripts/verify-sitemap-index.mjs",
     "seo:prepare-webmaster": "node scripts/prepare-webmaster-submission.mjs",
-    "seo:coverage-report": "node scripts/finalize-coverage-report.mjs"
+    "seo:coverage-report": "node scripts/finalize-coverage-report.mjs",
+    "seo:audit-titles": "node scripts/audit-title-lengths.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

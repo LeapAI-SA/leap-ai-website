@@ -73,15 +73,63 @@ export function containsBrand(text: string, brand = siteConfig.name) {
   return haystack.includes(needle) || haystack.includes("leapai")
 }
 
+const SEO_TITLE_MIN_LENGTH = 50
+const SEO_TITLE_MAX_LENGTH = 60
+
+const TITLE_SUFFIX_BY_PATH: Record<string, string> = {
+  "/": "CX Platform, Contact Center, and AI Automation in Saudi",
+  "/solutions": "Omnichannel CX, Bots, and Customer Journey Automation",
+  "/products": "WhatsApp, Survey, Ticketing, and AI CX Tools",
+  "/use-cases": "Retail, Telecom, Banking, and Healthcare Scenarios",
+  "/contact-us": "Book a Demo, Get Pricing, and Talk to Experts",
+  "/become-a-partner": "Reseller and Integration Partner Program in KSA",
+  "/about-us": "Saudi CX Company for AI, Automation, and PDPL Hosting",
+  "/privacy-policy": "Data Handling, Security, and PDPL Compliance Terms",
+}
+
+function titleFromSlug(path: string) {
+  const last = path.split("/").filter(Boolean).at(-1) ?? ""
+  if (!last) return ""
+  return last
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ")
+}
+
+function getTitleSuffix(path: string) {
+  if (TITLE_SUFFIX_BY_PATH[path]) return TITLE_SUFFIX_BY_PATH[path]
+  if (path.startsWith("/solutions/")) return "AI and Omnichannel Customer Experience Solution"
+  if (path.startsWith("/products/")) return "Customer Engagement Product for Growth and Service"
+  if (path.startsWith("/use-cases/")) return "Industry Use Case for Automation and Customer Experience"
+  if (path.startsWith("/")) {
+    const label = titleFromSlug(path)
+    if (label) return `${label} Insights, Features, and Deployment Guide`
+  }
+  return "Customer Experience, Contact Center, and AI Platform"
+}
+
 /** Remove duplicate "LeapAI — Leap AI —" style prefixes. */
-export function normalizeSeoTitle(title: string, brand = siteConfig.name) {
+export function normalizeSeoTitle(title: string, brand = siteConfig.name, path = "/") {
   let value = title.replace(/\s+/g, " ").trim()
   value = value.replace(/^LeapAI\s*[—–-]\s*Leap AI\s*[—–-]\s*/i, "Leap AI — ")
   value = value.replace(/^LeapAI\s*[—–-]\s*LeapAI\s*[—–-]\s*/i, "LeapAI — ")
   if (!containsBrand(value, brand)) {
     value = `${brand} — ${value}`
   }
-  return truncateMeta(value, 60)
+
+  if (value.length < SEO_TITLE_MIN_LENGTH) {
+    const suffix = getTitleSuffix(path)
+    if (suffix && !value.toLowerCase().includes(suffix.toLowerCase())) {
+      value = `${value} — ${suffix}`
+    }
+  }
+
+  if (value.length < SEO_TITLE_MIN_LENGTH) {
+    value = `${value} — Enterprise-Ready CX Solutions`
+  }
+
+  return truncateMeta(value, SEO_TITLE_MAX_LENGTH)
 }
 
 const DESCRIPTION_CLOSER_AR =
@@ -172,7 +220,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 
   const url = absoluteUrl(path)
   const ogImage = resolveOgImage(image)
-  const pageTitle = normalizeSeoTitle(title)
+  const pageTitle = normalizeSeoTitle(title, siteConfig.name, path)
   const metaDescription = normalizeSeoDescription(description)
   const metaDescriptionAr = normalizeSeoDescription(descriptionAr ?? description)
   const ogTitleSource = titleAr ?? title
@@ -231,15 +279,14 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 }
 
 export function buildHomeMetadata(settings?: PublicSiteSettings | null): Metadata {
-  const brand = settings?.seo?.brandLock || siteConfig.name
   const titleAr = settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
   const descAr = settings?.seo?.metaDescription?.ar || siteConfig.descriptionAr
 
   return buildPageMetadata({
-    title: normalizeSeoTitle(titleAr, brand),
-    titleAr: normalizeSeoTitle(titleAr, brand),
-    description: normalizeSeoDescription(descAr, brand),
-    descriptionAr: normalizeSeoDescription(descAr, brand),
+    title: titleAr,
+    titleAr,
+    description: descAr,
+    descriptionAr: descAr,
     path: "/",
     image: settings?.images?.hero || siteConfig.defaultOgImage,
   })
@@ -251,7 +298,11 @@ export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadat
   const titleDefault =
     typeof home.title === "object" && home.title && "absolute" in home.title
       ? String(home.title.absolute)
-      : normalizeSeoTitle(settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`, brand)
+      : normalizeSeoTitle(
+          settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
+          brand,
+          "/",
+        )
 
   return {
     ...home,
