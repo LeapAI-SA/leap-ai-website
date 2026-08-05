@@ -58,6 +58,11 @@ export type CtaLabels = {
   learnMore: Localized
 }
 
+export type StoreIntegrationLinks = {
+  salla: string
+  zid: string
+}
+
 export const DEFAULT_PARTNERS: PartnerLogo[] = [
   { name: "Meta", logo: "/logos/meta.png" },
   { name: "Microsoft", logo: "/logos/microsoft.png" },
@@ -181,6 +186,11 @@ export const DEFAULT_CTA_LABELS: CtaLabels = {
   learnMore: { ar: "اكتشف المزيد", en: "Learn more" },
 }
 
+export const DEFAULT_STORE_INTEGRATION_LINKS: StoreIntegrationLinks = {
+  salla: "https://apps.salla.sa/ar/app/1047911288/",
+  zid: "https://apps.zid.sa/application/3277",
+}
+
 function mergeLocalized(defaults: Localized, value?: Localized): Localized {
   if (!value) return defaults
   return { ar: value.ar || defaults.ar, en: value.en || defaults.en }
@@ -252,6 +262,12 @@ export function mergeCtaLabels(labels?: Partial<CtaLabels> | null): CtaLabels {
     headerSignup: mergeLocalized(defaults.headerSignup, labels.headerSignup),
     learnMore: mergeLocalized(defaults.learnMore, labels.learnMore),
   }
+}
+
+export function mergeStoreIntegrationLinks(
+  links?: Partial<StoreIntegrationLinks> | null,
+): StoreIntegrationLinks {
+  return { ...DEFAULT_STORE_INTEGRATION_LINKS, ...links }
 }
 
 export function activePartners(partners: PartnerLogo[]): PartnerLogo[] {

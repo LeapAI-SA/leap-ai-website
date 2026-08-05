@@ -267,3 +267,13 @@ export function sanitizeSocialLinks(social: Record<string, unknown>) {
   }
   return out
 }
+
+export function sanitizeStoreIntegrationLinks(value: unknown): { salla?: string; zid?: string } {
+  const v = (value && typeof value === "object" ? value : {}) as Record<string, unknown>
+  const out: { salla?: string; zid?: string } = {}
+  for (const key of ["salla", "zid"] as const) {
+    const safe = sanitizeHttpUrl(v[key])
+    if (safe) out[key] = safe
+  }
+  return out
+}

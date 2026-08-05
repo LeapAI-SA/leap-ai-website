@@ -181,6 +181,10 @@ const siteSettingsSchema = new Schema(
       youtube: { type: String, default: "https://www.youtube.com/channel/UC4kmc62wjm7IjKlO6j28jlg" },
       linkedin: { type: String, default: "https://www.linkedin.com/company/leapai-sa/" },
     },
+    storeIntegrationLinks: {
+      salla: { type: String, default: "https://apps.salla.sa/ar/app/1047911288/" },
+      zid: { type: String, default: "https://apps.zid.sa/application/3277" },
+    },
     seo: {
       siteTitle: {
         type: localizedSchema,
@@ -315,6 +319,10 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     stats: settings.stats,
     images: settings.images,
     social: settings.social,
+    storeIntegrationLinks: settings.storeIntegrationLinks ?? {
+      salla: "https://apps.salla.sa/ar/app/1047911288/",
+      zid: "https://apps.zid.sa/application/3277",
+    },
     seo: settings.seo,
     navigation: settings.navigation ?? defaultNavigation(),
     partners: settings.partners ?? [],

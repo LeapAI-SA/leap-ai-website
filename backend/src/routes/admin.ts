@@ -15,6 +15,7 @@ import {
   sanitizePrivacyPage,
   sanitizeCtaLabels,
   sanitizeSocialLinks,
+  sanitizeStoreIntegrationLinks,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
 import { uploadImage } from "../middleware/upload.js"
@@ -82,6 +83,12 @@ router.put("/settings", async (req, res) => {
   }
   if (body.social && typeof body.social === "object") {
     settings.set("social", { ...plain.social, ...sanitizeSocialLinks(body.social as Record<string, unknown>) })
+  }
+  if (body.storeIntegrationLinks && typeof body.storeIntegrationLinks === "object") {
+    settings.set("storeIntegrationLinks", {
+      ...(plain.storeIntegrationLinks ?? {}),
+      ...sanitizeStoreIntegrationLinks(body.storeIntegrationLinks),
+    })
   }
   if (body.seo && typeof body.seo === "object") {
     const incoming = body.seo as Record<string, unknown>

@@ -8,12 +8,14 @@ import { useLanguage } from "@/lib/i18n"
 import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
 import { useSiteSettings } from "@/lib/site-settings-context"
-import { mergeCtaLabels } from "@/lib/site-marketing"
+import { mergeCtaLabels, mergeStoreIntegrationLinks } from "@/lib/site-marketing"
+import { safeExternalUrl } from "@/lib/social-links"
 
 export function StoreIntegrations() {
   const { t, tr, lang } = useLanguage()
   const { settings } = useSiteSettings()
   const storesCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).stores, lang, t("stores.cta"))
+  const storeLinks = mergeStoreIntegrationLinks(settings?.storeIntegrationLinks)
 
   const sharedPoints = [t("stores.feat1"), t("stores.feat2"), t("stores.feat3"), t("stores.abandonedCart")]
 
@@ -22,6 +24,8 @@ export function StoreIntegrations() {
       <div className="mx-auto grid max-w-5xl gap-6 px-6 md:grid-cols-2">
         {storeIntegrations.map((store, i) => {
           const title = tr(store.title)
+          const href = safeExternalUrl(storeLinks[store.name]) ?? "#contact"
+          const isExternal = href.startsWith("http")
 
           return (
             <motion.div
@@ -51,7 +55,8 @@ export function StoreIntegrations() {
                 ))}
               </ul>
               <a
-                href="#contact"
+                href={href}
+                {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-amber px-6 py-3 text-sm font-bold text-amber-foreground transition-colors hover:bg-amber/90"
               >
                 {storesCta}

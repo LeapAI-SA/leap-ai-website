@@ -26,6 +26,7 @@ import {
   DEFAULT_ABOUT_PAGE,
   DEFAULT_PRIVACY_PAGE,
   DEFAULT_CTA_LABELS,
+  DEFAULT_STORE_INTEGRATION_LINKS,
   featuresToText,
   mergePartners,
   mergePricingPlans,
@@ -33,6 +34,7 @@ import {
   mergeAboutPage,
   mergePrivacyPage,
   mergeCtaLabels,
+  mergeStoreIntegrationLinks,
   paragraphsToText,
   textToFeatures,
   textToParagraphs,
@@ -76,6 +78,7 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     ...data,
     images: { ...DEFAULT_IMAGES, ...data.images },
     social: mergeSocialLinks(data.social),
+    storeIntegrationLinks: mergeStoreIntegrationLinks(data.storeIntegrationLinks),
     seo: { ...DEFAULT_SEO, ...data.seo },
     navigation: mergeNavigation(data.navigation),
     partners: mergePartners(data.partners),
@@ -665,6 +668,50 @@ export default function DashboardSettingsPage() {
               />
             </FormField>
           ))}
+        </div>
+      </Panel>
+
+      <Panel
+        title="Store integration app links"
+        description="Homepage Salla and Zid Learn More destinations (app store URLs)"
+      >
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField label="Salla App Link">
+            <input
+              type="url"
+              dir="ltr"
+              value={settings.storeIntegrationLinks?.salla ?? DEFAULT_STORE_INTEGRATION_LINKS.salla}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  storeIntegrationLinks: {
+                    ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
+                    salla: e.target.value,
+                  },
+                })
+              }
+              placeholder={DEFAULT_STORE_INTEGRATION_LINKS.salla}
+              className="form-input font-mono text-sm"
+            />
+          </FormField>
+          <FormField label="Zid App Link">
+            <input
+              type="url"
+              dir="ltr"
+              value={settings.storeIntegrationLinks?.zid ?? DEFAULT_STORE_INTEGRATION_LINKS.zid}
+              onChange={(e) =>
+                setSettings({
+                  ...settings,
+                  storeIntegrationLinks: {
+                    ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
+                    zid: e.target.value,
+                  },
+                })
+              }
+              placeholder={DEFAULT_STORE_INTEGRATION_LINKS.zid}
+              className="form-input font-mono text-sm"
+            />
+          </FormField>
         </div>
       </Panel>
 
