@@ -31,7 +31,9 @@ if [[ ! -f "$TARGET" ]]; then
   echo "Searching for proxy_pass to update in /etc/nginx ..."
   matches=$(grep -RIl 'proxy_pass http://127.0.0.1:300[01]' /etc/nginx 2>/dev/null || true)
   if [[ -z "$matches" ]]; then
-    echo "No nginx site with 127.0.0.1:3000/3001 found. Copy manually:"
+    echo "No nginx site with 127.0.0.1:3000/3001 found. For full apex+www SSL + redirect, run:"
+    echo "  sudo bash deploy/fix-www-ssl.sh"
+    echo "Or copy manually:"
     echo "  sudo cp $CONF_SRC $TARGET"
     echo "  sudo ln -sf $TARGET /etc/nginx/sites-enabled/leapai.ai"
     exit 1
@@ -41,6 +43,10 @@ if [[ ! -f "$TARGET" ]]; then
   done <<< "$matches"
 else
   patch_file "$TARGET"
+  if ! grep -q 'server_name www.leapai.ai' "$TARGET" 2>/dev/null; then
+    echo "Note: $TARGET has no www server block. For www SSL + apex redirect run:"
+    echo "  sudo bash deploy/fix-www-ssl.sh"
+  fi
 fi
 
 sudo nginx -t

@@ -39,11 +39,59 @@ sudo bash deploy/apply-nginx-3000.sh
 
 If nginx still points at `:3001` while Docker is on `:3000` (or the reverse), `https://leapai.ai` will return **502**.
 
+### 3b. www SSL (`ERR_CERT_COMMON_NAME_INVALID`)
+
+Browsers require the live certificate SAN to include **both** `leapai.ai` and `www.leapai.ai`. Apex alone is not enough — `https://www.leapai.ai` will fail TLS before any redirect runs.
+
+Canonical host is **apex** (`https://leapai.ai`). After TLS succeeds, www must **301** to apex.
+
+On the Ubuntu host that holds the Let’s Encrypt cert / nginx site:
+
+```bash
+git pull
+sudo bash deploy/fix-www-ssl.sh
+# optional: CERTBOT_EMAIL=ops@you.com sudo -E bash deploy/fix-www-ssl.sh
+```
+
+That script:
+
+1. Runs `certbot` with `-d leapai.ai -d www.leapai.ai --expand`
+2. Installs [`nginx-root-hosting.conf`](nginx-root-hosting.conf) (www HTTPS → `301 https://leapai.ai$request_uri`)
+3. Reloads nginx
+
+**Google HTTPS load balancer:** live responses include `Via: 1.1 google` and IP `34.117.172.39` (Google anycast). Browser TLS is decided **at the LB**, not only on the VM.
+
+If Certbot on the VM succeeds but browsers still warn on www, expand the **Google-managed certificate** (domains `leapai.ai` + `www.leapai.ai`) and attach it to the HTTPS target proxy:
+
+```bash
+gcloud auth login
+gcloud config set project YOUR_PROD_PROJECT   # not a unrelated/dev project
+bash deploy/fix-www-ssl-gcp.sh
+# optional: CERT_NAME=leapai-ai-cert-www PROXY_NAME=your-https-proxy bash deploy/fix-www-ssl-gcp.sh
+```
+
+Console path: **Network services → Load balancing →** HTTPS load balancer → **Certificates** → create/replace managed cert with both hostnames → wait until status is **ACTIVE** (often 15–60+ minutes; DNS for both names must point at the LB).
+
+Then still run `sudo bash deploy/fix-www-ssl.sh` on the Ubuntu backend so nginx **301**s www → apex after TLS succeeds.
+
+Verify from any machine:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy/verify-www-ssl.ps1
+```
+
+```bash
+bash deploy/verify-www-ssl.sh
+```
+
+Expected: apex `200`; www `301` to `https://leapai.ai/...` with **no** certificate name mismatch.
+
 ## 4. Verify
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/test-all.ps1
 powershell -ExecutionPolicy Bypass -File scripts/verify-geo-production.ps1
+powershell -ExecutionPolicy Bypass -File deploy/verify-www-ssl.ps1
 ```
 
 All suites must pass with **0 failures**.
@@ -51,9 +99,8 @@ All suites must pass with **0 failures**.
 Confirm:
 
 - `https://leapai.ai` canonical / og:url use `https://leapai.ai`
-- `http://leapai.ai` and `https://www.leapai.ai` redirect to `https://leapai.ai`
+- `http://leapai.ai` and `https://www.leapai.ai` redirect to `https://leapai.ai` (www must not show a cert warning)
 - Response includes `Strict-Transport-Security` and `Content-Security-Policy`
-
 ## 5. Post-cutover
 
 - Resubmit sitemap in Google Search Console: `https://leapai.ai/sitemap.xml`
