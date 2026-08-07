@@ -8,6 +8,8 @@ const nextConfig = {
   output: "standalone",
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   poweredByHeader: false,
+  // Legacy /en/* redirects handle trailing slashes in one hop (see legacy-redirects.mjs).
+  skipTrailingSlashRedirect: true,
   images: {
     unoptimized: false,
     formats: ["image/avif", "image/webp"],

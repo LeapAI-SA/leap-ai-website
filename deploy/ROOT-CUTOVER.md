@@ -39,6 +39,20 @@ sudo bash deploy/apply-nginx-3000.sh
 
 If nginx still points at `:3001` while Docker is on `:3000` (or the reverse), `https://leapai.ai` will return **502**.
 
+### 3a. Kill WordPress under `/en` (required)
+
+Public traffic must never hit PHP/WordPress. Legacy `/en/*` is handled by Next.js ([`frontend/lib/legacy-redirects.mjs`](../frontend/lib/legacy-redirects.mjs)).
+
+On the Ubuntu host:
+
+```bash
+sudo bash deploy/kill-wordpress-en.sh
+```
+
+That script re-applies [`nginx-root-hosting.conf`](nginx-root-hosting.conf) (proxy everything to `:3000`), flags leftover `wp-config.php` / `php-fpm` configs, and smoke-checks that `/en/...` responses have no `wp-content` markers.
+
+After deploy of the Next redirect map: unmapped `/en/*` → `/` (no soft-404 strip). Mapped WordPress slugs → `/solutions|products|use-cases/...`.
+
 ### 3b. www SSL (`ERR_CERT_COMMON_NAME_INVALID`)
 
 Browsers require the live certificate SAN to include **both** `leapai.ai` and `www.leapai.ai`. Apex alone is not enough — `https://www.leapai.ai` will fail TLS before any redirect runs.
@@ -103,5 +117,8 @@ Confirm:
 - Response includes `Strict-Transport-Security` and `Content-Security-Policy`
 ## 5. Post-cutover
 
-- Resubmit sitemap in Google Search Console: `https://leapai.ai/sitemap.xml`
+- Resubmit sitemap in Google Search Console and Bing Webmaster: `https://leapai.ai/sitemap.xml` (must list **0** `/en/` URLs)
+- After deploy of legacy redirects: `cd frontend && npm run seo:classify-en && npm run seo:verify-index && npm run seo:submit-indexnow && npm run seo:prepare-webmaster`
+- Confirm `/en/r24` → `/products/ai-recruiter` (200) and unknown `/en/foo` → `/` (not a soft-404)
+- Bing/GSC URL Removals only for URLs that still hard-404 after redirects
 - Confirm GEO files contain `https://leapai.ai` URLs (not localhost or webhook host)

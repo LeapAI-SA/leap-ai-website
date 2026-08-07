@@ -7,6 +7,7 @@
 
 /** @type {Record<string, string>} */
 export const LEGACY_SLUG_TO_PATH = {
+  // Use cases
   "healthcare-use-case": "/use-cases/healthcare",
   "complaints-automation-use-case": "/use-cases/complaints-automation",
   "retail-use-case": "/use-cases/retail",
@@ -15,6 +16,8 @@ export const LEGACY_SLUG_TO_PATH = {
   "banking-use-case-ar": "/use-cases/banking",
   "insurance-use-case": "/use-cases/insurance",
   "travel-hospitality-use-case": "/use-cases/travel-hospitality",
+
+  // Solutions (WordPress + short slugs)
   "nlu-ai-chatbot": "/solutions/nlu-chatbot",
   "ai-voice-bot": "/solutions/voice-bot",
   "genai-generative-ai-chatbot": "/solutions/genai-chatbot",
@@ -22,21 +25,72 @@ export const LEGACY_SLUG_TO_PATH = {
   "omni-channel-contact-center": "/solutions",
   "multichannel-contact-centers": "/solutions",
   "whatsapp-business-registration": "/solutions/whatsapp-business",
-  "ai-flow-builder": "/products/chatbot-tree",
+  "whatsapp-business": "/solutions/whatsapp-business",
   "customer-data-platform": "/solutions/cdp",
   "customer-journey-orchestration": "/solutions/customer-journey",
+  "growth-hacking-journey": "/solutions/customer-journey",
+  "growth-hacking": "/solutions/customer-journey",
   "quality-management-qm": "/solutions/quality-management",
+  "quality-management-qm-solutions": "/solutions/quality-management",
   "real-time-dashboard": "/solutions/realtime-dashboard",
+  "business-intelligence-and-analytics-bi-solutions": "/solutions/realtime-dashboard",
   "google-rcs-messaging": "/solutions/google-rcs",
+  "google-rcs": "/solutions/google-rcs",
   "apple-messages-for-business": "/solutions/apple-messages",
+  "apple-business-messaging-abc": "/solutions/apple-messages",
+  "customer-relationship-management-crm-system": "/solutions/crm",
+  "building-a-cpd-customer-database": "/solutions/cdp",
+  "building-a-cdp-customer-database": "/solutions/cdp",
+
+  // Products
+  "ai-flow-builder": "/products/chatbot-tree",
+  "campgain-management-platform": "/products/whatsapp-campaigns",
+  "campaign-management-platform": "/products/whatsapp-campaigns",
+  "leap-survey": "/products/leap-survey",
+  "leap-digital-invoice": "/products/digital-invoices",
+  "digital-invitation-system-via-whatsapp": "/products/whatsapp-invitations",
+  "whatsapp-agent": "/products/whatsapp-officer",
+  "leap-rec-engine": "/products/recommendation-engine",
+  r24: "/products/ai-recruiter",
+  "whatsapp-parking-check-in": "/products/ai-parking",
+  "leap-ticketing": "/products/leap-ticketing",
+
+  // Marketing / space pages
   "leap-space-1": "/",
   "leap-space-2": "/",
   "leap-space-3": "/",
 }
 
+/** Static pages that exist on the new site (identity /en → same path). */
+const CANONICAL_STATIC_PAGES = new Set([
+  "about-us",
+  "contact-us",
+  "become-a-partner",
+  "privacy-policy",
+  "solutions",
+  "products",
+  "use-cases",
+])
+
+/**
+ * True when stripped /en path is a real App Router path (not a dead WP slug).
+ * @param {string} path pathname starting with /
+ */
+export function isLikelyCanonicalPath(path) {
+  const p = path.replace(/\/+$/, "") || "/"
+  if (p === "/") return true
+  const slug = p.replace(/^\//, "")
+  if (CANONICAL_STATIC_PAGES.has(slug)) return true
+  if (p.startsWith("/solutions/") || p.startsWith("/products/") || p.startsWith("/use-cases/")) {
+    return true
+  }
+  return false
+}
+
 /**
  * Resolve a request pathname (with or without /en prefix) to a canonical path.
  * Returns null when no special mapping applies.
+ * Unmapped /en/* goes to `/` (never strip to a soft-404).
  * @param {string} pathname
  * @returns {string | null}
  */
@@ -44,14 +98,17 @@ export function resolveLegacyPath(pathname) {
   const raw = pathname.replace(/\/+$/, "") || "/"
   const withoutEn = raw === "/en" ? "/" : raw.startsWith("/en/") ? raw.slice(3) : raw
   const slug = withoutEn.replace(/^\//, "")
+  const isEn = raw === "/en" || raw.startsWith("/en/")
 
-  if (!slug) return raw.startsWith("/en") ? "/" : null
+  if (!slug) return isEn ? "/" : null
 
   const mapped = LEGACY_SLUG_TO_PATH[slug]
   if (mapped) return mapped
 
-  if (raw.startsWith("/en/") || raw === "/en") {
-    return withoutEn.startsWith("/") ? withoutEn : `/${withoutEn}`
+  if (isEn) {
+    const candidate = withoutEn.startsWith("/") ? withoutEn : `/${withoutEn}`
+    if (isLikelyCanonicalPath(candidate)) return candidate
+    return "/"
   }
 
   return null
@@ -74,17 +131,25 @@ export function buildLegacyRedirects() {
   }
 
   // Identity /en static pages (fewer hops than catch-all alone)
-  for (const page of ["about-us", "contact-us", "become-a-partner", "privacy-policy", "solutions", "products", "use-cases"]) {
+  for (const page of CANONICAL_STATIC_PAGES) {
     out.push(
       { source: `/en/${page}`, destination: `/${page}`, permanent: true },
       { source: `/en/${page}/`, destination: `/${page}`, permanent: true },
     )
   }
 
+  // Preserve new-site section URLs if someone prefixes /en
+  out.push(
+    { source: "/en/solutions/:path*", destination: "/solutions/:path*", permanent: true },
+    { source: "/en/products/:path*", destination: "/products/:path*", permanent: true },
+    { source: "/en/use-cases/:path*", destination: "/use-cases/:path*", permanent: true },
+  )
+
   out.push(
     { source: "/en", destination: "/", permanent: true },
     { source: "/en/", destination: "/", permanent: true },
-    { source: "/en/:path*", destination: "/:path*", permanent: true },
+    // Unknown WordPress leftovers → home (not /:path* soft-404)
+    { source: "/en/:path*", destination: "/", permanent: true },
   )
 
   return out

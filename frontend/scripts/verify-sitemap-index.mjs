@@ -31,11 +31,20 @@ const LEGACY_CHECKS = [
     expectPath: "/solutions/digital-channels",
   },
   { from: "/en/whatsapp-business-registration", expectPath: "/solutions/whatsapp-business" },
+  { from: "/en/whatsapp-business", expectPath: "/solutions/whatsapp-business" },
   { from: "/en/leap-space-2", expectPath: "/" },
   { from: "/en/healthcare-use-case", expectPath: "/use-cases/healthcare" },
+  { from: "/en/r24", expectPath: "/products/ai-recruiter" },
+  { from: "/en/r24/", expectPath: "/products/ai-recruiter" },
+  { from: "/en/leap-ticketing", expectPath: "/products/leap-ticketing" },
+  { from: "/en/growth-hacking", expectPath: "/solutions/customer-journey" },
+  { from: "/en/quality-management-qm-solutions", expectPath: "/solutions/quality-management" },
+  { from: "/en/customer-relationship-management-crm-system", expectPath: "/solutions/crm" },
+  { from: "/en/unknown-wordpress-slug-xyz", expectPath: "/" },
   { from: "/nlu-ai-chatbot", expectPath: "/solutions/nlu-chatbot" },
   { from: "/whatsapp-business-registration", expectPath: "/solutions/whatsapp-business" },
   { from: "/retail-use-case", expectPath: "/use-cases/retail" },
+  { from: "/r24", expectPath: "/products/ai-recruiter" },
 ]
 
 async function fetchSitemapUrls(host) {
@@ -119,6 +128,21 @@ async function main() {
   const urls = await fetchSitemapUrls(HOST)
   console.log(`Found ${urls.length} sitemap URLs`)
 
+  const enInSitemap = urls.filter((u) => {
+    try {
+      return new URL(u).pathname.includes("/en/") || new URL(u).pathname === "/en"
+    } catch {
+      return u.includes("/en/")
+    }
+  })
+  if (enInSitemap.length > 0) {
+    console.error(`FAIL: sitemap must not include /en URLs (${enInSitemap.length} found):`)
+    for (const u of enInSitemap.slice(0, 20)) console.error(`  ${u}`)
+    process.exitCode = 1
+  } else {
+    console.log("OK: sitemap has 0 /en URLs")
+  }
+
   const sitemapRows = []
   for (const url of urls) {
     const health = await checkUrl(url)
@@ -174,12 +198,13 @@ async function main() {
     generatedAt: new Date().toISOString(),
     host: HOST,
     sitemapCount: urls.length,
+    enUrlCount: enInSitemap.length,
     liveOkCount: sitemapRows.filter((r) => r.liveOk).length,
     publicSearchFoundCount: sitemapRows.filter((r) => r.publicSearchSignal === "found").length,
     legacyRedirectOkCount: legacyRows.filter((r) => r.ok).length,
     legacyRedirectTotal: legacyRows.length,
     note:
-      "publicSearchSignal uses DuckDuckGo HTML results as a public proxy. Authoritative Google/Bing coverage requires Search Console / Webmaster Tools exports. IndexNow covers Bing ecosystem only.",
+      "publicSearchSignal uses DuckDuckGo HTML results as a public proxy. Authoritative Google/Bing coverage requires Search Console / Webmaster Tools exports. IndexNow covers Bing ecosystem only. Sitemap must never list /en URLs.",
   }
 
   const report = { summary, sitemap: sitemapRows, legacyRedirects: legacyRows }
@@ -228,8 +253,12 @@ async function main() {
   console.log(`\nWrote ${outPath}`)
   console.log(`Wrote ${mdPath}`)
   console.log(
-    `Summary: live ${summary.liveOkCount}/${summary.sitemapCount}, search-found ${summary.publicSearchFoundCount}/${summary.sitemapCount}, legacy ${summary.legacyRedirectOkCount}/${summary.legacyRedirectTotal}`,
+    `Summary: live ${summary.liveOkCount}/${summary.sitemapCount}, search-found ${summary.publicSearchFoundCount}/${summary.sitemapCount}, legacy ${summary.legacyRedirectOkCount}/${summary.legacyRedirectTotal}, en-in-sitemap ${summary.enUrlCount}`,
   )
+
+  if (enInSitemap.length > 0) process.exitCode = 1
+  if (legacyRows.some((r) => !r.ok)) process.exitCode = 1
+  if (sitemapRows.some((r) => !r.liveOk)) process.exitCode = 1
 }
 
 main().catch((err) => {

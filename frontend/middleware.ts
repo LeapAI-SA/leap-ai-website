@@ -118,7 +118,7 @@ export async function middleware(request: NextRequest) {
     if (legacy) {
       url.pathname = legacy
     } else if (pathname === "/en" || pathname.startsWith("/en/")) {
-      url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
+      url.pathname = "/"
     }
     url.search = ""
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
@@ -135,7 +135,14 @@ export async function middleware(request: NextRequest) {
 
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     const url = request.nextUrl.clone()
-    url.pathname = pathname === "/en" ? "/" : pathname.slice(3) || "/"
+    url.pathname = resolveLegacyPath(pathname) || "/"
+    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+  }
+
+  // skipTrailingSlashRedirect: strip trailing slash for non-legacy paths
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    const url = request.nextUrl.clone()
+    url.pathname = normalizedPath
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 

@@ -2,6 +2,8 @@
 /**
  * Merge live HTTP checks with known organic-search evidence into a final coverage table.
  * Run after verify-sitemap-index.mjs (or alone — will fetch live health).
+ *
+ * Legacy /en paths are redirect checks only (not content pages).
  */
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -14,30 +16,61 @@ const outDir = join(__dirname, "output")
 /** Paths confirmed appearing in Google organic results during audit (2026-08-03). */
 const GOOGLE_OBSERVED = new Set(["/"])
 
-/** Legacy URLs still appearing in Google SERPs (old WordPress forms). */
-const GOOGLE_LEGACY_STILL_SHOWING = [
-  "/en/",
-  "/en/about-us/",
-  "/en/contact-us/",
-  "/en/become-a-partner/",
-  "/en/healthcare-use-case/",
-  "/en/insurance-use-case/",
-  "/en/telecom-use-case/",
-  "/en/banking-use-case/",
-  "/en/retail-use-case/",
-  "/en/nlu-ai-chatbot/",
-  "/en/ai-voice-bot/",
-  "/en/whatsapp-business-registration/",
-  "/en/omni-channel-contact-center/",
-  "/en/leap-space-2/",
-  "/retail-use-case/",
-  "/banking-use-case-ar/",
+/**
+ * Legacy WordPress /en URLs that may still appear in SERPs.
+ * After deploy they must 301/308 to canonical destinations (see legacy-redirects.mjs).
+ */
+const LEGACY_REDIRECT_CHECKS = [
+  { path: "/en/", expect: "/" },
+  { path: "/en/about-us/", expect: "/about-us" },
+  { path: "/en/contact-us/", expect: "/contact-us" },
+  { path: "/en/become-a-partner/", expect: "/become-a-partner" },
+  { path: "/en/healthcare-use-case/", expect: "/use-cases/healthcare" },
+  { path: "/en/insurance-use-case/", expect: "/use-cases/insurance" },
+  { path: "/en/telecom-use-case/", expect: "/use-cases/telecom" },
+  { path: "/en/banking-use-case/", expect: "/use-cases/banking" },
+  { path: "/en/retail-use-case/", expect: "/use-cases/retail" },
+  { path: "/en/nlu-ai-chatbot/", expect: "/solutions/nlu-chatbot" },
+  { path: "/en/ai-voice-bot/", expect: "/solutions/voice-bot" },
+  { path: "/en/whatsapp-business-registration/", expect: "/solutions/whatsapp-business" },
+  { path: "/en/whatsapp-business/", expect: "/solutions/whatsapp-business" },
+  { path: "/en/omni-channel-contact-center/", expect: "/solutions" },
+  { path: "/en/leap-space-2/", expect: "/" },
+  { path: "/en/r24/", expect: "/products/ai-recruiter" },
+  { path: "/en/leap-ticketing/", expect: "/products/leap-ticketing" },
+  { path: "/en/growth-hacking/", expect: "/solutions/customer-journey" },
+  { path: "/retail-use-case/", expect: "/use-cases/retail" },
+  { path: "/banking-use-case-ar/", expect: "/use-cases/banking" },
 ]
 
 async function liveStatus(path) {
   const url = path === "/" ? HOST : `${HOST}${path}`
   const res = await fetch(url, { redirect: "follow", method: "GET" })
-  return { url, status: res.status, ok: res.status === 200 }
+  return { url, status: res.status, ok: res.status === 200, finalUrl: res.url }
+}
+
+async function followLegacy(path) {
+  let url = `${HOST}${path}`
+  const chain = []
+  for (let i = 0; i < 8; i++) {
+    const res = await fetch(url, { redirect: "manual", method: "GET" })
+    const loc = res.headers.get("location")
+    chain.push({ url, status: res.status, location: loc })
+    if (res.status >= 300 && res.status < 400 && loc) {
+      url = new URL(loc, url).href
+      continue
+    }
+    return { finalUrl: url, finalStatus: res.status, chain }
+  }
+  return { finalUrl: url, finalStatus: chain.at(-1)?.status ?? 0, chain }
+}
+
+function pathFromUrl(url) {
+  try {
+    return new URL(url).pathname.replace(/\/$/, "") || "/"
+  } catch {
+    return url
+  }
 }
 
 async function main() {
@@ -54,6 +87,11 @@ async function main() {
       const u = new URL(m[1].trim())
       return u.pathname || "/"
     })
+  }
+
+  const enInSitemap = urls.filter((p) => p === "/en" || p.startsWith("/en/"))
+  if (enInSitemap.length) {
+    console.error(`FAIL: sitemap paths include /en: ${enInSitemap.join(", ")}`)
   }
 
   const rows = []
@@ -77,22 +115,42 @@ async function main() {
     })
   }
 
+  console.log("\nLegacy /en redirect checks (not sitemap content):")
+  const legacyRows = []
+  for (const { path, expect } of LEGACY_REDIRECT_CHECKS) {
+    const result = await followLegacy(path)
+    const finalPath = pathFromUrl(result.finalUrl)
+    const expectNorm = expect.replace(/\/$/, "") || "/"
+    const ok = result.finalStatus === 200 && finalPath === expectNorm
+    legacyRows.push({ path, expect: expectNorm, finalPath, finalStatus: result.finalStatus, ok })
+    console.log(`${ok ? "OK" : "FAIL"} ${path} → ${finalPath} (expect ${expectNorm}) [${result.finalStatus}]`)
+  }
+
   const summary = {
     generatedAt: new Date().toISOString(),
     sitemapCount: rows.length,
+    enInSitemap: enInSitemap.length,
     liveOk: rows.filter((r) => r.liveHttp === 200).length,
     googleObservedAsNewUrl: rows.filter((r) => r.googleOrganic === "indexed_observed").length,
-    googleLegacyStillShowing: GOOGLE_LEGACY_STILL_SHOWING.length,
-    bingNote: "Public Bing SERP blocked by captcha; IndexNow submitted (202 Accepted). Confirm coverage in Bing Webmaster after key file is deployed.",
+    legacyRedirectOk: legacyRows.filter((r) => r.ok).length,
+    legacyRedirectTotal: legacyRows.length,
+    bingNote:
+      "Public Bing SERP blocked by captcha. After deploy: npm run seo:submit-indexnow + resubmit sitemap in Bing Webmaster. Use URL removal only for residual 404s.",
     actionRequired: [
-      "Deploy redirect + IndexNow key changes",
-      "Re-run: npm run seo:submit-indexnow",
-      "Submit sitemap in Google Search Console and Bing Webmaster",
-      "Request indexing for hub pages in GSC URL Inspection",
+      "On host: sudo bash deploy/kill-wordpress-en.sh (ensure no PHP/WP under /en)",
+      "Deploy Next legacy-redirects + skipTrailingSlashRedirect",
+      "npm run seo:classify-en && npm run seo:verify-index",
+      "npm run seo:submit-indexnow && npm run seo:prepare-webmaster",
+      "Resubmit https://leapai.ai/sitemap.xml in Google Search Console and Bing Webmaster",
+      "Bing/GSC Removals only for URLs that still 404 after redirects",
     ],
   }
 
-  const report = { summary, urls: rows, googleLegacyStillShowing: GOOGLE_LEGACY_STILL_SHOWING }
+  const report = {
+    summary,
+    urls: rows,
+    legacyRedirectChecks: legacyRows,
+  }
   writeFileSync(join(outDir, "sitemap-index-final.json"), JSON.stringify(report, null, 2))
 
   const md = [
@@ -103,11 +161,12 @@ async function main() {
     `## Verdict`,
     ``,
     `- Live sitemap pages: **${summary.liveOk}/${summary.sitemapCount}** HTTP 200`,
-    `- New canonical URLs observed in Google organic: **${summary.googleObservedAsNewUrl}/${summary.sitemapCount}** (homepage only)`,
-    `- Legacy WordPress URLs still showing in Google: **${summary.googleLegacyStillShowing}**`,
-    `- Bing: IndexNow accepted (202); key file not live until deploy; confirm in Webmaster Tools`,
+    `- Sitemap /en URLs: **${summary.enInSitemap}** (must be 0)`,
+    `- New canonical URLs observed in Google organic: **${summary.googleObservedAsNewUrl}/${summary.sitemapCount}**`,
+    `- Legacy /en redirect checks OK: **${summary.legacyRedirectOk}/${summary.legacyRedirectTotal}**`,
+    `- Bing: confirm coverage in Webmaster Tools after IndexNow + sitemap resubmit`,
     ``,
-    `## All sitemap URLs`,
+    `## All sitemap URLs (canonical only — no /en)`,
     ``,
     `| Path | Live | Google (new URL) | Bing |`,
     `|---|---|---|---|`,
@@ -116,11 +175,16 @@ async function main() {
         `| \`${r.path}\` | ${r.liveHttp} | ${r.googleOrganic} | ${r.bingOrganic} |`,
     ),
     ``,
-    `## Legacy URLs still in Google SERPs`,
+    `## Legacy /en redirect checks`,
     ``,
-    ...GOOGLE_LEGACY_STILL_SHOWING.map((p) => `- \`${p}\``),
+    `| From | Expect | Final | Status | OK |`,
+    `|---|---|---|---|---|`,
+    ...legacyRows.map(
+      (r) =>
+        `| \`${r.path}\` | \`${r.expect}\` | \`${r.finalPath}\` | ${r.finalStatus} | ${r.ok} |`,
+    ),
     ``,
-    `These should 301 to new destinations after deploy of \`legacy-redirects\` / middleware map.`,
+    `These are redirects, not indexable content. Soft-404 strip behavior is retired.`,
     ``,
     `## Next steps`,
     ``,
@@ -131,6 +195,8 @@ async function main() {
   writeFileSync(join(outDir, "sitemap-index-final.md"), md)
   console.log(md)
   console.log(`\nWrote ${join(outDir, "sitemap-index-final.md")}`)
+
+  if (enInSitemap.length || legacyRows.some((r) => !r.ok)) process.exitCode = 1
 }
 
 main().catch((e) => {

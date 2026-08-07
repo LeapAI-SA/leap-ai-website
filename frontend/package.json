@@ -13,7 +13,9 @@
     "seo:verify-index": "node scripts/verify-sitemap-index.mjs",
     "seo:prepare-webmaster": "node scripts/prepare-webmaster-submission.mjs",
     "seo:coverage-report": "node scripts/finalize-coverage-report.mjs",
-    "seo:audit-titles": "node scripts/audit-title-lengths.mjs"
+    "seo:classify-en": "node scripts/classify-en-urls.mjs",
+    "seo:audit-titles": "node scripts/audit-title-lengths.mjs",
+    "seo:rotate-indexnow-key": "node scripts/rotate-indexnow-key.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
