@@ -17,7 +17,7 @@ export const siteConfig = {
   descriptionAr:
     "LeapAI هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات سلة وزد وOdoo — استضافة محلية في الرياض ومتوافقة مع نظام حماية البيانات الشخصية.",
   descriptionEn:
-    "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh.",
+    "LeapAI is Saudi Arabia's premier AI-native CX platform for omni-channel contact centers, WhatsApp Business, AI chatbots, and enterprise integrations — PDPL-ready local hosting in Riyadh.",
   locale: "ar_SA",
   localeAlt: "en_US",
   twitterHandle: "@leapai_cx",
@@ -189,6 +189,26 @@ export function normalizeOgDescription(description: string, brand = siteConfig.n
   return truncateMeta(value, 65)
 }
 
+const TWITTER_DESC_MIN = 150
+const TWITTER_DESC_MAX = 200
+
+/** Twitter card description — 150–200 chars for social and AI crawlers. */
+export function normalizeTwitterDescription(description: string, brand = siteConfig.name) {
+  let value = description.replace(/\s+/g, " ").trim()
+  if (!containsBrand(value, brand)) {
+    value = `${brand} — ${value}`
+  }
+
+  if (value.length < TWITTER_DESC_MIN) {
+    const closer = looksArabic(value) ? DESCRIPTION_CLOSER_AR : DESCRIPTION_CLOSER_EN
+    if (!value.includes(closer.slice(0, 20))) {
+      value = `${value} ${closer}`.replace(/\s+/g, " ").trim()
+    }
+  }
+
+  return truncateMeta(value, TWITTER_DESC_MAX)
+}
+
 function buildHreflangAlternates(path: string) {
   const url = absoluteUrl(path)
   return {
@@ -235,7 +255,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   const ogTitleSource = titleAr ?? title
   const ogTitle = normalizeOgTitle(ogTitleSource)
   const ogDescription = normalizeOgDescription(descriptionAr ?? description)
-  const twitterDescription = truncateMeta(metaDescription, 200)
+  const twitterDescription = normalizeTwitterDescription(description)
 
   return {
     title: { absolute: pageTitle },

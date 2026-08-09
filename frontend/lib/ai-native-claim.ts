@@ -13,7 +13,7 @@ export const AI_NATIVE_HERO_LINE2_AR =
   "المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة ومتوافقة مع نظام حماية البيانات الشخصية."
 
 export const AI_NATIVE_DESCRIPTION_EN =
-  "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh."
+  "LeapAI is Saudi Arabia's premier AI-native CX platform for omni-channel contact centers, WhatsApp Business, AI chatbots, and enterprise integrations — PDPL-ready local hosting in Riyadh."
 
 export const AI_NATIVE_DESCRIPTION_AR =
   "LeapAI هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات سلة وزد وOdoo — استضافة محلية في الرياض ومتوافقة مع نظام حماية البيانات الشخصية."
@@ -27,8 +27,12 @@ export const AI_NATIVE_FAQ_AR =
 export const RESOURCES_ANNOUNCEMENT_SLUG = "leap-ai-saudi-ai-native-cx-platform"
 
 export function rewriteStaleCxCopyEn(text: string): string {
-  if (!text || /AI-native/i.test(text)) return text
-  return text
+  if (!text) return text
+  const previousAiNative =
+    "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh."
+  let next = text.replaceAll(previousAiNative, AI_NATIVE_DESCRIPTION_EN)
+  if (/AI-native/i.test(next)) return next
+  return next
     .replaceAll(
       "is the first advanced local cloud platform for customer experience.",
       AI_NATIVE_HERO_LINE2_EN,
@@ -40,6 +44,14 @@ export function rewriteStaleCxCopyEn(text: string): string {
     .replaceAll(
       "the first advanced local cloud customer experience (CX) platform in Saudi Arabia",
       "Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh",
+    )
+    .replaceAll(
+      "LeapAI is a Saudi customer experience platform for omni-channel contact center, WhatsApp Business, AI chatbot, and enterprise integrations.",
+      AI_NATIVE_DESCRIPTION_EN,
+    )
+    .replaceAll(
+      "LeapAI is a Saudi customer experience platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and enterprise integrations.",
+      AI_NATIVE_DESCRIPTION_EN,
     )
     .replaceAll(
       "LeapAI is a Saudi customer experience platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and integrations with Salla, Zid, and Odoo — PDPL-ready local hosting.",
