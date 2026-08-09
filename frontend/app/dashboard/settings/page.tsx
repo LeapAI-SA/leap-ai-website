@@ -451,7 +451,6 @@ function CtaLabelsEditor({ labels, onChange }: { labels: CtaLabels; onChange: (l
     { key: "pricing", label: "Pricing cards button" },
     { key: "stores", label: "Store integrations button" },
     { key: "acquire", label: "Acquire CTA button" },
-    { key: "headerSignup", label: "Header WhatsApp signup button" },
     { key: "learnMore", label: "Learn more link (Solutions/Products lists)" },
   ]
 
@@ -564,7 +563,7 @@ export default function DashboardSettingsPage() {
     line2: "Hero line 2",
     sub1: "Subtitle 1",
     sub2: "Subtitle 2",
-    cta: "Call-to-action button",
+    cta: "Call-to-action button (shown as Book a demo / حجز تجربة on the live hero)",
   }
 
   return (

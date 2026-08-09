@@ -4,6 +4,8 @@ import { getOrCreateSettings, serializePublicSettings } from "../models/SiteSett
 import { ContentItem, serializeContentItem, type ContentType } from "../models/ContentItem.js"
 import { ContactMessage } from "../models/ContactMessage.js"
 import { isNonEmptyString, isValidEmail, trimString } from "../lib/validate.js"
+import { isBusinessEmail } from "../lib/business-email.js"
+import { sendDemoLeadEmail } from "../lib/mail.js"
 import { cacheGet, cacheSet } from "../config/redis.js"
 
 const router = Router()
@@ -74,6 +76,45 @@ router.get("/content/:slug", async (req, res) => {
 
 router.get("/health", async (_req, res) => {
   res.json({ status: "ok", service: "leap-backend", mongo: true, redis: true })
+})
+
+router.post("/demo", contactLimiter, async (req, res) => {
+  const body = req.body as Record<string, unknown>
+  const name = trimString(body.name, 120)
+  const email = trimString(body.email, 200).toLowerCase()
+
+  if (!isNonEmptyString(name) || !isValidEmail(email)) {
+    return res.status(400).json({ error: "Full name and a valid business email are required" })
+  }
+  if (!isBusinessEmail(email)) {
+    return res.status(400).json({
+      error: "Please use a business email. Gmail, Hotmail, Outlook, and similar providers are not accepted.",
+    })
+  }
+
+  const item = await ContactMessage.create({
+    source: "demo",
+    name,
+    email,
+    company: "",
+    address: "",
+    phone: "",
+    message: "Book a demo request",
+  })
+
+  try {
+    const mail = await sendDemoLeadEmail({ name, email })
+    console.log(`Demo lead saved: ${item._id.toString()} emailed=${mail.emailed}`)
+    res.status(201).json({ ok: true, id: item._id.toString(), emailed: mail.emailed })
+  } catch (err) {
+    console.error("Demo lead email failed:", err)
+    res.status(201).json({
+      ok: true,
+      id: item._id.toString(),
+      emailed: false,
+      warning: "Saved but email to sales@leapai.ai failed. Check SMTP settings.",
+    })
+  }
 })
 
 router.post("/contact", contactLimiter, async (req, res) => {

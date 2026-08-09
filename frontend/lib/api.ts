@@ -66,7 +66,7 @@ export type ContentItemPublic = {
 
 export type ContactMessage = {
   id: string
-  source: "contact" | "partner"
+  source: "contact" | "partner" | "demo"
   name: string
   email: string
   company: string
@@ -187,6 +187,19 @@ export async function loginAdmin(email: string, password: string) {
     throw new Error(err.error ?? "Login failed")
   }
   return res.json() as Promise<{ token: string; user: { email: string; role: string } }>
+}
+
+export async function submitDemoRequest(payload: { name: string; email: string }) {
+  const res = await clientFetch(`${browserApiUrl()}/api/public/demo`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Failed to send demo request" }))
+    throw new Error(err.error ?? "Failed to send demo request")
+  }
+  return res.json() as Promise<{ ok: boolean; id: string; emailed?: boolean }>
 }
 
 export async function submitContactMessage(payload: {

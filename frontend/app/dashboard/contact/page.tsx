@@ -80,7 +80,7 @@ export default function DashboardContactPage() {
     <div className="space-y-8">
       <PageHeader
         title="Contact Us"
-        description="View messages submitted from the public Contact Us form. Edit contact details in Site Settings."
+        description="View Contact Us, partner, and Book a demo submissions. Demo leads are also emailed to sales@leapai.ai when SMTP is configured."
         actions={
           <>
             <DashButton onClick={() => load()} variant="secondary" disabled={loading}>
@@ -143,13 +143,21 @@ export default function DashboardContactPage() {
                         </a>
                       </td>
                       <td className="whitespace-nowrap px-3 py-2" dir="ltr">
-                        <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
-                          <Phone className="size-4" />
-                          {item.phone}
-                        </a>
+                        {item.phone ? (
+                          <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                            <Phone className="size-4" />
+                            {item.phone}
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {item.source === "partner" ? "Partner form" : "Contact Us"}
+                        {item.source === "partner"
+                          ? "Partner form"
+                          : item.source === "demo"
+                            ? "Book a demo"
+                            : "Contact Us"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt)}</td>
                       <td className="px-3 py-2">

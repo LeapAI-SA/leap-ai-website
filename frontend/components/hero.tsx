@@ -1,11 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
+import { DemoRequestDialog } from "@/components/demo-request-dialog"
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,12 +25,13 @@ const item = {
 export function Hero() {
   const { lang, t } = useLanguage()
   const { settings } = useSiteSettings()
+  const [demoOpen, setDemoOpen] = useState(false)
 
   const line1 = settings ? pickLocalized(settings.hero.line1, lang, t("hero.line1")) : t("hero.line1")
   const line2 = settings ? pickLocalized(settings.hero.line2, lang, t("hero.line2")) : t("hero.line2")
   const sub1 = settings ? pickLocalized(settings.hero.sub1, lang, t("hero.sub1")) : t("hero.sub1")
   const sub2 = settings ? pickLocalized(settings.hero.sub2, lang, t("hero.sub2")) : t("hero.sub2")
-  const cta = settings ? pickLocalized(settings.hero.cta, lang, t("hero.cta")) : t("hero.cta")
+  const cta = t("hero.cta")
   const heroImage = resolveMediaUrl(settings?.images?.hero ?? "/hero-dashboard.png")
 
   return (
@@ -64,14 +67,15 @@ export function Hero() {
             {sub2}
           </motion.p>
           <motion.div variants={item} className="mt-8">
-            <motion.a
-              href="#contact"
+            <motion.button
+              type="button"
+              onClick={() => setDemoOpen(true)}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               className="inline-flex w-full max-w-sm items-center justify-center rounded-full bg-amber px-6 py-3 text-base font-bold text-accent-foreground shadow-lg sm:w-auto sm:px-10 sm:py-3.5 sm:text-lg lg:px-12 lg:py-4"
             >
               {cta}
-            </motion.a>
+            </motion.button>
           </motion.div>
         </motion.div>
 
@@ -96,6 +100,7 @@ export function Hero() {
           </motion.div>
         </motion.div>
       </div>
+      <DemoRequestDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
     </section>
   )
 }

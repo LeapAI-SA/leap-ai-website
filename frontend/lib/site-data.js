@@ -545,7 +545,7 @@ exports.pricingPlans = [
             ar: [
                 "إدارة التفاعلات الرقمية: البريد، مراسلة الويب والتطبيق",
                 "التسجيل السريع لأرقام الواتساب",
-                "التحقق من العلامة الخضراء لتوثيق الواتساب",
+                "التحقق من العلامة الزرقاء لتوثيق الواتساب",
                 "مساحة عمل محسّنة للموظفين الرقميين",
                 "الوصول إلى مركز المعرفة",
                 "إمكانات الوسائط الغنية والمتعددة",
@@ -555,7 +555,7 @@ exports.pricingPlans = [
             en: [
                 "Digital interaction management: email, web and app messaging",
                 "Fast WhatsApp number onboarding",
-                "Green badge verification for WhatsApp",
+                "Blue Tick verification for WhatsApp",
                 "Optimized workspace for digital agents",
                 "Access to the knowledge center",
                 "Rich, multimedia capabilities",

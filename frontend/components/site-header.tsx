@@ -8,11 +8,9 @@ import { Clock, Mail, Phone, Search, Menu, X, ChevronDown, ArrowLeft, Globe } fr
 import { type NavItem } from "@/lib/site-data"
 import { useNavContent } from "@/lib/nav-content-context"
 import { useLanguage } from "@/lib/i18n"
-import { pickLocalized } from "@/lib/api"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
 import { activeNavLinks, mergeNavigation, navLinkLabel } from "@/lib/site-nav"
-import { mergeCtaLabels } from "@/lib/site-marketing"
 import { sitePath } from "@/lib/site-path"
 
 export function SiteHeader() {
@@ -31,7 +29,6 @@ export function SiteHeader() {
     settings?.contact.businessHours?.en ??
     t("header.hours")
   const navigation = mergeNavigation(settings?.navigation)
-  const signupLabel = pickLocalized(mergeCtaLabels(settings?.ctaLabels).headerSignup, lang, t("header.signup"))
   const leftNav = activeNavLinks(navigation.headerLeft)
   const rightNav = activeNavLinks(navigation.headerRight)
 
@@ -204,12 +201,6 @@ export function SiteHeader() {
             >
               <Search className="size-4" />
             </button>
-            <Link
-              href="/#contact"
-              className="hidden rounded-full bg-whatsapp px-5 py-2.5 text-sm font-bold text-whatsapp-foreground shadow-sm transition-colors hover:bg-whatsapp/90 sm:inline-block"
-            >
-              {signupLabel}
-            </Link>
             <button
               aria-label={t("header.menu")}
               onClick={() => setOpen((v) => !v)}
@@ -285,15 +276,6 @@ export function SiteHeader() {
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <Link
-                    href="/#contact"
-                    onClick={() => setOpen(false)}
-                    className="mt-2 block rounded-full bg-whatsapp px-5 py-2.5 text-center text-sm font-bold text-whatsapp-foreground"
-                  >
-                    {signupLabel}
-                  </Link>
-                </li>
               </ul>
             </motion.nav>
           )}

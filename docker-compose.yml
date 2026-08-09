@@ -48,6 +48,13 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       SEED_ON_START: ${SEED_ON_START:-true}
+      DEMO_LEADS_EMAIL: ${DEMO_LEADS_EMAIL:-sales@leapai.ai}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-LeapAI Website <noreply@leapai.ai>}
     volumes:
       - uploads_data:/app/uploads
     depends_on:

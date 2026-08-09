@@ -151,7 +151,7 @@ const siteSettingsSchema = new Schema(
       },
       cta: {
         type: localizedSchema,
-        default: () => ({ ar: "تحدث إلى مستشارنا", en: "Talk to Our Advisor" }),
+        default: () => ({ ar: "حجز تجربة", en: "Book a demo" }),
       },
     },
     stats: {
@@ -302,11 +302,21 @@ const siteSettingsSchema = new Schema(
 
 export const SiteSettings = mongoose.model("SiteSettings", siteSettingsSchema)
 
+const OLD_HERO_CTA_AR = new Set(["تحدث إلى مستشارنا", "تحدث إلى مستشارينا"])
+const OLD_HERO_CTA_EN = new Set(["Talk to Our Advisor", "Talk to our consultants", "Talk to Our Consultants"])
+
 export async function getOrCreateSettings() {
   let settings = await SiteSettings.findOne()
   if (!settings) {
     settings = await SiteSettings.create({})
   }
+
+  const cta = settings.hero?.cta
+  if (settings.hero && cta && (OLD_HERO_CTA_AR.has(cta.ar) || OLD_HERO_CTA_EN.has(cta.en))) {
+    settings.hero.cta = { ar: "حجز تجربة", en: "Book a demo" }
+    await settings.save()
+  }
+
   return settings
 }
 

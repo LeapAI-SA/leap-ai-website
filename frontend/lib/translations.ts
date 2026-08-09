@@ -5,7 +5,6 @@ export const translations = {
   "header.hours": { ar: "الأحد - الخميس 8.00 - 17.00", en: "Sun - Thu 8.00 - 17.00" },
   "header.email": { ar: "البريد:", en: "Email:" },
   "header.phone": { ar: "الهاتف:", en: "Phone:" },
-  "header.signup": { ar: "تسجيل واتساب أعمال", en: "WhatsApp Business Signup" },
   "header.search": { ar: "بحث", en: "Search" },
   "header.menu": { ar: "القائمة", en: "Menu" },
   "nav.home": { ar: "الرئيسية", en: "Home" },
@@ -31,7 +30,31 @@ export const translations = {
     ar: "منصة LeapAI هي الاختيار الأمثل لخدمة العملاء والاحتفاظ بهم على الأمد البعيد.",
     en: "LeapAI is the ideal choice for serving customers and retaining them for the long term.",
   },
-  "hero.cta": { ar: "تحدث إلى مستشارنا", en: "Talk to Our Advisor" },
+  "hero.cta": { ar: "حجز تجربة", en: "Book a demo" },
+
+  "demo.title": { ar: "حجز تجربة", en: "Book a demo" },
+  "demo.sub": {
+    ar: "أدخل اسمك وبريد العمل وسيتواصل معك فريق المبيعات.",
+    en: "Enter your name and business email and our sales team will reach out.",
+  },
+  "demo.fullName": { ar: "الاسم الكامل", en: "Full name" },
+  "demo.businessEmail": { ar: "البريد الإلكتروني للعمل", en: "Business email" },
+  "demo.emailPlaceholder": { ar: "you@company.com", en: "you@company.com" },
+  "demo.submit": { ar: "إرسال الطلب", en: "Submit request" },
+  "demo.submitting": { ar: "جاري الإرسال…", en: "Sending…" },
+  "demo.success": { ar: "تم استلام طلبك", en: "Request received" },
+  "demo.successText": {
+    ar: "شكراً لك. سيتواصل معك فريق المبيعات قريباً على بريد العمل.",
+    en: "Thank you. Sales will contact you shortly at your business email.",
+  },
+  "demo.close": { ar: "إغلاق", en: "Close" },
+  "demo.nameRequired": { ar: "يرجى إدخال الاسم الكامل.", en: "Please enter your full name." },
+  "demo.emailInvalid": { ar: "يرجى إدخال بريد إلكتروني صحيح.", en: "Please enter a valid email address." },
+  "demo.emailBusinessOnly": {
+    ar: "يرجى استخدام بريد عمل. Gmail وHotmail وOutlook وغيرها غير مقبولة.",
+    en: "Please use a business email. Gmail, Hotmail, Outlook, and similar providers are not accepted.",
+  },
+  "demo.error": { ar: "تعذر إرسال الطلب. حاول مرة أخرى.", en: "Could not send the request. Please try again." },
 
   /* --------------------------- Services intro --------------------------- */
   "services.label": { ar: "LEAP AI", en: "LEAP AI" },
