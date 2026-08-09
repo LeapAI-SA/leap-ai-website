@@ -51,7 +51,7 @@ export function Hero() {
         <motion.div className="max-w-xl" variants={container} initial="hidden" animate="show">
           <motion.h1
             variants={item}
-            className="text-balance text-3xl font-extrabold leading-tight md:text-4xl lg:text-5xl"
+            className="text-balance text-xl font-extrabold leading-snug md:text-2xl lg:text-3xl"
           >
             {lang === "ar" && line1 && <>{line1} </>}
             <span className="text-primary">Leap</span>
@@ -59,11 +59,11 @@ export function Hero() {
           </motion.h1>
           <motion.p
             variants={item}
-            className="mt-6 text-pretty text-base leading-relaxed text-navy-foreground/85 md:text-lg"
+            className="mt-5 text-pretty text-sm leading-relaxed text-navy-foreground/85 md:text-base"
           >
             {sub1}
           </motion.p>
-          <motion.p variants={item} className="mt-3 text-pretty font-medium leading-relaxed text-amber">
+          <motion.p variants={item} className="mt-3 text-pretty text-sm font-medium leading-relaxed text-amber md:text-base">
             {sub2}
           </motion.p>
           <motion.div variants={item} className="mt-8">
