@@ -34,11 +34,13 @@ export const translations = {
 
   "demo.title": { ar: "حجز تجربة", en: "Book a demo" },
   "demo.sub": {
-    ar: "أدخل اسمك وبريد العمل وسيتواصل معك فريق المبيعات.",
-    en: "Enter your name and business email and our sales team will reach out.",
+    ar: "أدخل اسمك وبريد العمل ورقم الهاتف وسيتواصل معك فريق المبيعات.",
+    en: "Enter your name, business email, and phone number and our sales team will reach out.",
   },
   "demo.fullName": { ar: "الاسم الكامل", en: "Full name" },
   "demo.businessEmail": { ar: "البريد الإلكتروني للعمل", en: "Business email" },
+  "demo.phone": { ar: "رقم الهاتف", en: "Phone" },
+  "demo.phonePlaceholder": { ar: "+966 5X XXX XXXX", en: "+966 5X XXX XXXX" },
   "demo.emailPlaceholder": { ar: "you@company.com", en: "you@company.com" },
   "demo.submit": { ar: "إرسال الطلب", en: "Submit request" },
   "demo.submitting": { ar: "جاري الإرسال…", en: "Sending…" },
@@ -49,6 +51,7 @@ export const translations = {
   },
   "demo.close": { ar: "إغلاق", en: "Close" },
   "demo.nameRequired": { ar: "يرجى إدخال الاسم الكامل.", en: "Please enter your full name." },
+  "demo.phoneRequired": { ar: "يرجى إدخال رقم هاتف صحيح.", en: "Please enter a valid phone number." },
   "demo.emailInvalid": { ar: "يرجى إدخال بريد إلكتروني صحيح.", en: "Please enter a valid email address." },
   "demo.emailBusinessOnly": {
     ar: "يرجى استخدام بريد عمل. Gmail وHotmail وOutlook وغيرها غير مقبولة.",

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useEffect, useId, useState } from "react"
-import { CheckCircle2, Mail, User, X } from "lucide-react"
+import { CheckCircle2, Mail, Phone, User, X } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
 import { submitDemoRequest } from "@/lib/api"
 import { isBusinessEmail, isValidEmailFormat } from "@/lib/business-email"
@@ -17,6 +17,7 @@ export function DemoRequestDialog({ open, onClose }: Props) {
   const titleId = useId()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,6 +35,7 @@ export function DemoRequestDialog({ open, onClose }: Props) {
     if (!open) {
       setName("")
       setEmail("")
+      setPhone("")
       setSubmitting(false)
       setSent(false)
       setError(null)
@@ -44,8 +46,14 @@ export function DemoRequestDialog({ open, onClose }: Props) {
     e.preventDefault()
     const fullName = name.trim()
     const businessEmail = email.trim()
+    const phoneValue = phone.trim()
+    const phoneDigits = phoneValue.replace(/\D/g, "")
     if (!fullName) {
       setError(t("demo.nameRequired"))
+      return
+    }
+    if (phoneDigits.length < 8) {
+      setError(t("demo.phoneRequired"))
       return
     }
     if (!isValidEmailFormat(businessEmail)) {
@@ -60,7 +68,7 @@ export function DemoRequestDialog({ open, onClose }: Props) {
     setSubmitting(true)
     setError(null)
     try {
-      await submitDemoRequest({ name: fullName, email: businessEmail })
+      await submitDemoRequest({ name: fullName, email: businessEmail, phone: phoneValue })
       setSent(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : t("demo.error"))
@@ -129,6 +137,23 @@ export function DemoRequestDialog({ open, onClose }: Props) {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    className="w-full rounded-xl border border-border bg-background py-2.5 ps-10 pe-3 text-sm text-foreground outline-none ring-amber/40 focus:ring-2"
+                  />
+                </span>
+              </label>
+              <label className="block space-y-1.5">
+                <span className="text-sm font-semibold text-foreground">{t("demo.phone")}</span>
+                <span className="relative block">
+                  <Phone className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="tel"
+                    name="phone"
+                    autoComplete="tel"
+                    required
+                    dir="ltr"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t("demo.phonePlaceholder")}
                     className="w-full rounded-xl border border-border bg-background py-2.5 ps-10 pe-3 text-sm text-foreground outline-none ring-amber/40 focus:ring-2"
                   />
                 </span>

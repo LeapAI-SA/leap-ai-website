@@ -189,7 +189,7 @@ export async function loginAdmin(email: string, password: string) {
   return res.json() as Promise<{ token: string; user: { email: string; role: string } }>
 }
 
-export async function submitDemoRequest(payload: { name: string; email: string }) {
+export async function submitDemoRequest(payload: { name: string; email: string; phone: string }) {
   const res = await clientFetch(`${browserApiUrl()}/api/public/demo`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

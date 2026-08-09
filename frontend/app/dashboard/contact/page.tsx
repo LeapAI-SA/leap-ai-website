@@ -1,9 +1,15 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Mail, Phone, Trash2, CheckCircle2, Circle, RefreshCw, Eye } from "lucide-react"
+import { Mail, Phone, Trash2, CheckCircle2, Circle, RefreshCw, Eye, X } from "lucide-react"
 import { adminFetch, type ContactMessage } from "@/lib/api"
 import { PageHeader, Panel, LoadingBlock, Alert, DashButton } from "@/components/dashboard/ui"
+
+function sourceLabel(source: ContactMessage["source"]) {
+  if (source === "partner") return "Partner form"
+  if (source === "demo") return "Book a demo"
+  return "Contact Us"
+}
 
 function formatDate(value: string) {
   try {
@@ -42,11 +48,31 @@ export default function DashboardContactPage() {
     return () => clearInterval(timer)
   }, [])
 
+  useEffect(() => {
+    if (!selectedId) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedId(null)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [selectedId])
+
   const unreadCount = useMemo(() => messages.filter((m) => !m.read).length, [messages])
   const selectedMessage = useMemo(
     () => messages.find((item) => item.id === selectedId) ?? null,
     [messages, selectedId],
   )
+
+  function closeView() {
+    setSelectedId(null)
+  }
+
+  async function openView(item: ContactMessage) {
+    setSelectedId(item.id)
+    if (!item.read) {
+      void toggleRead(item)
+    }
+  }
 
   async function toggleRead(item: ContactMessage) {
     setBusyId(item.id)
@@ -153,18 +179,14 @@ export default function DashboardContactPage() {
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {item.source === "partner"
-                          ? "Partner form"
-                          : item.source === "demo"
-                            ? "Book a demo"
-                            : "Contact Us"}
+                        {sourceLabel(item.source)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt)}</td>
                       <td className="px-3 py-2">
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            onClick={() => setSelectedId(item.id)}
+                            onClick={() => openView(item)}
                             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
                           >
                             <Eye className="size-3.5" />
@@ -196,40 +218,85 @@ export default function DashboardContactPage() {
               </table>
             </div>
 
-            {selectedMessage && (
-              <article className="rounded-2xl border border-border bg-card p-5">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-navy">{selectedMessage.name}</h3>
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                        {selectedMessage.source === "partner" ? "Partner form" : "Contact Us"}
-                      </span>
-                    </div>
-                    {selectedMessage.company && (
-                      <p className="text-sm text-muted-foreground">{selectedMessage.company}</p>
-                    )}
-                    {selectedMessage.address && (
-                      <p className="text-sm text-muted-foreground">{selectedMessage.address}</p>
-                    )}
-                    <p className="mt-1 text-xs text-muted-foreground">{formatDate(selectedMessage.createdAt)}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(null)}
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-navy hover:bg-muted"
-                  >
-                    Close
-                  </button>
-                </div>
-                <p className="mt-4 whitespace-pre-wrap rounded-xl bg-muted/40 p-4 text-sm leading-relaxed text-foreground">
-                  {selectedMessage.message}
-                </p>
-              </article>
-            )}
           </div>
         )}
       </Panel>
+
+      {selectedMessage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-navy/60 p-4 backdrop-blur-sm"
+          onClick={closeView}
+          role="presentation"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="contact-view-title"
+            className="relative w-full max-w-lg rounded-3xl border border-border bg-card p-6 shadow-2xl sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={closeView}
+              className="absolute end-4 top-4 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Close"
+            >
+              <X className="size-5" />
+            </button>
+
+            <div className="flex flex-wrap items-center gap-2 pe-10">
+              <h3 id="contact-view-title" className="text-xl font-bold text-navy">
+                {selectedMessage.name}
+              </h3>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                {sourceLabel(selectedMessage.source)}
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">{formatDate(selectedMessage.createdAt)}</p>
+
+            <dl className="mt-5 space-y-3 text-sm">
+              <div>
+                <dt className="font-semibold text-muted-foreground">Email</dt>
+                <dd>
+                  <a href={`mailto:${selectedMessage.email}`} className="font-medium text-primary hover:underline">
+                    {selectedMessage.email}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt className="font-semibold text-muted-foreground">Phone</dt>
+                <dd dir="ltr">
+                  {selectedMessage.phone ? (
+                    <a href={`tel:${selectedMessage.phone.replace(/\s/g, "")}`} className="font-medium text-primary hover:underline">
+                      {selectedMessage.phone}
+                    </a>
+                  ) : (
+                    "—"
+                  )}
+                </dd>
+              </div>
+              {selectedMessage.company ? (
+                <div>
+                  <dt className="font-semibold text-muted-foreground">Company</dt>
+                  <dd>{selectedMessage.company}</dd>
+                </div>
+              ) : null}
+              {selectedMessage.address ? (
+                <div>
+                  <dt className="font-semibold text-muted-foreground">Address</dt>
+                  <dd>{selectedMessage.address}</dd>
+                </div>
+              ) : null}
+              <div>
+                <dt className="font-semibold text-muted-foreground">Message</dt>
+                <dd className="mt-1 whitespace-pre-wrap rounded-xl bg-muted/40 p-4 leading-relaxed text-foreground">
+                  {selectedMessage.message || "—"}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

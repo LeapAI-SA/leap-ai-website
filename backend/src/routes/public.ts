@@ -84,9 +84,11 @@ router.post("/demo", contactLimiter, async (req, res) => {
   const body = req.body as Record<string, unknown>
   const name = trimString(body.name, 120)
   const email = trimString(body.email, 200).toLowerCase()
+  const phone = trimString(body.phone, 40)
+  const phoneDigits = phone.replace(/\D/g, "")
 
-  if (!isNonEmptyString(name) || !isValidEmail(email)) {
-    return res.status(400).json({ error: "Full name and a valid business email are required" })
+  if (!isNonEmptyString(name) || !isValidEmail(email) || phoneDigits.length < 8) {
+    return res.status(400).json({ error: "Full name, valid business email, and phone are required" })
   }
   if (!isBusinessEmail(email)) {
     return res.status(400).json({
@@ -100,12 +102,12 @@ router.post("/demo", contactLimiter, async (req, res) => {
     email,
     company: "",
     address: "",
-    phone: "",
+    phone,
     message: "Book a demo request",
   })
 
   try {
-    const mail = await sendDemoLeadEmail({ name, email })
+    const mail = await sendDemoLeadEmail({ name, email, phone })
     console.log(`Demo lead saved: ${item._id.toString()} emailed=${mail.emailed}`)
     res.status(201).json({ ok: true, id: item._id.toString(), emailed: mail.emailed })
   } catch (err) {

@@ -19,7 +19,7 @@ function createTransport() {
   })
 }
 
-export async function sendDemoLeadEmail(input: { name: string; email: string }) {
+export async function sendDemoLeadEmail(input: { name: string; email: string; phone: string }) {
   if (!smtpConfigured()) {
     console.warn(
       "SMTP is not configured — demo lead saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally DEMO_LEADS_EMAIL).",
@@ -39,6 +39,7 @@ export async function sendDemoLeadEmail(input: { name: string; email: string }) 
       "",
       `Full name: ${input.name}`,
       `Business email: ${input.email}`,
+      `Phone: ${input.phone}`,
       "",
       "Reply directly to this message to reach the lead.",
     ].join("\n"),
@@ -47,6 +48,7 @@ export async function sendDemoLeadEmail(input: { name: string; email: string }) 
       <ul>
         <li><strong>Full name:</strong> ${escapeHtml(input.name)}</li>
         <li><strong>Business email:</strong> ${escapeHtml(input.email)}</li>
+        <li><strong>Phone:</strong> ${escapeHtml(input.phone)}</li>
       </ul>
       <p>Reply directly to this message to reach the lead.</p>
     `,
