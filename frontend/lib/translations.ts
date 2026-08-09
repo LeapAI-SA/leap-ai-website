@@ -5,7 +5,6 @@ export const translations = {
   "header.hours": { ar: "الأحد - الخميس 8.00 - 17.00", en: "Sun - Thu 8.00 - 17.00" },
   "header.email": { ar: "البريد:", en: "Email:" },
   "header.phone": { ar: "الهاتف:", en: "Phone:" },
-  "header.search": { ar: "بحث", en: "Search" },
   "header.menu": { ar: "القائمة", en: "Menu" },
   "nav.home": { ar: "الرئيسية", en: "Home" },
   "nav.about": { ar: "معلومات عنا", en: "About Us" },

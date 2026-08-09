@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "motion/react"
-import { Clock, Mail, Phone, Search, Menu, X, ChevronDown, ArrowLeft, Globe } from "lucide-react"
+import { Clock, Mail, Phone, Menu, X, ChevronDown, ArrowLeft, Globe } from "lucide-react"
 import { type NavItem } from "@/lib/site-data"
 import { useNavContent } from "@/lib/nav-content-context"
 import { useLanguage } from "@/lib/i18n"
@@ -194,12 +194,6 @@ export function SiteHeader() {
             >
               <Globe className="size-3.5" />
               {t("nav.langToggle")}
-            </button>
-            <button
-              aria-label={t("header.search")}
-              className="hidden size-9 items-center justify-center rounded-full border border-white/25 text-navy-foreground/80 transition-colors hover:border-amber hover:text-amber md:flex"
-            >
-              <Search className="size-4" />
             </button>
             <button
               aria-label={t("header.menu")}
