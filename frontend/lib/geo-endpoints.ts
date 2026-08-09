@@ -18,7 +18,7 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     path: "/llms.txt",
     label: "llms.txt",
     description: "Short summary about LeapAI for AI tools",
-    expect: "LeapAI",
+    expect: "AI-native",
   },
   {
     id: "llms-full",
@@ -32,21 +32,21 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     path: "/llms-small.txt",
     label: "llms-small.txt",
     description: "Compact summary for AI crawlers",
-    expect: "LeapAI",
+    expect: "AI-native",
   },
   {
     id: "robots",
     path: "/robots.txt",
     label: "robots.txt",
     description: "Crawler rules and sitemap",
-    expect: "GPTBot",
+    expect: "Google-CloudVertexBot",
   },
   {
     id: "sitemap",
     path: "/sitemap.xml",
     label: "sitemap.xml",
     description: "List of all public pages",
-    expect: "llms.txt",
+    expect: "resources/leap-ai-saudi-ai-native-cx-platform",
   },
   {
     id: "ai-txt",

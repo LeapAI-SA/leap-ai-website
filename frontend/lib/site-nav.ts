@@ -19,6 +19,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us" },
   ],
   headerRight: [
+    { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
@@ -28,6 +29,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions" },
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products" },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases" },
+    { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
@@ -37,11 +39,26 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
   ],
 }
 
+const RESOURCES_LINK: SiteNavLink = { label: { ar: "الموارد", en: "Resources" }, href: "/resources" }
+
+function ensureResourcesLink(links: SiteNavLink[], beforeHref: string): SiteNavLink[] {
+  if (links.some((link) => link.href === "/resources" || link.href.startsWith("/resources/"))) {
+    return links
+  }
+  const next = [...links]
+  const idx = next.findIndex((link) => link.href === beforeHref)
+  if (idx >= 0) next.splice(idx, 0, RESOURCES_LINK)
+  else next.push(RESOURCES_LINK)
+  return next
+}
+
 export function mergeNavigation(navigation?: Partial<SiteNavigation> | null): SiteNavigation {
+  const headerRight = navigation?.headerRight?.length ? navigation.headerRight : DEFAULT_NAVIGATION.headerRight
+  const footerLinks = navigation?.footerLinks?.length ? navigation.footerLinks : DEFAULT_NAVIGATION.footerLinks
   return {
     headerLeft: navigation?.headerLeft?.length ? navigation.headerLeft : DEFAULT_NAVIGATION.headerLeft,
-    headerRight: navigation?.headerRight?.length ? navigation.headerRight : DEFAULT_NAVIGATION.headerRight,
-    footerLinks: navigation?.footerLinks?.length ? navigation.footerLinks : DEFAULT_NAVIGATION.footerLinks,
+    headerRight: ensureResourcesLink(headerRight, "/become-a-partner"),
+    footerLinks: ensureResourcesLink(footerLinks, "/become-a-partner"),
     footerLegal: navigation?.footerLegal?.length ? navigation.footerLegal : DEFAULT_NAVIGATION.footerLegal,
   }
 }

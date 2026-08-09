@@ -10,6 +10,7 @@ const PRIORITY: Record<string, number> = {
   "/solutions": 0.9,
   "/products": 0.9,
   "/use-cases": 0.9,
+  "/resources": 0.9,
   "/about-us": 0.8,
   "/contact-us": 0.7,
   "/become-a-partner": 0.7,
@@ -23,6 +24,8 @@ function changeFrequencyFor(path: string): MetadataRoute.Sitemap[number]["change
     path === "/solutions" ||
     path === "/products" ||
     path === "/use-cases" ||
+    path === "/resources" ||
+    path.startsWith("/resources/") ||
     path.startsWith("/llms") ||
     path.includes("ai.txt")
   ) {

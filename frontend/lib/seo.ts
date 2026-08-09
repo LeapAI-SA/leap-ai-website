@@ -10,12 +10,14 @@ export function getSiteUrl() {
 export const siteConfig = {
   name: "LeapAI",
   nameFull: "Leap AI",
-  taglineAr: "أول منصة سحابية محلية متقدمة لتجربة العملاء",
-  taglineEn: "The first advanced local cloud platform for customer experience",
+  taglineAr:
+    "المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة، متوافقة مع نظام حماية البيانات الشخصية في الرياض.",
+  taglineEn:
+    "Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh.",
   descriptionAr:
-    "LeapAI منصة سعودية لتجربة العملاء تشمل مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL.",
+    "LeapAI هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات سلة وزد وOdoo — استضافة محلية في الرياض ومتوافقة مع نظام حماية البيانات الشخصية.",
   descriptionEn:
-    "LeapAI is a Saudi customer experience platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and integrations with Salla, Zid, and Odoo — PDPL-ready local hosting.",
+    "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh.",
   locale: "ar_SA",
   localeAlt: "en_US",
   twitterHandle: "@leapai_cx",
@@ -23,13 +25,18 @@ export const siteConfig = {
   keywords: [
     "LeapAI",
     "Leap AI",
+    "AI-native CX platform",
+    "AI-native customer experience",
     "customer experience",
     "CX platform",
     "contact center",
     "WhatsApp Business",
     "AI chatbot",
     "Saudi Arabia",
+    "PDPL",
     "تجربة العملاء",
+    "منصة تجربة العملاء",
+    "ذكاء اصطناعي أصيل",
     "مركز اتصال",
     "ذكاء اصطناعي",
     "واتساب للأعمال",
@@ -77,13 +84,14 @@ const SEO_TITLE_MIN_LENGTH = 50
 const SEO_TITLE_MAX_LENGTH = 60
 
 const TITLE_SUFFIX_BY_PATH: Record<string, string> = {
-  "/": "CX Platform, Contact Center, and AI Automation in Saudi",
+  "/": "AI-Native CX Platform in Saudi Arabia",
   "/solutions": "Omnichannel CX, Bots, and Customer Journey Automation",
   "/products": "WhatsApp, Survey, Ticketing, and AI CX Tools",
   "/use-cases": "Retail, Telecom, Banking, and Healthcare Scenarios",
   "/contact-us": "Book a Demo, Get Pricing, and Talk to Experts",
   "/become-a-partner": "Reseller and Integration Partner Program in KSA",
-  "/about-us": "Saudi CX Company for AI, Automation, and PDPL Hosting",
+  "/about-us": "Saudi AI-Native CX Company for PDPL Hosting",
+  "/resources": "AI-Native CX Insights, News, and Guides",
   "/privacy-policy": "Data Handling, Security, and PDPL Compliance Terms",
 }
 
@@ -102,6 +110,7 @@ function getTitleSuffix(path: string) {
   if (path.startsWith("/solutions/")) return "AI and Omnichannel Customer Experience Solution"
   if (path.startsWith("/products/")) return "Customer Engagement Product for Growth and Service"
   if (path.startsWith("/use-cases/")) return "Industry Use Case for Automation and Customer Experience"
+  if (path.startsWith("/resources/")) return "AI-Native CX Resource for Saudi Enterprises"
   if (path.startsWith("/")) {
     const label = titleFromSlug(path)
     if (label) return `${label} Insights, Features, and Deployment Guide`
@@ -279,13 +288,15 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 }
 
 export function buildHomeMetadata(settings?: PublicSiteSettings | null): Metadata {
+  const titleEn = settings?.seo?.siteTitle?.en || `${siteConfig.name} — ${siteConfig.taglineEn}`
   const titleAr = settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
+  const descEn = settings?.seo?.metaDescription?.en || siteConfig.descriptionEn
   const descAr = settings?.seo?.metaDescription?.ar || siteConfig.descriptionAr
 
   return buildPageMetadata({
-    title: titleAr,
+    title: titleEn,
     titleAr,
-    description: descAr,
+    description: descEn,
     descriptionAr: descAr,
     path: "/",
     image: settings?.images?.hero || siteConfig.defaultOgImage,
@@ -299,7 +310,7 @@ export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadat
     typeof home.title === "object" && home.title && "absolute" in home.title
       ? String(home.title.absolute)
       : normalizeSeoTitle(
-          settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
+          settings?.seo?.siteTitle?.en || `${siteConfig.name} — ${siteConfig.taglineEn}`,
           brand,
           "/",
         )
@@ -369,7 +380,7 @@ export function buildWebsiteSchema() {
     "@type": "WebSite",
     name: siteConfig.name,
     url: getSiteUrl(),
-    description: siteConfig.descriptionAr,
+    description: siteConfig.descriptionEn,
     inLanguage: ["ar", "en"],
     publisher: { "@type": "Organization", name: siteConfig.name },
   }
@@ -382,6 +393,7 @@ export function buildSiteNavigationSchema() {
     { name: "Solutions", nameAr: "حلولنا", path: "/solutions" },
     { name: "Products", nameAr: "منتجاتنا", path: "/products" },
     { name: "Use Cases", nameAr: "حالات الاستخدام", path: "/use-cases" },
+    { name: "Resources", nameAr: "الموارد", path: "/resources" },
     { name: "Become a Partner", nameAr: "كن شريكنا", path: "/become-a-partner" },
     { name: "Contact Us", nameAr: "اتصل بنا", path: "/contact-us" },
     {

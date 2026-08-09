@@ -17,6 +17,7 @@ const typeLabels: Record<ContentItemPublic["type"], string> = {
   solution: "Solution",
   product: "Product",
   "use-case": "Use Case",
+  article: "Article",
 }
 
 export default function DashboardContentPage() {
@@ -37,6 +38,7 @@ export default function DashboardContentPage() {
       solution: items.filter((i) => i.type === "solution").length,
       product: items.filter((i) => i.type === "product").length,
       "use-case": items.filter((i) => i.type === "use-case").length,
+      article: items.filter((i) => i.type === "article").length,
     }),
     [items],
   )
@@ -56,7 +58,7 @@ export default function DashboardContentPage() {
     <div className="space-y-8">
       <PageHeader
         title="Content Library"
-        description="Manage solutions, products, and use cases displayed on your public website."
+        description="Manage solutions, products, use cases, and Resources articles displayed on your public website."
         actions={
           <DashButton href="/dashboard/content/new" variant="amber">
             <Plus className="size-4" />
@@ -74,6 +76,7 @@ export default function DashboardContentPage() {
             { id: "solution", label: "Solutions", count: counts.solution },
             { id: "product", label: "Products", count: counts.product },
             { id: "use-case", label: "Use Cases", count: counts["use-case"] },
+            { id: "article", label: "Resources", count: counts.article },
           ]}
         />
         <div className="relative max-w-sm flex-1">

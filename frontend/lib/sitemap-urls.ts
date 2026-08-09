@@ -1,13 +1,15 @@
 import { solutionsGroups, products, useCases } from "@/lib/site-data"
+import { ARTICLES } from "@/lib/articles"
 import { absoluteUrl } from "@/lib/seo"
 
-/** Canonical public URLs included in /sitemap.xml (39 total). */
+/** Canonical public URLs included in /sitemap.xml. */
 export function getSitemapPaths(): string[] {
   return [
     "/",
     "/solutions",
     "/products",
     "/use-cases",
+    "/resources",
     "/contact-us",
     "/become-a-partner",
     "/about-us",
@@ -19,6 +21,7 @@ export function getSitemapPaths(): string[] {
     ...solutionsGroups.flatMap((g) => g.items.map((item) => `/solutions/${item.slug}`)),
     ...products.map((item) => `/products/${item.slug}`),
     ...useCases.map((item) => `/use-cases/${item.slug}`),
+    ...ARTICLES.map((item) => `/resources/${item.slug}`),
   ]
 }
 

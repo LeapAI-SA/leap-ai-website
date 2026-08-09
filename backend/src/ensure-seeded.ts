@@ -5,6 +5,7 @@ import { dirname, join } from "path"
 import { User } from "./models/User.js"
 import { getOrCreateSettings } from "./models/SiteSettings.js"
 import { ContentItem } from "./models/ContentItem.js"
+import { upsertArticlesFromSeed } from "./lib/upsert-articles.js"
 
 type Localized = { ar: string; en: string }
 type SeedItem = {
@@ -94,4 +95,5 @@ export async function ensureSeeded() {
 
   await getOrCreateSettings()
   await importContent()
+  await upsertArticlesFromSeed()
 }

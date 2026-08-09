@@ -57,12 +57,12 @@ const DEFAULT_IMAGES = {
 
 const DEFAULT_SEO = {
   siteTitle: {
-    ar: "Leap AI — أول منصة سحابية محلية متقدمة لتجربة العملاء",
-    en: "Leap AI — The first advanced local cloud platform for customer experience",
+    ar: "LeapAI — المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي",
+    en: "LeapAI — Saudi Arabia's premier AI-native CX platform",
   },
   metaDescription: {
-    ar: "LeapAI منصة سعودية لتجربة العملاء تشمل مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL.",
-    en: "LeapAI is a Saudi customer experience platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and integrations with Salla, Zid, and Odoo — PDPL-ready local hosting.",
+    ar: "LeapAI هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات سلة وزد وOdoo — استضافة محلية في الرياض ومتوافقة مع نظام حماية البيانات الشخصية.",
+    en: "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh.",
   },
   footerText: {
     ar: "هدفنا هو تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — ودفع نجاح الأعمال مع إثراء الحياة.",

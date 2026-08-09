@@ -1,5 +1,10 @@
 import mongoose, { Schema } from "mongoose"
 import { rewriteFeatureList, rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
+import {
+  ensureAiNativeFaq,
+  ensureResourcesNav,
+  rewriteLocalizedCxCopy,
+} from "../lib/ai-native-claim.js"
 import { cacheDel } from "../config/redis.js"
 
 const localizedSchema = new Schema(
@@ -88,6 +93,7 @@ const defaultNavigation = () => ({
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us", enabled: true },
   ],
   headerRight: [
+    { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
   ],
@@ -97,6 +103,7 @@ const defaultNavigation = () => ({
     { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions", enabled: true },
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products", enabled: true },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases", enabled: true },
+    { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
   ],
@@ -133,15 +140,15 @@ const siteSettingsSchema = new Schema(
       line2: {
         type: localizedSchema,
         default: () => ({
-          ar: "أول منصة سحابية محلية متقدمة لتجربة العملاء.",
-          en: "is the first advanced local cloud platform for customer experience.",
+          ar: "المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة ومتوافقة مع نظام حماية البيانات الشخصية.",
+          en: "is Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh.",
         }),
       },
       sub1: {
         type: localizedSchema,
         default: () => ({
-          ar: "LeapAI منصة سحابية سعودية مخصصة لتجربة العملاء تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع PDPL ودعم متخصص لضمان تشغيل مستقر ونمو قابل للقياس.",
-          en: "LeapAI is a Saudi cloud platform for customer experience that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting and dedicated support.",
+          ar: "LeapAI المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع نظام حماية البيانات الشخصية ودعم رؤية 2030.",
+          en: "LeapAI is Saudi Arabia's premier AI-native CX platform that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting aligned to Vision 2030.",
         }),
       },
       sub2: {
@@ -191,15 +198,15 @@ const siteSettingsSchema = new Schema(
       siteTitle: {
         type: localizedSchema,
         default: () => ({
-          ar: "Leap AI — أول منصة سحابية محلية متقدمة لتجربة العملاء",
-          en: "Leap AI — The first advanced local cloud platform for customer experience",
+          ar: "LeapAI — المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي",
+          en: "LeapAI — Saudi Arabia's premier AI-native CX platform",
         }),
       },
       metaDescription: {
         type: localizedSchema,
         default: () => ({
-          ar: "LeapAI منصة سعودية لتجربة العملاء تشمل مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL.",
-          en: "LeapAI is a Saudi customer experience platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and integrations with Salla, Zid, and Odoo — PDPL-ready local hosting.",
+          ar: "LeapAI هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: مركز اتصال متعدد القنوات، واتساب للأعمال، شات بوت ذكي، وتكاملات سلة وزد وOdoo — استضافة محلية في الرياض ومتوافقة مع نظام حماية البيانات الشخصية.",
+          en: "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform for omni-channel contact centers, WhatsApp Business, AI chatbot, and Salla, Zid, and Odoo integrations — PDPL-ready local hosting in Riyadh.",
         }),
       },
       footerText: {
@@ -266,6 +273,13 @@ const siteSettingsSchema = new Schema(
       type: [faqItemSchema],
       default: () => [
         {
+          question: { ar: "ما هي LeapAI؟", en: "What is LeapAI?" },
+          answer: {
+            ar: "LeapAI (ليب) هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة ومتوافقة مع نظام حماية البيانات الشخصية في الرياض. توفر حلول مراكز اتصال متعددة القنوات، واتساب للأعمال، شات بوت بالذكاء الاصطناعي، وأتمتة التسويق الرقمي لخدمة العملاء والاحتفاظ بهم.",
+            en: "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh. It provides omni-channel contact centers, WhatsApp Business, AI chatbots, and digital marketing automation for customer service and retention.",
+          },
+        },
+        {
           question: { ar: "ما هي باقات Leap Space؟", en: "What are Leap Space pricing plans?" },
           answer: {
             ar: "الأسعار تبدأ من 149 و199 و299 ريال حسب الباقة، مع إمكانية تقديم باقات مخصصة حسب حجم التشغيل.",
@@ -318,6 +332,56 @@ export async function getOrCreateSettings() {
   if (settings.hero && cta && (OLD_HERO_CTA_AR.has(cta.ar) || OLD_HERO_CTA_EN.has(cta.en))) {
     settings.hero.cta = { ar: "حجز تجربة", en: "Book a demo" }
     dirty = true
+  }
+
+  if (settings.hero) {
+    const nextLine2 = rewriteLocalizedCxCopy(settings.hero.line2)
+    if (nextLine2) {
+      settings.hero.line2 = nextLine2
+      settings.markModified("hero")
+      dirty = true
+    }
+    const nextSub1 = rewriteLocalizedCxCopy(settings.hero.sub1)
+    if (nextSub1) {
+      settings.hero.sub1 = nextSub1
+      settings.markModified("hero")
+      dirty = true
+    }
+  }
+
+  if (settings.seo) {
+    const nextTitle = rewriteLocalizedCxCopy(settings.seo.siteTitle)
+    if (nextTitle) {
+      settings.seo.siteTitle = nextTitle
+      settings.markModified("seo")
+      dirty = true
+    }
+    const nextDesc = rewriteLocalizedCxCopy(settings.seo.metaDescription)
+    if (nextDesc) {
+      settings.seo.metaDescription = nextDesc
+      settings.markModified("seo")
+      dirty = true
+    }
+  }
+
+  const nextFaq = ensureAiNativeFaq(settings.faq)
+  const faqChanged =
+    nextFaq.length !== (settings.faq?.length ?? 0) ||
+    nextFaq.some((item, i) => item.answer?.en !== settings.faq?.[i]?.answer?.en)
+  if (faqChanged) {
+    settings.faq = nextFaq as typeof settings.faq
+    settings.markModified("faq")
+    dirty = true
+  }
+
+  if (settings.navigation?.headerRight?.length || settings.navigation?.footerLinks?.length) {
+    const headerMissing = (settings.navigation.headerRight ?? []).every((link) => link.href !== "/resources")
+    const footerMissing = (settings.navigation.footerLinks ?? []).every((link) => link.href !== "/resources")
+    if (headerMissing || footerMissing) {
+      settings.navigation = ensureResourcesNav(settings.navigation) as typeof settings.navigation
+      settings.markModified("navigation")
+      dirty = true
+    }
   }
 
   const pricingCta = settings.ctaLabels?.pricing

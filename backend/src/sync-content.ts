@@ -5,6 +5,7 @@ import { dirname, join } from "path"
 import { connectDB } from "./config/db.js"
 import { ContentItem } from "./models/ContentItem.js"
 import { cacheDel } from "./config/redis.js"
+import { upsertArticlesFromSeed } from "./lib/upsert-articles.js"
 
 type Localized = { ar: string; en: string }
 type SeedItem = {
@@ -99,9 +100,13 @@ export async function syncContentFromSeed() {
     )
   }
 
+  const articleSlugs = await upsertArticlesFromSeed()
+  for (const slug of articleSlugs) seedSlugs.add(slug)
+
   await cacheDel("public:content:solution")
   await cacheDel("public:content:product")
   await cacheDel("public:content:use-case")
+  await cacheDel("public:content:article")
 
   const total = await ContentItem.countDocuments()
   return { total, seedSlugs: seedSlugs.size }

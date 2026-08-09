@@ -95,13 +95,13 @@ export const DEFAULT_ABOUT_PAGE: AboutPageSettings = {
   storyHeading: { ar: "قصتنا", en: "Our Story" },
   story: {
     ar: [
-      "مع أكثر من 23 عامًا من الخبرة في مجال التكنولوجيا داخل السوق السعودي، أصبحت LeapAI ثمرة إرث وابتكار BAB International. وبصفتها رائدة في تكنولوجيا المعلومات والاتصالات منذ 1999، أطلقت BAB International منصة LeapAI في 2022 لتكون مخصصة لحلول الذكاء الاصطناعي للمؤسسات ورائدة في السوق كمزود رائد لحلول الذكاء الاصطناعي.",
+      "مع أكثر من 23 عامًا من الخبرة في مجال التكنولوجيا داخل السوق السعودي، أصبحت LeapAI ثمرة إرث وابتكار BAB International. وبصفتها رائدة في تكنولوجيا المعلومات والاتصالات منذ 1999، أطلقت BAB International منصة LeapAI في 2022 لتكون المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — سحابة محلية متوافقة مع نظام حماية البيانات الشخصية وداعمة لرؤية 2030.",
       "نهدف إلى تشكيل حقبة جديدة من التحول المدعوم بالذكاء الاصطناعي بقيادة خبرة تقنية وقيادية واسعة تمتد لأكثر من عقدين.",
       "شغوفون بالعمل معًا والمساعدة في ربط الشركات بالمستقبل الناشئ.",
       "نسعى إلى المساهمة في تحقيق أعلى معايير الرفاهية للمجتمع السعودي من خلال توفير قيمة مضافة في مجال خدمة العملاء وفق أعلى المعايير لتحقيق التميز.",
     ],
     en: [
-      "With more than 23 years of experience in the technology space within the Saudi market, LeapAI became the fruit of BAB International's legacy and innovation. As an ICT leader since 1999, BAB International initiated LeapAI in 2022 to be dedicated to enterprise AI solutions and a leader in the marketplace as a pioneer AI solution provider.",
+      "With more than 23 years of experience in the technology space within the Saudi market, LeapAI became the fruit of BAB International's legacy and innovation. As an ICT leader since 1999, BAB International initiated LeapAI in 2022 as Saudi Arabia's premier AI-native customer experience (CX) platform — a PDPL-ready local-cloud platform aligned with Vision 2030.",
       "We aim to shape a new era of AI-powered transformation led by vast technical and leadership experience spanning more than two decades.",
       "Passionate to work together and help bridge businesses to the emerging future.",
       "We seek to contribute to achieving the highest standards of excellence for Saudi society by providing added value in customer service in accordance with the highest standards.",
@@ -110,8 +110,8 @@ export const DEFAULT_ABOUT_PAGE: AboutPageSettings = {
   visionTagline: { ar: "كن في صدارة اللعبة", en: "Stay ahead of the game" },
   visionTitle: { ar: "رؤيتنا", en: "Our Vision" },
   visionText: {
-    ar: "تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — وتعزيز نجاح الأعمال مع إثراء الحياة.",
-    en: "To enable a symbiotic relationship between humans and artificial intelligence — enhancing business success while enriching lives.",
+    ar: "أن نكون المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — وتمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي بما يخدم رؤية 2030 ونظام حماية البيانات الشخصية.",
+    en: "To be Saudi Arabia's premier AI-native CX platform — enabling a symbiotic relationship between humans and AI in line with Vision 2030 and PDPL-ready local hosting.",
   },
   missionTitle: { ar: "مهمتنا", en: "Our Mission" },
   missionText: {

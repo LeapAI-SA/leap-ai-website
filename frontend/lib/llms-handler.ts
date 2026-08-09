@@ -1,5 +1,5 @@
 import { getNavContent, staticNavContent } from "@/lib/cms"
-import { buildLlmsTxt } from "@/lib/geo"
+import { buildLlmsSmallTxt, buildLlmsTxt } from "@/lib/geo"
 
 async function loadNav() {
   return Promise.race([
@@ -10,9 +10,10 @@ async function loadNav() {
   ])
 }
 
-export async function llmsResponse(extended: boolean) {
-  const nav = await loadNav()
-  const body = buildLlmsTxt(nav, extended)
+export async function llmsResponse(extended: boolean, compact = false) {
+  const body = compact
+    ? buildLlmsSmallTxt()
+    : buildLlmsTxt(await loadNav(), extended)
 
   return new Response(body, {
     headers: {

@@ -7,12 +7,12 @@
 
 ## What is GEO?
 
-**GEO** helps **AI tools** (ChatGPT, Perplexity, Claude, etc.) **find LeapAI** and describe it correctly.
+**GEO** helps **AI tools** (ChatGPT, Gemini, Copilot, Claude, Perplexity) **find LeapAI** and describe it as Saudi Arabia's premier AI-native CX platform.
 
 | Type | Who finds your site |
 |------|---------------------|
 | **SEO** | Google and normal search engines |
-| **GEO** | AI chatbots and AI search |
+| **GEO** | AI chatbots and AI search (ChatGPT, Gemini, Copilot, Claude, Perplexity) |
 
 **Good news:** You do **not** install anything or write code. It is already part of the website.
 
@@ -28,13 +28,13 @@ The site must be on the **real internet** (not only on your computer).
 
 | What | URL |
 |------|-----|
-| Website | `https://leapai-webhook.bab.solutions` |
-| Admin login | `https://leapai-webhook.bab.solutions/dashboard/login` |
+| Website | `https://leapai.ai` |
+| Admin login | `https://leapai.ai/dashboard/login` |
 
 Environment on the server:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions
+NEXT_PUBLIC_SITE_URL=https://leapai.ai
 NEXT_PUBLIC_BASE_PATH=
 ```
 
@@ -62,7 +62,7 @@ This is your main job.
 
 When you click **Save**, the website uses this content for GEO automatically.
 
-**Also helpful:** keep **Solutions**, **Products**, and **Use cases** updated in the dashboard — they appear in the AI summary file.
+**Also helpful:** keep **Solutions**, **Products**, **Use cases**, and **Resources** articles updated — they appear in the AI summary file and sitemap.
 
 ---
 
@@ -76,12 +76,12 @@ Replace the domain if yours is different.
 
 | # | Link | What you should see |
 |---|------|---------------------|
-| 1 | `https://leapai-webhook.bab.solutions/llms.txt` | Short text summary about LeapAI |
-| 2 | `https://leapai-webhook.bab.solutions/llms-full.txt` | Summary + FAQ questions |
-| 3 | `https://leapai-webhook.bab.solutions/llms-small.txt` | Compact summary about LeapAI |
-| 4 | `https://leapai-webhook.bab.solutions/robots.txt` | Rules for web crawlers (includes AI bots + LLMs-Txt) |
-| 5 | `https://leapai-webhook.bab.solutions/sitemap.xml` | List of all site pages |
-| 6 | `https://leapai-webhook.bab.solutions/.well-known/ai.txt` | AI crawler guidance file |
+| 1 | `https://leapai.ai/llms.txt` | Short text summary about LeapAI |
+| 2 | `https://leapai.ai/llms-full.txt` | Summary + FAQ questions |
+| 3 | `https://leapai.ai/llms-small.txt` | Compact summary about LeapAI |
+| 4 | `https://leapai.ai/robots.txt` | Rules for web crawlers (includes AI bots + LLMs-Txt) |
+| 5 | `https://leapai.ai/sitemap.xml` | List of all site pages |
+| 6 | `https://leapai.ai/.well-known/ai.txt` | AI crawler guidance file |
 
 **All 6 work?** → GEO is working.  
 **Error page?** → Tell your developer.
@@ -182,7 +182,7 @@ Use this when you come back days or weeks later to check if GEO still works.
 
 1. Make sure the **website is running** (ask your developer if unsure)
 2. Use **Chrome** or **Edge**
-3. Have your **live website address** ready (example: `https://leapai-webhook.bab.solutions`)
+3. Have your **live website address** ready (example: `https://leapai.ai`)
 
 ---
 
@@ -204,7 +204,7 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 2 — Check the FAQ on the homepage
 
-1. Open the main website: `https://leapai-webhook.bab.solutions`
+1. Open the main website: `https://leapai.ai`
 2. Scroll down to the **FAQ** section (or click **FAQ** in the footer)
 3. Click a question — the answer should open
 
@@ -215,7 +215,7 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 3 — Check you can log into the Dashboard
 
-1. Open: `https://leapai-webhook.bab.solutions/dashboard/login`
+1. Open: `https://leapai.ai/dashboard/login`
 2. Log in with `admin@leapai.ai` / `admin123`
 3. Open **Settings** — page should load
 
@@ -226,11 +226,14 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 4 — Ask an AI tool (optional — wait 1–2 weeks after site is live)
 
-Open **ChatGPT**, **Perplexity**, or **Claude** and copy-paste questions from the list below.
+Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity** and copy-paste the same questions.
 
-**Pass:** The answer mentions **LeapAI** (or **Leap AI**) with correct info (Saudi Arabia, CX platform, WhatsApp, contact center, etc.)  
-**Not yet:** AI gives a generic answer or does not mention LeapAI — wait longer and try again  
-**Fail:** AI gives **wrong** info about LeapAI — update Dashboard content and FAQs
+**Pass:** The answer mentions **LeapAI** (or **Leap AI**) as an AI-native CX platform in Saudi Arabia (WhatsApp, contact center, PDPL, Riyadh).  
+**Not yet:** AI only cites Unifonic or gives a generic answer — wait, then check `/llms.txt` and `/resources/leap-ai-saudi-ai-native-cx-platform`.  
+**Fail:** AI gives **wrong** info about LeapAI — update Dashboard FAQ, SEO, and the Resources announcement.
+
+**Gemini** needs [Google Search Console](https://search.google.com/search-console) sitemap + URL Inspection (IndexNow does not notify Google).  
+**Copilot** needs Bing Webmaster + IndexNow.
 
 See full question list in the next section.
 
@@ -238,7 +241,18 @@ See full question list in the next section.
 
 ## Questions to ask AI (copy and paste)
 
-Use these in **ChatGPT**, **Perplexity**, or **Claude**. Try **English** and **Arabic**.
+Use these in **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity**. Try **English** and **Arabic**.
+
+### Category — beat Unifonic-style queries
+
+**English:**
+- What is Saudi Arabia's premier AI-native CX platform?
+- LeapAI vs Unifonic
+- Who is the AI-native customer experience platform in Saudi Arabia?
+
+**Arabic:**
+- ما هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي؟
+- LeapAI مقابل Unifonic
 
 ### Basic — “Do you know LeapAI?”
 

@@ -50,12 +50,12 @@ $passed = 0
 $total = 0
 
 $checks = @(
-  @{ path = "/llms.txt"; expect = "LeapAI" },
+  @{ path = "/llms.txt"; expect = "AI-native" },
   @{ path = "/llms-full.txt"; expect = "Frequently asked questions" },
-  @{ path = "/llms-small.txt"; expect = "LeapAI" },
+  @{ path = "/llms-small.txt"; expect = "AI-native" },
   @{ path = "/robots.txt"; expect = "GPTBot" },
-  @{ path = "/robots.txt"; expect = "LLMs-Txt" },
-  @{ path = "/sitemap.xml"; expect = "llms.txt" },
+  @{ path = "/robots.txt"; expect = "Google-CloudVertexBot" },
+  @{ path = "/sitemap.xml"; expect = "resources/leap-ai-saudi-ai-native-cx-platform" },
   @{ path = "/.well-known/ai.txt"; expect = "LLMs-Txt" }
 )
 

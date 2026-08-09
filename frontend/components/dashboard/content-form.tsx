@@ -14,7 +14,7 @@ import {
 } from "@/components/dashboard/ui"
 
 export type ContentFormValues = {
-  type: "solution" | "product" | "use-case"
+  type: "solution" | "product" | "use-case" | "article"
   slug: string
   groupSlug: string
   groupTitle: { ar: string; en: string }
@@ -86,6 +86,7 @@ export function ContentForm({
               <option value="solution">Solution</option>
               <option value="product">Product</option>
               <option value="use-case">Use case</option>
+              <option value="article">Article / Resource</option>
             </select>
           </FormField>
           <FormField label="URL slug" hint="e.g. whatsapp-business">

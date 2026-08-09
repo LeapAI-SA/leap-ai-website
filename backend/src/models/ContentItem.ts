@@ -10,7 +10,7 @@ const localizedSchema = new Schema(
 
 const contentItemSchema = new Schema(
   {
-    type: { type: String, enum: ["solution", "product", "use-case"], required: true, index: true },
+    type: { type: String, enum: ["solution", "product", "use-case", "article"], required: true, index: true },
     slug: { type: String, required: true, unique: true, index: true },
     groupSlug: { type: String, default: "" },
     groupTitle: { type: localizedSchema, default: () => ({ ar: "", en: "" }) },
@@ -32,7 +32,7 @@ contentItemSchema.index({ type: 1, sortOrder: 1 })
 
 export const ContentItem = mongoose.model("ContentItem", contentItemSchema)
 
-export type ContentType = "solution" | "product" | "use-case"
+export type ContentType = "solution" | "product" | "use-case" | "article"
 
 export function serializeContentItem(item: InstanceType<typeof ContentItem>) {
   return {

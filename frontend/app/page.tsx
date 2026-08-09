@@ -32,6 +32,7 @@ export default async function Page() {
     { href: "/solutions", ar: "حلولنا", en: "Solutions" },
     { href: "/products", ar: "منتجاتنا", en: "Products" },
     { href: "/use-cases", ar: "حالات الاستخدام", en: "Use Cases" },
+    { href: "/resources", ar: "الموارد", en: "Resources" },
     { href: "/become-a-partner", ar: "كن شريكنا", en: "Become a Partner" },
     { href: "/contact-us", ar: "اتصل بنا", en: "Contact Us" },
   ] as const
@@ -40,8 +41,8 @@ export default async function Page() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": `${getSiteUrl()}/#webpage`,
-    name: `${siteConfig.nameFull} — ${siteConfig.taglineAr}`,
-    description: siteConfig.descriptionAr,
+    name: `${siteConfig.name} — ${siteConfig.taglineEn}`,
+    description: siteConfig.descriptionEn,
     url: absoluteUrl("/"),
     inLanguage: ["ar", "en"],
     isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },

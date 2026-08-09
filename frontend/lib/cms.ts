@@ -3,6 +3,7 @@ import type { ContentItemPublic, Localized } from "./api"
 import { fetchPublicContent, fetchWithTimeout } from "./api"
 import { getApiUrl, isBuildPhase } from "./api-url"
 import { solutionsGroups, solutionsFlat, products, useCases, findSolution, findProduct, findUseCase } from "./site-data"
+import { ARTICLES, findArticle, type ArticleItem } from "./articles"
 import { resolveContentImage } from "./page-images"
 
 export const staticNavContent = {
@@ -141,4 +142,36 @@ export async function allProductSlugs(): Promise<string[]> {
 
 export async function allUseCaseSlugs(): Promise<string[]> {
   return allSlugsForType("use-case", useCases.map((i) => i.slug))
+}
+
+function toArticleItem(item: ContentItemPublic): ArticleItem {
+  const fallback = findArticle(item.slug)
+  return {
+    slug: item.slug,
+    title: item.title,
+    excerpt: item.excerpt,
+    description: item.description,
+    features: item.features,
+    image: item.image || fallback?.image,
+    publishedAt: fallback?.publishedAt ?? item.updatedAt?.slice(0, 10) ?? "2026-08-09",
+    kind: item.slug === "leap-ai-saudi-ai-native-cx-platform" ? "news" : (fallback?.kind ?? "article"),
+  }
+}
+
+export async function getArticles(): Promise<ArticleItem[]> {
+  const items = await fetchPublicContent("article")
+  if (!items.length) return ARTICLES
+  const fromCms = items.sort((a, b) => a.sortOrder - b.sortOrder).map(toArticleItem)
+  const extra = ARTICLES.filter((article) => !fromCms.some((item) => item.slug === article.slug))
+  return [...fromCms, ...extra]
+}
+
+export async function resolveArticle(slug: string): Promise<ArticleItem | undefined> {
+  const cms = await fetchContentBySlug(slug)
+  if (cms?.type === "article") return toArticleItem(cms)
+  return findArticle(slug)
+}
+
+export async function allArticleSlugs(): Promise<string[]> {
+  return allSlugsForType("article", ARTICLES.map((item) => item.slug))
 }

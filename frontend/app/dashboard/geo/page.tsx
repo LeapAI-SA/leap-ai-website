@@ -270,7 +270,7 @@ export default function DashboardGeoPage() {
     <div className="space-y-8">
       <PageHeader
         title="GEO — AI visibility"
-        description="GEO helps ChatGPT, Perplexity, Claude, and other AI tools find and describe LeapAI correctly. Files update automatically when you save Site Settings and Content."
+        description="GEO helps ChatGPT, Gemini, Copilot, Claude, and Perplexity find and describe LeapAI as Saudi Arabia's premier AI-native CX platform. Files update when you save Site Settings and Content."
         actions={
           <DashButton onClick={() => checkAll()} variant="secondary" disabled={checkingAll}>
             <RefreshCw className={`size-4 ${checkingAll ? "animate-spin" : ""}`} />
@@ -424,8 +424,11 @@ export default function DashboardGeoPage() {
           >
             Search Console
           </a>{" "}
-          → Sitemaps → submit <span className="font-mono">sitemap.xml</span>, then use URL Inspection on priority
-          pages.
+          → Sitemaps → submit <span className="font-mono">sitemap.xml</span>, then use URL Inspection on{" "}
+          <span className="font-mono">/</span> and{" "}
+          <span className="font-mono">/resources/leap-ai-saudi-ai-native-cx-platform</span>. Gemini uses Google
+          Search — IndexNow does not notify Google. After deploy, ask ChatGPT, Gemini, Copilot, Claude, and
+          Perplexity: “What is Saudi Arabia’s premier AI-native CX platform?” and “LeapAI vs Unifonic.”
         </p>
       </Panel>
 
@@ -438,8 +441,8 @@ export default function DashboardGeoPage() {
                 <strong className="text-foreground">SEO</strong> — Google and normal search engines
               </li>
               <li>
-                <strong className="text-foreground">GEO</strong> — AI chatbots and AI search (ChatGPT, Claude,
-                Perplexity)
+                <strong className="text-foreground">GEO</strong> — AI chatbots and AI search (ChatGPT, Gemini,
+                Copilot, Claude, Perplexity)
               </li>
             </ul>
           </div>

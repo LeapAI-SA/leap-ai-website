@@ -51,7 +51,7 @@ export type PublicSiteSettings = {
 
 export type ContentItemPublic = {
   id: string
-  type: "solution" | "product" | "use-case"
+  type: "solution" | "product" | "use-case" | "article"
   slug: string
   groupSlug?: string
   groupTitle?: Localized
@@ -62,6 +62,7 @@ export type ContentItemPublic = {
   image?: string
   published: boolean
   sortOrder: number
+  updatedAt?: string
 }
 
 export type ContactMessage = {

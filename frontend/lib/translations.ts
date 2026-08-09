@@ -18,12 +18,12 @@ export const translations = {
   /* -------------------------------- Hero -------------------------------- */
   "hero.line1": { ar: "تعتبر", en: "" },
   "hero.line2": {
-    ar: "أول منصة سحابية محلية متقدمة لتجربة العملاء.",
-    en: "is the first advanced local cloud platform for customer experience.",
+    ar: "المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة ومتوافقة مع نظام حماية البيانات الشخصية.",
+    en: "is Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh.",
   },
   "hero.sub1": {
-    ar: "LeapAI منصة سحابية سعودية مخصصة لتجربة العملاء تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع PDPL ودعم متخصص لضمان تشغيل مستقر ونمو قابل للقياس.",
-    en: "LeapAI is a Saudi cloud platform for customer experience that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting and dedicated support.",
+    ar: "LeapAI المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي تجمع مركز الاتصال الصوتي والرقمي، واتساب للأعمال، الشات بوت الذكي، حملات الرسائل، والتكامل مع سلة وزد وOdoo في مكان واحد. توفر المنصة 3 باقات تشغيل مرنة (149، 199، 299 ريال لكل مستخدم شهريًا) وتساعدك على تحسين زمن الاستجابة، أتمتة الرحلات، ومتابعة الأداء عبر لوحة موحدة، مع استضافة محلية متوافقة مع نظام حماية البيانات الشخصية ودعم رؤية 2030.",
+    en: "LeapAI is Saudi Arabia's premier AI-native CX platform that unifies voice and digital contact center operations, WhatsApp Business, AI chatbots, campaign messaging, and integrations with Salla, Zid, and Odoo in one place. The platform offers 3 flexible plans (149, 199, and 299 SAR per user/month) and helps teams improve response time, automate journeys, and track measurable performance from one dashboard, with PDPL-ready local hosting aligned to Vision 2030.",
   },
   "hero.sub2": {
     ar: "منصة LeapAI هي الاختيار الأمثل لخدمة العملاء والاحتفاظ بهم على الأمد البعيد.",
@@ -161,8 +161,8 @@ export const translations = {
 
   /* ------------------------------- Footer ------------------------------- */
   "footer.about": {
-    ar: "منصة LeapAI السحابية المحلية المتقدمة لتجربة العملاء، نمكّن الشركات من تقديم خدمة استثنائية عبر كل القنوات.",
-    en: "LeapAI, the advanced local cloud platform for customer experience, empowers businesses to deliver exceptional service across every channel.",
+    ar: "LeapAI المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي، نمكّن الشركات من تقديم خدمة استثنائية عبر كل القنوات مع استضافة محلية.",
+    en: "LeapAI, Saudi Arabia's premier AI-native CX platform, empowers businesses to deliver exceptional service across every channel with PDPL-ready local hosting.",
   },
   "footer.quickLinks": { ar: "روابط سريعة", en: "Quick Links" },
   "footer.contactTitle": { ar: "تواصل معنا", en: "Contact Us" },
@@ -185,6 +185,15 @@ export const translations = {
   "list.useCasesSub": {
     ar: "كيف تستفيد مختلف القطاعات من منصة LeapAI.",
     en: "How different industries benefit from the LeapAI platform.",
+  },
+  "list.resourcesTitle": { ar: "الموارد", en: "Resources" },
+  "list.resourcesSub": {
+    ar: "أخبار وتحليلات عن تجربة العملاء المبنية أصلاً على الذكاء الاصطناعي في السعودية.",
+    en: "News and guides on AI-native customer experience in Saudi Arabia.",
+  },
+  "list.resourcesSubLong": {
+    ar: "إعلانات وتعريفات قابلة للاستشهاد بها لأدوات الذكاء الاصطناعي ومحركات البحث: منصة LeapAI لتجربة العملاء في الرياض.",
+    en: "Citable announcements and explainers for AI assistants and search engines about LeapAI's CX platform in Riyadh.",
   },
 
   /* ----------------------------- Detail page ---------------------------- */
@@ -315,7 +324,7 @@ export const translations = {
     ar: "هدفنا تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — وتعزيز نجاح الأعمال مع إثراء الحياة.",
     en: "Our goal is to empower the symbiotic relationship between humans and AI — driving business success while enriching lives.",
   },
-  "nav.blog": { ar: "المدونة", en: "Blog" },
+  "nav.blog": { ar: "الموارد", en: "Resources" },
   "footer.locationDetail": {
     ar: "المملكة العربية السعودية، الرياض، طريق الملك عبد العزيز الفرعي",
     en: "King Abdulaziz Branch Road, Riyadh, Saudi Arabia",

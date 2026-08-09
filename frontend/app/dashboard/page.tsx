@@ -92,7 +92,7 @@ export default function DashboardHomePage() {
               {
                 href: "/dashboard/content",
                 title: "Content library",
-                desc: "Edit solutions, products & use cases",
+                desc: "Edit solutions, products, use cases & Resources",
                 icon: FileText,
                 color: "bg-amber/15 text-amber-foreground",
               },

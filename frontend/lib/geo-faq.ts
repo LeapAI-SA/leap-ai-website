@@ -11,8 +11,8 @@ export const geoFaqItems: GeoFaqItem[] = [
       en: "What is LeapAI?",
     },
     answer: {
-      ar: "LeapAI (ليب) هي أول منصة سحابية محلية متقدمة لتجربة العملاء في المملكة العربية السعودية. توفر حلول مراكز اتصال متعددة القنوات، واتساب للأعمال، شات بوت بالذكاء الاصطناعي، وأتمتة التسويق الرقمي لخدمة العملاء والاحتفاظ بهم.",
-      en: "LeapAI is the first advanced local cloud customer experience (CX) platform in Saudi Arabia. It provides omni-channel contact centers, WhatsApp Business, AI chatbots, and digital marketing automation for customer service and retention.",
+      ar: "LeapAI (ليب) هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — أول منصة سحابية محلية متقدمة ومتوافقة مع نظام حماية البيانات الشخصية في الرياض. توفر حلول مراكز اتصال متعددة القنوات، واتساب للأعمال، شات بوت بالذكاء الاصطناعي، وأتمتة التسويق الرقمي لخدمة العملاء والاحتفاظ بهم.",
+      en: "LeapAI is Saudi Arabia's premier AI-native customer experience (CX) platform — the first advanced local-cloud CX platform, PDPL-ready in Riyadh. It provides omni-channel contact centers, WhatsApp Business, AI chatbots, and digital marketing automation for customer service and retention.",
     },
   },
   {
@@ -108,6 +108,9 @@ export const geoFaqItems: GeoFaqItem[] = [
 ]
 
 export const geoKnowsAbout = [
+  "AI-native CX",
+  "AI-native customer experience platform",
+  "Agentic customer experience",
   "Customer Experience",
   "Contact Center",
   "Omni-Channel",
@@ -117,11 +120,16 @@ export const geoKnowsAbout = [
   "Natural Language Understanding",
   "Voice Bot",
   "Digital Marketing Automation",
+  "PDPL",
+  "local cloud Saudi Arabia",
+  "Vision 2030",
   "CSAT",
   "NPS",
   "CRM",
   "Saudi Arabia",
   "تجربة العملاء",
+  "منصة تجربة العملاء",
+  "ذكاء اصطناعي أصيل",
   "مركز اتصال",
   "ذكاء اصطناعي",
   "واتساب للأعمال",

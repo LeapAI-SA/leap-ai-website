@@ -31,6 +31,7 @@ export function SiteFooter() {
     { href: "/solutions", label: { ar: "حلولنا", en: "Solutions" } },
     { href: "/products", label: { ar: "منتجاتنا", en: "Products" } },
     { href: "/use-cases", label: { ar: "حالات الاستخدام", en: "Use Cases" } },
+    { href: "/resources", label: { ar: "الموارد", en: "Resources" } },
     { href: "/contact-us", label: { ar: "اتصل بنا", en: "Contact Us" } },
     { href: "/become-a-partner", label: { ar: "كن شريكنا", en: "Become a Partner" } },
   ] as const

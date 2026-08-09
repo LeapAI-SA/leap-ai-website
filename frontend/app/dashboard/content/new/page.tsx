@@ -31,7 +31,7 @@ export default function NewContentPage() {
   return (
     <ContentForm
       title="Create content"
-      description="Add a new solution, product, or use case to your website."
+      description="Add a new solution, product, use case, or Resources article to your website."
       form={form}
       setForm={setForm}
       onSubmit={submit}
