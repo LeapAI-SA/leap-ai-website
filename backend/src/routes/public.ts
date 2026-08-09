@@ -7,6 +7,7 @@ import { isNonEmptyString, isValidEmail, trimString } from "../lib/validate.js"
 import { isBusinessEmail } from "../lib/business-email.js"
 import { sendDemoLeadEmail } from "../lib/mail.js"
 import { cacheGet, cacheSet } from "../config/redis.js"
+import { rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
 
 const router = Router()
 
@@ -38,6 +39,7 @@ router.get("/settings", async (_req, res) => {
   res.set("Cache-Control", "no-store")
   const cached = await cacheGet<ReturnType<typeof serializePublicSettings>>(CACHE_SETTINGS)
   if (cached) {
+    cached.pricingPlans = rewritePricingPlansCopy(cached.pricingPlans)
     return res.json(cached)
   }
 

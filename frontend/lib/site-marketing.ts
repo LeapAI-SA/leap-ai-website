@@ -1,4 +1,5 @@
 import { addonItems, pricingPlans, type AddonItem, type PricingPlan } from "./site-data"
+import { rewriteFeatureList } from "./whatsapp-tick"
 import type { Localized, LocalizedArr } from "./i18n"
 
 export type PartnerLogo = {
@@ -201,7 +202,14 @@ export function mergePartners(partners?: PartnerLogo[] | null): PartnerLogo[] {
 }
 
 export function mergePricingPlans(plans?: PricingPlan[] | null): PricingPlan[] {
-  return plans?.length ? plans : DEFAULT_PRICING_PLANS
+  const source = plans?.length ? plans : DEFAULT_PRICING_PLANS
+  return source.map((plan) => ({
+    ...plan,
+    features: {
+      ar: rewriteFeatureList(plan.features?.ar),
+      en: rewriteFeatureList(plan.features?.en),
+    },
+  }))
 }
 
 export function mergeAddonsSection(section?: Partial<AddonsSection> | null): AddonsSection {

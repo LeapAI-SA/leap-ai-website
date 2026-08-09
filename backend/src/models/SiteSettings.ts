@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose"
+import { rewriteFeatureList, rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
+import { cacheDel } from "../config/redis.js"
 
 const localizedSchema = new Schema(
   {
@@ -311,10 +313,28 @@ export async function getOrCreateSettings() {
     settings = await SiteSettings.create({})
   }
 
+  let dirty = false
   const cta = settings.hero?.cta
   if (settings.hero && cta && (OLD_HERO_CTA_AR.has(cta.ar) || OLD_HERO_CTA_EN.has(cta.en))) {
     settings.hero.cta = { ar: "حجز تجربة", en: "Book a demo" }
+    dirty = true
+  }
+
+  const plans = settings.pricingPlans ?? []
+  for (const plan of plans) {
+    const ar = plan.features?.ar ?? []
+    const en = plan.features?.en ?? []
+    const nextAr = rewriteFeatureList(ar)
+    const nextEn = rewriteFeatureList(en)
+    if (nextAr.some((line, i) => line !== ar[i]) || nextEn.some((line, i) => line !== en[i])) {
+      plan.features = { ar: nextAr, en: nextEn }
+      dirty = true
+    }
+  }
+
+  if (dirty) {
     await settings.save()
+    await cacheDel("public:settings")
   }
 
   return settings
@@ -336,7 +356,11 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     seo: settings.seo,
     navigation: settings.navigation ?? defaultNavigation(),
     partners: settings.partners ?? [],
-    pricingPlans: settings.pricingPlans ?? [],
+    pricingPlans: rewritePricingPlansCopy(
+      (settings.pricingPlans ?? []).map((plan) =>
+        typeof plan.toObject === "function" ? plan.toObject() : plan,
+      ),
+    ),
     addons: settings.addons,
     aboutPage: settings.aboutPage,
     privacyPage: settings.privacyPage,
