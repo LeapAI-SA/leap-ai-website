@@ -50,8 +50,14 @@ async function authorized(request: Request) {
   return false
 }
 
-function httpStatusForIndexNow(result: { ok: boolean; status: number }) {
+function httpStatusForIndexNow(result: {
+  ok: boolean
+  status: number
+  engines?: { status: number }[]
+}) {
   if (result.ok) return 200
+  const engines = result.engines ?? []
+  if (engines.length > 0 && engines.every((e) => e.status === 0)) return 503
   if (result.status === 0) return 503
   // Provider rejections (422, 403, etc.) — not a reverse-proxy failure
   return 422

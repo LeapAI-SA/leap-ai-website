@@ -34,6 +34,16 @@ type IndexNowStatus = {
   sitemapUrl: string
 }
 
+type IndexNowEngineResult = {
+  id: string
+  label: string
+  endpoint: string
+  ok: boolean
+  status: number
+  body: string
+  error?: string
+}
+
 type IndexNowSubmitResult = {
   ok: boolean
   status: number
@@ -43,6 +53,10 @@ type IndexNowSubmitResult = {
   body?: string
   error?: string
   googleNote?: string
+  engines?: IndexNowEngineResult[]
+  bingOk?: boolean
+  yandexOk?: boolean
+  bingOwnershipForbidden?: boolean
 }
 
 
@@ -51,31 +65,49 @@ function matchesExpect(content: string, expect?: string) {
   return content.includes(expect)
 }
 
-/** Bing returns this when the key file is fine but domain ownership is not bound yet. */
-function isIndexNowOwnershipForbidden(detail: string) {
-  return /UserForbiddedToAccessSite|unauthorized to access the site|verify the site using the key/i.test(
-    detail,
-  )
+const BING_INDEXNOW_NEXT_STEPS =
+  "Bing next steps: https://www.bing.com/webmasters → confirm https://leapai.ai is Verified → " +
+  "URL Submission → IndexNow → Generate API key → run `node scripts/rotate-indexnow-key.mjs --key=<bing-key>` → deploy → retry Submit."
+
+function engineSummary(engines?: IndexNowEngineResult[]) {
+  if (!engines?.length) return ""
+  return engines
+    .map((e) => `${e.label}: ${e.ok ? `OK ${e.status}` : `fail ${e.status}`}`)
+    .join(" · ")
 }
 
-function indexNowFailureText(data: IndexNowSubmitResult, keyHint: string) {
+function indexNowResultText(data: IndexNowSubmitResult, keyHint: string) {
+  const summary = engineSummary(data.engines)
+  const summarySuffix = summary ? ` (${summary})` : ""
+
+  if (data.ok && data.bingOwnershipForbidden) {
+    return (
+      `Submitted ${data.submitted} sitemap URLs — Yandex accepted; Bing still returns ownership 403.${summarySuffix} ` +
+      BING_INDEXNOW_NEXT_STEPS +
+      keyHint
+    )
+  }
+
+  if (data.ok) {
+    const bingNote = data.bingOk === false ? ` ${BING_INDEXNOW_NEXT_STEPS}` : ""
+    return `Submitted ${data.submitted} sitemap URLs to IndexNow (HTTP ${data.status}).${summarySuffix}${keyHint}${bingNote} Google still needs Search Console.`
+  }
+
   const detail =
     data.error ||
     (typeof data.body === "string" && data.body ? data.body : "") ||
     ""
 
-  if (isIndexNowOwnershipForbidden(detail)) {
+  if (data.bingOwnershipForbidden || /UserForbiddedToAccessSite|unauthorized to access the site/i.test(detail)) {
     return (
-      "IndexNow rejected ownership (Bing 403). The key file can be live while Bing still lacks a domain–key binding. " +
-      "Fix: open https://www.bing.com/webmasters → add https://leapai.ai → verify with XML file (not Google Search Console import) → " +
-      "save BingSiteAuth.xml into frontend/public/ → deploy → click Verify in Bing → retry Submit. " +
-      "Then check URL Submission / IndexNow in Bing Webmaster Tools." +
+      `IndexNow: Bing rejected ownership (403). Key file/BingSiteAuth can be live while Bing lacks an IndexNow key binding.${summarySuffix} ` +
+      BING_INDEXNOW_NEXT_STEPS +
       keyHint
     )
   }
 
   const fallback = detail || (data.status ? `Provider HTTP ${data.status}` : "Unknown error")
-  return `IndexNow failed${data.status ? ` (provider HTTP ${data.status})` : ""}. ${fallback}${keyHint}`
+  return `IndexNow failed${data.status ? ` (provider HTTP ${data.status})` : ""}.${summarySuffix} ${fallback}${keyHint}`
 }
 
 function indexNowApiUrl() {
@@ -164,15 +196,15 @@ export default function DashboardGeoPage() {
 
       if (data.ok) {
         setIndexNowMessage({
-          variant: "success",
-          text: `Submitted ${data.submitted} sitemap URLs to IndexNow (HTTP ${data.status}).${keyHint} Google still needs Search Console.`,
+          variant: data.bingOwnershipForbidden ? "info" : "success",
+          text: indexNowResultText(data, keyHint),
         })
         return
       }
 
       setIndexNowMessage({
         variant: "error",
-        text: indexNowFailureText(data, keyHint),
+        text: indexNowResultText(data, keyHint),
       })
     } catch (err) {
       setIndexNowMessage({
@@ -365,7 +397,7 @@ export default function DashboardGeoPage() {
           </div>
         ) : null}
         <p className="mt-4 text-xs text-muted-foreground">
-          For Bing ownership (required before IndexNow accepts URLs): open{" "}
+          For Bing IndexNow (if GEO shows Bing 403 while Yandex OK): open{" "}
           <a
             href="https://www.bing.com/webmasters"
             target="_blank"
@@ -374,10 +406,13 @@ export default function DashboardGeoPage() {
           >
             Bing Webmaster Tools
           </a>{" "}
-          → add <span className="font-mono">https://leapai.ai</span> → verify with{" "}
-          <strong className="text-foreground">XML file</strong> (not Google import) → place{" "}
-          <span className="font-mono">BingSiteAuth.xml</span> in <span className="font-mono">frontend/public/</span>{" "}
-          → deploy → Verify. See <span className="font-mono">BingSiteAuth.xml.example</span>.
+          → confirm <span className="font-mono">https://leapai.ai</span> is{" "}
+          <strong className="text-foreground">Verified</strong> → URL Submission → IndexNow →{" "}
+          <strong className="text-foreground">Generate API key</strong> → run{" "}
+          <span className="font-mono">node scripts/rotate-indexnow-key.mjs --key=&lt;bing-key&gt;</span> → deploy →
+          retry Submit. Site ownership file:{" "}
+          <span className="font-mono">BingSiteAuth.xml</span> (see{" "}
+          <span className="font-mono">BingSiteAuth.xml.example</span>).
         </p>
         <p className="mt-2 text-xs text-muted-foreground">
           For Google: open{" "}
@@ -559,8 +594,8 @@ export default function DashboardGeoPage() {
               "Keep SEO title and description accurate",
               "Publish solutions, products, and use cases in Content Library",
               "All 6 crawler files above should show OK",
-              "Verify https://leapai.ai in Bing Webmaster Tools with BingSiteAuth.xml (XML method)",
-              "Use Submit sitemap (IndexNow) after Bing ownership + deploy",
+              "If Bing IndexNow 403: Generate key in Bing Webmaster → npm run seo:rotate-indexnow-key -- --key=<key>",
+              "Use Submit sitemap (IndexNow) after deploy (Yandex may succeed even when Bing 403s)",
               "Be patient — AI may take days or weeks to mention LeapAI",
             ].map((line) => (
               <li key={line} className="flex gap-2">

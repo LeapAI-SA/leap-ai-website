@@ -40,6 +40,25 @@ async function ensureKeyLive(host, key) {
   return { keyUrl, ok: res.ok && text === key, status: res.status, text: text.slice(0, 80) }
 }
 
+async function submitToEndpoint(url, payload) {
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify(payload),
+    })
+    const body = await res.text().catch(() => "")
+    return { endpoint: url, status: res.status, ok: res.status === 200 || res.status === 202, body }
+  } catch (err) {
+    return {
+      endpoint: url,
+      status: 0,
+      ok: false,
+      body: err instanceof Error ? err.message : "network error",
+    }
+  }
+}
+
 async function submitIndexNow(host, key, urlList) {
   const payload = {
     host: new URL(host).host,
@@ -47,13 +66,13 @@ async function submitIndexNow(host, key, urlList) {
     keyLocation: `${host}/${key}.txt`,
     urlList,
   }
-  const res = await fetch("https://api.indexnow.org/indexnow", {
-    method: "POST",
-    headers: { "Content-Type": "application/json; charset=utf-8" },
-    body: JSON.stringify(payload),
-  })
-  const body = await res.text().catch(() => "")
-  return { status: res.status, ok: res.status === 200 || res.status === 202, body, payload }
+  const engines = await Promise.all([
+    submitToEndpoint("https://api.indexnow.org/indexnow", payload),
+    submitToEndpoint("https://yandex.com/indexnow", payload),
+  ])
+  const ok = engines.some((e) => e.ok)
+  const primary = engines.find((e) => e.ok) ?? engines[0]
+  return { status: primary.status, ok, body: primary.body, payload, engines }
 }
 
 async function main() {
@@ -74,16 +93,18 @@ async function main() {
   console.log(`Sitemap URLs: ${urls.length}`)
 
   const result = await submitIndexNow(HOST, INDEXNOW_KEY, urls)
-  console.log(`IndexNow status: ${result.status} ok=${result.ok}`)
-  if (result.body) console.log(`Body: ${result.body}`)
-  if (/UserForbiddedToAccessSite|unauthorized to access the site/i.test(result.body || "")) {
+  for (const e of result.engines) {
+    console.log(`  ${e.endpoint} → HTTP ${e.status} ok=${e.ok}${e.body ? ` ${e.body.slice(0, 120)}` : ""}`)
+  }
+  console.log(`IndexNow overall: status=${result.status} ok=${result.ok}`)
+  const bing = result.engines.find((e) => e.endpoint.includes("indexnow.org"))
+  if (bing && !bing.ok && /UserForbiddedToAccessSite|unauthorized to access the site/i.test(bing.body || "")) {
     console.warn(
-      "\nBing rejected ownership (UserForbiddedToAccessSite).\n" +
-        "Key file can be live while Bing still lacks a domain–key binding.\n" +
-        "1) https://www.bing.com/webmasters → add https://leapai.ai\n" +
-        "2) Verify with XML file (not Google import)\n" +
-        "3) Save BingSiteAuth.xml to frontend/public/ (see BingSiteAuth.xml.example)\n" +
-        "4) Deploy → Verify in Bing → re-run this script / GEO Submit\n",
+      "\nBing rejected ownership (UserForbiddedToAccessSite). Yandex may still accept.\n" +
+        "1) https://www.bing.com/webmasters → confirm https://leapai.ai is Verified\n" +
+        "2) URL Submission → IndexNow → Generate API key\n" +
+        "3) node scripts/rotate-indexnow-key.mjs --key=<bing-key>\n" +
+        "4) Deploy → re-run this script / GEO Submit\n",
     )
   }
 
@@ -93,7 +114,13 @@ async function main() {
     generatedAt: new Date().toISOString(),
     host: HOST,
     keyLive: keyCheck.ok,
-    indexNow: { status: result.status, ok: result.ok, body: result.body, submitted: urls.length },
+    indexNow: {
+      status: result.status,
+      ok: result.ok,
+      body: result.body,
+      submitted: urls.length,
+      engines: result.engines,
+    },
     googleSearchConsole: {
       action: "manual",
       sitemapUrl: `${HOST}/sitemap.xml`,
@@ -109,7 +136,8 @@ async function main() {
       sitemapUrl: `${HOST}/sitemap.xml`,
       consoleUrl: "https://www.bing.com/webmasters",
       steps: [
-        "IndexNow submission above notifies Bing automatically when key is live",
+        "Confirm property Verified (XML method)",
+        "URL Submission → IndexNow → Generate key if Bing returns 403",
         "Also submit sitemap.xml under Bing Webmaster → Sitemaps",
       ],
     },
