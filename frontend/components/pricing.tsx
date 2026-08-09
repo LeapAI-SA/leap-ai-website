@@ -1,19 +1,21 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "motion/react"
 import { Check, Headphones, MessagesSquare, LayoutGrid } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
-import { pickLocalized } from "@/lib/api"
 import { useSiteSettings } from "@/lib/site-settings-context"
-import { mergePricingPlans, mergeCtaLabels } from "@/lib/site-marketing"
+import { mergePricingPlans } from "@/lib/site-marketing"
+import { DemoRequestDialog } from "@/components/demo-request-dialog"
 
 const planIcons = [Headphones, MessagesSquare, LayoutGrid]
 
 export function Pricing() {
-  const { t, tr, lang } = useLanguage()
+  const { t, tr } = useLanguage()
   const { settings } = useSiteSettings()
+  const [demoOpen, setDemoOpen] = useState(false)
   const pricingPlans = mergePricingPlans(settings?.pricingPlans)
-  const pricingCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).pricing, lang, t("pricing.cta"))
+  const pricingCta = t("pricing.cta")
 
   return (
     <section id="pricing" className="bg-secondary py-20">
@@ -77,8 +79,9 @@ export function Pricing() {
                   ))}
                 </ul>
 
-                <a
-                  href="#contact"
+                <button
+                  type="button"
+                  onClick={() => setDemoOpen(true)}
                   className={`mt-8 inline-flex items-center justify-center rounded-full px-6 py-3 font-bold transition-colors ${
                     plan.featured
                       ? "bg-amber text-accent-foreground hover:bg-amber/90"
@@ -86,12 +89,13 @@ export function Pricing() {
                   }`}
                 >
                   {pricingCta}
-                </a>
+                </button>
               </motion.div>
             )
           })}
         </div>
       </div>
+      <DemoRequestDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
     </section>
   )
 }

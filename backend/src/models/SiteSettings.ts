@@ -320,6 +320,16 @@ export async function getOrCreateSettings() {
     dirty = true
   }
 
+  const pricingCta = settings.ctaLabels?.pricing
+  if (
+    settings.ctaLabels &&
+    pricingCta &&
+    (OLD_HERO_CTA_AR.has(pricingCta.ar) || OLD_HERO_CTA_EN.has(pricingCta.en))
+  ) {
+    settings.ctaLabels.pricing = { ar: "حجز تجربة", en: "Book a demo" }
+    dirty = true
+  }
+
   const plans = settings.pricingPlans ?? []
   for (const plan of plans) {
     const ar = plan.features?.ar ?? []

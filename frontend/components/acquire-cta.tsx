@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { useLanguage } from "@/lib/i18n"
@@ -7,10 +8,12 @@ import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { mergeCtaLabels } from "@/lib/site-marketing"
+import { DemoRequestDialog } from "@/components/demo-request-dialog"
 
 export function AcquireCta() {
   const { t, lang } = useLanguage()
   const { settings } = useSiteSettings()
+  const [demoOpen, setDemoOpen] = useState(false)
   const acquireCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).acquire, lang, t("acquire.cta"))
 
   return (
@@ -34,14 +37,15 @@ export function AcquireCta() {
         >
           {t("acquire.subtitleLong")}
         </motion.p>
-        <motion.a
-          href="#contact"
+        <motion.button
+          type="button"
+          onClick={() => setDemoOpen(true)}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
           className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#22c55e] px-7 py-3.5 font-bold text-white shadow-lg transition-colors hover:bg-[#16a34a]"
         >
           {acquireCta}
-        </motion.a>
+        </motion.button>
       </div>
 
       <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:px-6 md:grid-cols-4 md:gap-4">
@@ -63,6 +67,7 @@ export function AcquireCta() {
           </motion.div>
         ))}
       </div>
+      <DemoRequestDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
     </section>
   )
 }

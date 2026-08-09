@@ -98,7 +98,7 @@ export const translations = {
   "pricing.popular": { ar: "الأكثر طلباً", en: "Most Popular" },
   "pricing.currency": { ar: "ريال", en: "SAR" },
   "pricing.perMonth": { ar: "/ شهرياً", en: "/ month" },
-  "pricing.cta": { ar: "تحدث إلى مستشارنا", en: "Talk to Our Advisor" },
+  "pricing.cta": { ar: "حجز تجربة", en: "Book a demo" },
 
   /* -------------------------------- Addons ------------------------------ */
   "addons.heading": { ar: "إضافات الذكاء الاصطناعي", en: "AI Add-ons" },

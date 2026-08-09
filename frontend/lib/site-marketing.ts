@@ -180,7 +180,7 @@ export const DEFAULT_PRIVACY_PAGE: PrivacyPageSettings = {
 }
 
 export const DEFAULT_CTA_LABELS: CtaLabels = {
-  pricing: { ar: "تحدث إلى مستشارنا", en: "Talk to Our Advisor" },
+  pricing: { ar: "حجز تجربة", en: "Book a demo" },
   stores: { ar: "اعرف أكثر", en: "Learn More" },
   acquire: { ar: "القيمة المضافة من ليب", en: "Added Value by Leap" },
   headerSignup: { ar: "تسجيل واتساب أعمال", en: "WhatsApp Business Signup" },
