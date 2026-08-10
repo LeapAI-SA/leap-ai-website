@@ -12,6 +12,8 @@ const aiCrawlers = [
   "Google-Extended",
   "Google-CloudVertexBot",
   "Gemini-Deep-Research",
+  "Bingbot",
+  "MicrosoftPreview",
   "Applebot-Extended",
   "cohere-ai",
   "Bytespider",

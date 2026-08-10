@@ -39,14 +39,14 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     path: "/robots.txt",
     label: "robots.txt",
     description: "Crawler rules and sitemap",
-    expect: "Google-CloudVertexBot",
+    expect: "Bingbot",
   },
   {
     id: "sitemap",
     path: "/sitemap.xml",
     label: "sitemap.xml",
     description: "List of all public pages",
-    expect: "resources/leap-ai-saudi-ai-native-cx-platform",
+    expect: "news/2026/08/09/leap-ai-saudi-ai-native-cx-platform",
   },
   {
     id: "ai-txt",

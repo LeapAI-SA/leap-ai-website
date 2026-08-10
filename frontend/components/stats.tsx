@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { mergeAboutPage } from "@/lib/site-marketing"
@@ -13,29 +12,11 @@ const fallbackStats: { value: number; labelKey: TranslationKey }[] = [
   { value: 250, labelKey: "stats.customers" },
 ]
 
-function useCountUp(target: number, start: boolean, duration = 1500) {
-  const [value, setValue] = useState(0)
-  useEffect(() => {
-    if (!start) return
-    let raf = 0
-    const startTime = performance.now()
-    const tick = (now: number) => {
-      const progress = Math.min((now - startTime) / duration, 1)
-      setValue(Math.floor(progress * target))
-      if (progress < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [target, start, duration])
-  return value
-}
-
-function StatItem({ value, label, start }: { value: number; label: string; start: boolean }) {
-  const count = useCountUp(value, start)
+function StatItem({ value, label }: { value: number; label: string }) {
   return (
     <div className="text-center">
       <p className="text-4xl font-extrabold text-primary-foreground sm:text-5xl lg:text-6xl">
-        {count}
+        {value}
         <span className="text-amber">+</span>
       </p>
       <p className="mt-2 text-base font-semibold text-primary-foreground/80 sm:text-lg">{label}</p>
@@ -55,8 +36,6 @@ export function Stats({
   /** `about` matches leapai.ai/about-us figures (100 / 50 / 80). */
   preset?: "default" | "about"
 }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
   const { lang, t } = useLanguage()
   const { settings } = useSiteSettings()
 
@@ -82,27 +61,11 @@ export function Stats({
           label: t(stat.labelKey),
         })))
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.3 },
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section ref={ref} className="bg-navy py-20">
+    <section className="bg-navy py-20">
       <div className="mx-auto grid max-w-5xl gap-10 px-4 sm:grid-cols-3 sm:gap-12 sm:px-6">
         {stats.map((s) => (
-          <StatItem key={`${s.label}-${s.value}`} value={s.value} label={s.label} start={visible} />
+          <StatItem key={`${s.label}-${s.value}`} value={s.value} label={s.label} />
         ))}
       </div>
     </section>

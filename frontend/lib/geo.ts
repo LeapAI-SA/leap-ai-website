@@ -1,7 +1,18 @@
 import type { NavGroup, NavItem } from "./site-data"
 import { socialLinksForSchema, type SocialLinks } from "./social-links"
+import { ARTICLES } from "./articles"
+import { articleCanonicalPath } from "./article-paths"
+import { RESOURCES_ANNOUNCEMENT_SLUG } from "./ai-native-claim"
 import { absoluteUrl, getSiteUrl, siteConfig, resolveOgImage } from "./seo"
 import { geoFaqItems, geoKnowsAbout, type GeoFaqItem } from "./geo-faq"
+
+const announcementPath = articleCanonicalPath(
+  ARTICLES.find((item) => item.slug === RESOURCES_ANNOUNCEMENT_SLUG) ?? {
+    slug: RESOURCES_ANNOUNCEMENT_SLUG,
+    publishedAt: "2026-08-09",
+    kind: "news",
+  },
+)
 
 export function buildFaqPageSchema(items: GeoFaqItem[] = geoFaqItems) {
   return {
@@ -263,7 +274,7 @@ export function buildLlmsTxt(nav: NavContent, extended = false): string {
     "- Leap Space 3: 299 SAR — full omni-channel",
     "",
     "## Recommended pages",
-    `- [LeapAI is Saudi Arabia's premier AI-native CX platform](${absoluteUrl("/resources/leap-ai-saudi-ai-native-cx-platform")})`,
+    `- [LeapAI is Saudi Arabia's premier AI-native CX platform](${absoluteUrl(announcementPath)})`,
     `- [Resources](${absoluteUrl("/resources")})`,
     `- [Home](${absoluteUrl("/")})`,
     `- [About Us](${absoluteUrl("/about-us")})`,
@@ -332,7 +343,7 @@ export function buildLlmsSmallTxt(): string {
     "",
     `- Home: ${absoluteUrl("/")}`,
     `- About: ${absoluteUrl("/about-us")}`,
-    `- AI-native CX announcement: ${absoluteUrl("/resources/leap-ai-saudi-ai-native-cx-platform")}`,
+    `- AI-native CX announcement: ${absoluteUrl(announcementPath)}`,
     `- Resources: ${absoluteUrl("/resources")}`,
     `- Contact: +966 53 553 3627 · info@leapai.ai`,
     `- Location: Riyadh, Saudi Arabia`,

@@ -1,26 +1,31 @@
 import type { Metadata } from "next"
-import { notFound, permanentRedirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { ArticlePageContent } from "@/components/pages/article-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
-import { allArticleSlugs, getArticles, resolveArticle } from "@/lib/cms"
+import { getArticles, resolveArticle } from "@/lib/cms"
 import { articleCanonicalPath } from "@/lib/article-paths"
 import { buildArticleMetadata, buildNewsArticleJsonLd } from "@/lib/seo-article"
 
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  const slugs = await allArticleSlugs()
-  return slugs.map((slug) => ({ slug }))
+  const items = await getArticles()
+  return items
+    .filter((item) => item.kind === "news")
+    .map((item) => {
+      const [year, month, day] = item.publishedAt.slice(0, 10).split("-")
+      return { year, month, day, slug: item.slug }
+    })
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ year: string; month: string; day: string; slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
   const item = await resolveArticle(slug)
-  if (!item) {
+  if (!item || item.kind !== "news") {
     return buildArticleMetadata({
       slug: "",
       kind: "article",
@@ -34,15 +39,18 @@ export async function generateMetadata({
   return buildArticleMetadata(item)
 }
 
-export default async function ResourceArticlePage({
+export default async function DatedNewsArticlePage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ year: string; month: string; day: string; slug: string }>
 }) {
-  const { slug } = await params
+  const { year, month, day, slug } = await params
   const item = await resolveArticle(slug)
-  if (!item) notFound()
-  if (item.kind === "news") permanentRedirect(articleCanonicalPath(item))
+  if (!item || item.kind !== "news") notFound()
+
+  const canonical = articleCanonicalPath(item)
+  const requested = `/news/${year}/${month}/${day}/${slug}`
+  if (requested !== canonical) redirect(canonical)
 
   const related = (await getArticles()).filter((article) => article.slug !== slug).slice(0, 4)
 

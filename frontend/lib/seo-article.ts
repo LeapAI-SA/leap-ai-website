@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import type { ArticleItem } from "./articles"
+import { articleCanonicalPath } from "./article-paths"
 import { absoluteUrl, buildPageMetadata, getSiteUrl, resolveOgImage, siteConfig } from "./seo"
 
 export function buildArticleMetadata(item: ArticleItem): Metadata {
@@ -8,14 +9,14 @@ export function buildArticleMetadata(item: ArticleItem): Metadata {
     titleAr: item.title.ar,
     description: item.excerpt.en || item.description.en,
     descriptionAr: item.excerpt.ar || item.description.ar,
-    path: `/resources/${item.slug}`,
+    path: articleCanonicalPath(item),
     image: item.image,
     type: "article",
   })
 }
 
 export function buildNewsArticleJsonLd(item: ArticleItem) {
-  const url = absoluteUrl(`/resources/${item.slug}`)
+  const url = absoluteUrl(articleCanonicalPath(item))
   const schemaType = item.kind === "news" ? "NewsArticle" : "Article"
   return {
     "@context": "https://schema.org",
@@ -67,7 +68,7 @@ export function buildResourcesListJsonLd(items: ArticleItem[]) {
         "@type": "ListItem",
         position: index + 1,
         name: item.title.en,
-        url: absoluteUrl(`/resources/${item.slug}`),
+        url: absoluteUrl(articleCanonicalPath(item)),
       })),
     },
   }

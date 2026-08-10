@@ -26,6 +26,7 @@ function changeFrequencyFor(path: string): MetadataRoute.Sitemap[number]["change
     path === "/use-cases" ||
     path === "/resources" ||
     path.startsWith("/resources/") ||
+    path.startsWith("/news/") ||
     path.startsWith("/llms") ||
     path.includes("ai.txt")
   ) {
@@ -48,10 +49,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       PRIORITY[path] ??
       (path.startsWith("/llms") || path.includes("ai.txt")
         ? 0.6
-        : path.startsWith("/solutions/") ||
-            path.startsWith("/products/") ||
-            path.startsWith("/use-cases/")
-          ? 0.8
-          : 0.7),
+        : path.startsWith("/news/")
+          ? 0.9
+          : path.startsWith("/solutions/") ||
+              path.startsWith("/products/") ||
+              path.startsWith("/use-cases/")
+            ? 0.8
+            : 0.7),
   }))
 }

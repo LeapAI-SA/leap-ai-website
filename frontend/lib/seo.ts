@@ -110,7 +110,9 @@ function getTitleSuffix(path: string) {
   if (path.startsWith("/solutions/")) return "AI and Omnichannel Customer Experience Solution"
   if (path.startsWith("/products/")) return "Customer Engagement Product for Growth and Service"
   if (path.startsWith("/use-cases/")) return "Industry Use Case for Automation and Customer Experience"
-  if (path.startsWith("/resources/")) return "AI-Native CX Resource for Saudi Enterprises"
+  if (path.startsWith("/resources/") || path.startsWith("/news/")) {
+    return "AI-Native CX Resource for Saudi Enterprises"
+  }
   if (path.startsWith("/")) {
     const label = titleFromSlug(path)
     if (label) return `${label} Insights, Features, and Deployment Guide`

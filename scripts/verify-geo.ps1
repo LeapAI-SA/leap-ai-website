@@ -55,7 +55,8 @@ $checks = @(
   @{ path = "/llms-small.txt"; expect = "AI-native" },
   @{ path = "/robots.txt"; expect = "GPTBot" },
   @{ path = "/robots.txt"; expect = "Google-CloudVertexBot" },
-  @{ path = "/sitemap.xml"; expect = "resources/leap-ai-saudi-ai-native-cx-platform" },
+  @{ path = "/robots.txt"; expect = "Bingbot" },
+  @{ path = "/sitemap.xml"; expect = "news/2026/08/09/leap-ai-saudi-ai-native-cx-platform" },
   @{ path = "/.well-known/ai.txt"; expect = "LLMs-Txt" }
 )
 

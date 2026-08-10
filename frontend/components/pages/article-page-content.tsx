@@ -4,6 +4,7 @@ import Link from "next/link"
 import { SitePageShell } from "@/components/site-page-shell"
 import { PageSection } from "@/components/section-heading"
 import type { ArticleItem } from "@/lib/articles"
+import { articleCanonicalPath } from "@/lib/article-paths"
 import { useLanguage } from "@/lib/i18n"
 import { sitePath } from "@/lib/site-path"
 
@@ -74,7 +75,7 @@ export function ArticlePageContent({
                 {related.map((other) => (
                   <li key={other.slug}>
                     <Link
-                      href={sitePath(`/resources/${other.slug}`)}
+                      href={sitePath(articleCanonicalPath(other))}
                       className="font-semibold text-primary hover:underline"
                     >
                       {tr(other.title)}
