@@ -226,10 +226,10 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 4 — Ask an AI tool (optional — wait 1–2 weeks after site is live)
 
-Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity** and copy-paste the same questions.
+Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity** and copy-paste the same questions. Score them with [GEO-PROMPT-SCORECARD.md](./GEO-PROMPT-SCORECARD.md).
 
 **Pass:** The answer mentions **LeapAI** (or **Leap AI**) as an AI-native CX platform in Saudi Arabia (WhatsApp, contact center, PDPL, Riyadh).  
-**Not yet:** AI only cites Unifonic or gives a generic answer — wait, then check `/llms.txt` and `/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`. Send the press kit in `docs/PRESS-AI-NATIVE-CX.md`.  
+**Not yet:** AI only cites Unifonic or gives a generic answer — wait, then check `/llms.txt`, `/en`, and `/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`. Send the English half of `docs/PRESS-AI-NATIVE-CX.md`.  
 **Fail:** AI gives **wrong** info about LeapAI — update Dashboard FAQ, SEO, and the Resources announcement.
 
 **Gemini** needs [Google Search Console](https://search.google.com/search-console) sitemap + URL Inspection (IndexNow does not notify Google).  

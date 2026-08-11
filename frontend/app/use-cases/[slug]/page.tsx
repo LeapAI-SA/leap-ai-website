@@ -4,6 +4,7 @@ import { DetailPageContent } from "@/components/pages/detail-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { allUseCaseSlugs, resolveUseCase, getUseCasesFromCms } from "@/lib/cms"
 import { buildContentJsonLd, buildContentMetadata } from "@/lib/seo-content"
+import { getRequestLocale } from "@/lib/locale"
 import { useCases } from "@/lib/site-data"
 
 export const dynamicParams = true
@@ -19,15 +20,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const item = await resolveUseCase(slug)
+  const [item, locale] = await Promise.all([resolveUseCase(slug), getRequestLocale()])
   if (!item) {
     return buildContentMetadata(
       { slug: "", title: { ar: "حالات الاستخدام", en: "Use Cases" }, excerpt: { ar: "", en: "" }, description: { ar: "", en: "" }, features: { ar: [], en: [] } },
       "/use-cases",
       { en: "Use Cases", ar: "حالات الاستخدام" },
+      locale,
     )
   }
-  return buildContentMetadata(item, `/use-cases/${slug}`, { en: "Use Cases", ar: "حالات الاستخدام" })
+  return buildContentMetadata(item, `/use-cases/${slug}`, { en: "Use Cases", ar: "حالات الاستخدام" }, locale)
 }
 
 export default async function UseCaseDetailPage({

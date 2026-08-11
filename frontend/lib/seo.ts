@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { resolveAssetPath, withBasePath } from "./media"
 import type { PublicSiteSettings } from "./api"
 import { getPublicSiteUrl, getBasePath } from "./site-url"
+import { getRequestLocale, stripLocalePrefix, withLocalePrefix, type SiteLang } from "./locale"
 
 export function getSiteUrl() {
   return getPublicSiteUrl()
@@ -211,14 +212,17 @@ export function normalizeTwitterDescription(description: string, brand = siteCon
   return truncateMeta(value, TWITTER_DESC_MAX)
 }
 
-function buildHreflangAlternates(path: string) {
-  const url = absoluteUrl(path)
+function buildHreflangAlternates(path: string, locale: SiteLang = "ar") {
+  const bare = stripLocalePrefix(path)
+  const arUrl = absoluteUrl(bare)
+  const enUrl = absoluteUrl(withLocalePrefix(bare, "en"))
+  const canonical = locale === "en" ? enUrl : arUrl
   return {
-    canonical: url,
+    canonical,
     languages: {
-      "ar-SA": url,
-      "en-US": url,
-      "x-default": url,
+      "ar-SA": arUrl,
+      "en-US": enUrl,
+      "x-default": arUrl,
     },
     types: {
       "text/plain": absoluteUrl("/llms.txt"),
@@ -235,6 +239,7 @@ type PageMetaInput = {
   image?: string
   noIndex?: boolean
   type?: "website" | "article"
+  locale?: SiteLang
 }
 
 export function buildPageMetadata(input: PageMetaInput): Metadata {
@@ -247,16 +252,19 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     image,
     noIndex = false,
     type = "website",
+    locale = "ar",
   } = input
 
-  const url = absoluteUrl(path)
+  const bare = stripLocalePrefix(path)
+  const localizedPath = withLocalePrefix(bare, locale)
+  const url = absoluteUrl(localizedPath)
   const ogImage = resolveOgImage(image)
-  const pageTitle = normalizeSeoTitle(title, siteConfig.name, path)
+  const pageTitle = normalizeSeoTitle(title, siteConfig.name, bare)
   const metaDescription = normalizeSeoDescription(description)
   const metaDescriptionAr = normalizeSeoDescription(descriptionAr ?? description)
-  const ogTitleSource = titleAr ?? title
+  const ogTitleSource = locale === "en" ? title : (titleAr ?? title)
   const ogTitle = normalizeOgTitle(ogTitleSource)
-  const ogDescription = normalizeOgDescription(descriptionAr ?? description)
+  const ogDescription = normalizeOgDescription(locale === "en" ? description : (descriptionAr ?? description))
   const twitterDescription = normalizeTwitterDescription(description)
 
   return {
@@ -267,7 +275,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     creator: siteConfig.name,
     publisher: siteConfig.name,
     metadataBase: new URL(getSiteUrl()),
-    alternates: buildHreflangAlternates(path),
+    alternates: buildHreflangAlternates(bare, locale),
     formatDetection: { email: false, address: false, telephone: false },
     robots: noIndex
       ? { index: false, follow: false, googleBot: { index: false, follow: false } }
@@ -287,8 +295,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
         },
     openGraph: {
       type,
-      locale: siteConfig.locale,
-      alternateLocale: [siteConfig.localeAlt],
+      locale: locale === "en" ? siteConfig.localeAlt : siteConfig.locale,
+      alternateLocale: [locale === "en" ? siteConfig.locale : siteConfig.localeAlt],
       url,
       siteName: siteConfig.name,
       title: ogTitle,
@@ -309,7 +317,10 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   }
 }
 
-export function buildHomeMetadata(settings?: PublicSiteSettings | null): Metadata {
+export function buildHomeMetadata(
+  settings?: PublicSiteSettings | null,
+  locale: SiteLang = "ar",
+): Metadata {
   const titleEn = settings?.seo?.siteTitle?.en || `${siteConfig.name} — ${siteConfig.taglineEn}`
   const titleAr = settings?.seo?.siteTitle?.ar || `${siteConfig.nameFull} — ${siteConfig.taglineAr}`
   const descEn = settings?.seo?.metaDescription?.en || siteConfig.descriptionEn
@@ -322,12 +333,23 @@ export function buildHomeMetadata(settings?: PublicSiteSettings | null): Metadat
     descriptionAr: descAr,
     path: "/",
     image: settings?.images?.hero || siteConfig.defaultOgImage,
+    locale,
   })
 }
 
-export function buildRootMetadata(settings?: PublicSiteSettings | null): Metadata {
+export async function metadataWithRequestLocale(
+  input: Omit<PageMetaInput, "locale">,
+): Promise<Metadata> {
+  const locale = await getRequestLocale()
+  return buildPageMetadata({ ...input, locale })
+}
+
+export function buildRootMetadata(
+  settings?: PublicSiteSettings | null,
+  locale: SiteLang = "ar",
+): Metadata {
   const brand = settings?.seo?.brandLock || siteConfig.name
-  const home = buildHomeMetadata(settings)
+  const home = buildHomeMetadata(settings, locale)
   const titleDefault =
     typeof home.title === "object" && home.title && "absolute" in home.title
       ? String(home.title.absolute)

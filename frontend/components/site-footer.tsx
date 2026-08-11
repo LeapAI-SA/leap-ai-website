@@ -45,20 +45,20 @@ export function SiteFooter() {
 
         <div className="mt-14 grid gap-10 border-t border-navy-foreground/15 pt-12 md:grid-cols-2 lg:grid-cols-5">
           <div>
-            <Link href="/" className="inline-block">
+            <Link href={sitePath("/", lang)} className="inline-block">
               <Image src={resolveMediaUrl("/leapai-logo-white.png")} alt="LeapAI" width={150} height={48} className="h-11 w-auto" />
             </Link>
             <ul className="mt-5 flex flex-col gap-2.5">
               {footerLinks.map((link) => (
                 <li key={`${link.href}-${link.label.en}`}>
-                  <Link href={sitePath(link.href)} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                  <Link href={sitePath(link.href, lang)} className="text-navy-foreground/75 transition-colors hover:text-amber">
                     {navLinkLabel(link, lang)}
                   </Link>
                 </li>
               ))}
               {footerLegal.map((link) => (
                 <li key={`${link.href}-${link.label.en}`}>
-                  <Link href={sitePath(link.href)} className="text-navy-foreground/75 transition-colors hover:text-amber">
+                  <Link href={sitePath(link.href, lang)} className="text-navy-foreground/75 transition-colors hover:text-amber">
                     {navLinkLabel(link, lang)}
                   </Link>
                 </li>

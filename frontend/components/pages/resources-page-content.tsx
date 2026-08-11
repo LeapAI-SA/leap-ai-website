@@ -23,7 +23,7 @@ export function ResourcesPageContent({ articles }: { articles: ArticleItem[] }) 
           {articles.map((item) => (
             <Link
               key={item.slug}
-              href={sitePath(articleCanonicalPath(item))}
+              href={sitePath(articleCanonicalPath(item), lang)}
               className="group flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-colors hover:border-primary/40"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-amber">

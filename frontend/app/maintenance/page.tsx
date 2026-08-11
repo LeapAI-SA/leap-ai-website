@@ -1,15 +1,17 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { buildPageMetadata } from "@/lib/seo"
+import { metadataWithRequestLocale } from "@/lib/seo"
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Maintenance",
-  titleAr: "تحت الصيانة",
-  description: "LeapAI website is temporarily in maintenance mode.",
-  descriptionAr: "موقع LeapAI تحت الصيانة مؤقتاً.",
-  path: "/maintenance",
-  noIndex: true,
-})
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataWithRequestLocale({
+    title: "Maintenance",
+    titleAr: "تحت الصيانة",
+    description: "LeapAI website is temporarily in maintenance mode.",
+    descriptionAr: "موقع LeapAI تحت الصيانة مؤقتاً.",
+    path: "/maintenance",
+    noIndex: true,
+  })
+}
 
 export default function MaintenancePage() {
   return (

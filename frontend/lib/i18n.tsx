@@ -1,7 +1,9 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { translations, type TranslationKey } from "./translations"
+import { stripLocalePrefix, withLocalePrefix } from "./locale-path"
 
 export type Lang = "ar" | "en"
 
@@ -31,16 +33,27 @@ export function LanguageProvider({
   defaultLanguage?: Lang
 }) {
   const [lang, setLangState] = useState<Lang>(defaultLanguage)
+  const pathname = usePathname()
+  const router = useRouter()
+  const urlLocked = pathname === "/en" || pathname.startsWith("/en/")
 
-  // Load saved preference after mount (avoids hydration mismatch)
+  // URL locale wins (crawlers + /en GEO). Otherwise restore saved preference.
   useEffect(() => {
+    if (urlLocked) {
+      setLangState("en")
+      return
+    }
+    if (defaultLanguage === "en") {
+      setLangState("en")
+      return
+    }
     const saved = (typeof window !== "undefined" && window.localStorage.getItem(STORAGE_KEY)) as Lang | null
     if (saved === "ar" || saved === "en") {
       setLangState(saved)
     } else if (defaultLanguage === "ar" || defaultLanguage === "en") {
       setLangState(defaultLanguage)
     }
-  }, [defaultLanguage])
+  }, [defaultLanguage, urlLocked])
 
   // Reflect language + direction on <html>
   useEffect(() => {
@@ -59,8 +72,11 @@ export function LanguageProvider({
   }, [])
 
   const toggleLang = useCallback(() => {
-    setLang(lang === "ar" ? "en" : "ar")
-  }, [lang, setLang])
+    const next: Lang = lang === "ar" ? "en" : "ar"
+    setLang(next)
+    if (pathname.startsWith("/dashboard")) return
+    router.push(withLocalePrefix(stripLocalePrefix(pathname), next))
+  }, [lang, setLang, pathname, router])
 
   const t = useCallback(
     (key: TranslationKey) => {

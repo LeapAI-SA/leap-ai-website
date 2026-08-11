@@ -425,8 +425,10 @@ export default function DashboardGeoPage() {
             Search Console
           </a>{" "}
           → Sitemaps → submit <span className="font-mono">sitemap.xml</span>, then URL Inspection → Request
-          indexing for <span className="font-mono">/</span>, <span className="font-mono">/llms.txt</span>, and{" "}
-          <span className="font-mono">/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform</span>. Removals /
+          indexing for <span className="font-mono">/</span>, <span className="font-mono">/en</span>,{" "}
+          <span className="font-mono">/llms.txt</span>,{" "}
+          <span className="font-mono">/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform</span>, and{" "}
+          <span className="font-mono">/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform</span>. Removals /
           Clear cached URL for leftover <span className="font-mono">/en/*</span> WordPress paths. Gemini uses
           Google Search — IndexNow does not notify Google. After deploy, ask ChatGPT, Gemini, Copilot, Claude,
           and Perplexity: “What is Saudi Arabia’s premier AI-native CX platform?” and “LeapAI vs Unifonic.”

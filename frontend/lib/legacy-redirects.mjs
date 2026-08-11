@@ -61,7 +61,7 @@ export const LEGACY_SLUG_TO_PATH = {
   "leap-space-3": "/",
 }
 
-/** Static pages that exist on the new site (identity /en → same path). */
+/** Static pages that exist on the new site (served under /en as English HTML). */
 const CANONICAL_STATIC_PAGES = new Set([
   "about-us",
   "contact-us",
@@ -70,6 +70,7 @@ const CANONICAL_STATIC_PAGES = new Set([
   "solutions",
   "products",
   "use-cases",
+  "resources",
 ])
 
 /**
@@ -81,34 +82,46 @@ export function isLikelyCanonicalPath(path) {
   if (p === "/") return true
   const slug = p.replace(/^\//, "")
   if (CANONICAL_STATIC_PAGES.has(slug)) return true
-  if (p.startsWith("/solutions/") || p.startsWith("/products/") || p.startsWith("/use-cases/")) {
+  if (
+    p.startsWith("/solutions/") ||
+    p.startsWith("/products/") ||
+    p.startsWith("/use-cases/") ||
+    p.startsWith("/resources/") ||
+    p.startsWith("/news/")
+  ) {
     return true
   }
   return false
 }
 
 /**
- * Resolve a request pathname (with or without /en prefix) to a canonical path.
- * Returns null when no special mapping applies.
- * Unmapped /en/* goes to `/` (never strip to a soft-404).
+ * Resolve a request pathname (with or without /en prefix) to a redirect target.
+ * Returns null when the URL should be served (Arabic page or English /en rewrite).
+ * WordPress leftovers under /en map to /en/… (not Arabic /).
  * @param {string} pathname
  * @returns {string | null}
  */
 export function resolveLegacyPath(pathname) {
   const raw = pathname.replace(/\/+$/, "") || "/"
+  const isEn = raw === "/en" || raw.startsWith("/en/")
   const withoutEn = raw === "/en" ? "/" : raw.startsWith("/en/") ? raw.slice(3) : raw
   const slug = withoutEn.replace(/^\//, "")
-  const isEn = raw === "/en" || raw.startsWith("/en/")
 
-  if (!slug) return isEn ? "/" : null
+  const withLocale = (dest) => {
+    if (!isEn) return dest
+    if (dest === "/") return "/en"
+    return `/en${dest}`
+  }
+
+  if (!slug) return null
 
   const mapped = LEGACY_SLUG_TO_PATH[slug]
-  if (mapped) return mapped
+  if (mapped) return withLocale(mapped)
 
   if (isEn) {
     const candidate = withoutEn.startsWith("/") ? withoutEn : `/${withoutEn}`
-    if (isLikelyCanonicalPath(candidate)) return candidate
-    return "/"
+    if (isLikelyCanonicalPath(candidate)) return null
+    return "/en"
   }
 
   return null
@@ -124,33 +137,17 @@ export function buildLegacyRedirects() {
   const out = []
 
   for (const [slug, destination] of Object.entries(LEGACY_SLUG_TO_PATH)) {
-    for (const src of [`/${slug}`, `/${slug}/`, `/en/${slug}`, `/en/${slug}/`]) {
-      if (src.replace(/\/$/, "") === destination.replace(/\/$/, "")) continue
-      out.push({ source: src, destination, permanent: true })
+    const enDest = destination === "/" ? "/en" : `/en${destination}`
+    for (const [src, dest] of [
+      [`/${slug}`, destination],
+      [`/${slug}/`, destination],
+      [`/en/${slug}`, enDest],
+      [`/en/${slug}/`, enDest],
+    ]) {
+      if (src.replace(/\/$/, "") === dest.replace(/\/$/, "")) continue
+      out.push({ source: src, destination: dest, permanent: true })
     }
   }
-
-  // Identity /en static pages (fewer hops than catch-all alone)
-  for (const page of CANONICAL_STATIC_PAGES) {
-    out.push(
-      { source: `/en/${page}`, destination: `/${page}`, permanent: true },
-      { source: `/en/${page}/`, destination: `/${page}`, permanent: true },
-    )
-  }
-
-  // Preserve new-site section URLs if someone prefixes /en
-  out.push(
-    { source: "/en/solutions/:path*", destination: "/solutions/:path*", permanent: true },
-    { source: "/en/products/:path*", destination: "/products/:path*", permanent: true },
-    { source: "/en/use-cases/:path*", destination: "/use-cases/:path*", permanent: true },
-  )
-
-  out.push(
-    { source: "/en", destination: "/", permanent: true },
-    { source: "/en/", destination: "/", permanent: true },
-    // Unknown WordPress leftovers → home (not /:path* soft-404)
-    { source: "/en/:path*", destination: "/", permanent: true },
-  )
 
   return out
 }

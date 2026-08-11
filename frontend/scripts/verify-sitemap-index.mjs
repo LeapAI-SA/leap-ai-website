@@ -21,26 +21,26 @@ const UA =
 
 /** Legacy URLs that must 301/308 to new destinations (not 404). */
 const LEGACY_CHECKS = [
-  { from: "/en/nlu-ai-chatbot", expectPath: "/solutions/nlu-chatbot" },
-  { from: "/en/ai-voice-bot", expectPath: "/solutions/voice-bot" },
-  { from: "/en/genai-generative-ai-chatbot", expectPath: "/solutions/genai-chatbot" },
-  { from: "/en/omni-channel-contact-center", expectPath: "/solutions" },
-  { from: "/en/multichannel-contact-centers", expectPath: "/solutions" },
+  { from: "/en/nlu-ai-chatbot", expectPath: "/en/solutions/nlu-chatbot" },
+  { from: "/en/ai-voice-bot", expectPath: "/en/solutions/voice-bot" },
+  { from: "/en/genai-generative-ai-chatbot", expectPath: "/en/solutions/genai-chatbot" },
+  { from: "/en/omni-channel-contact-center", expectPath: "/en/solutions" },
+  { from: "/en/multichannel-contact-centers", expectPath: "/en/solutions" },
   {
     from: "/en/connecting-digital-chat-channels-and-social-media-messages",
-    expectPath: "/solutions/digital-channels",
+    expectPath: "/en/solutions/digital-channels",
   },
-  { from: "/en/whatsapp-business-registration", expectPath: "/solutions/whatsapp-business" },
-  { from: "/en/whatsapp-business", expectPath: "/solutions/whatsapp-business" },
-  { from: "/en/leap-space-2", expectPath: "/" },
-  { from: "/en/healthcare-use-case", expectPath: "/use-cases/healthcare" },
-  { from: "/en/r24", expectPath: "/products/ai-recruiter" },
-  { from: "/en/r24/", expectPath: "/products/ai-recruiter" },
-  { from: "/en/leap-ticketing", expectPath: "/products/leap-ticketing" },
-  { from: "/en/growth-hacking", expectPath: "/solutions/customer-journey" },
-  { from: "/en/quality-management-qm-solutions", expectPath: "/solutions/quality-management" },
-  { from: "/en/customer-relationship-management-crm-system", expectPath: "/solutions/crm" },
-  { from: "/en/unknown-wordpress-slug-xyz", expectPath: "/" },
+  { from: "/en/whatsapp-business-registration", expectPath: "/en/solutions/whatsapp-business" },
+  { from: "/en/whatsapp-business", expectPath: "/en/solutions/whatsapp-business" },
+  { from: "/en/leap-space-2", expectPath: "/en" },
+  { from: "/en/healthcare-use-case", expectPath: "/en/use-cases/healthcare" },
+  { from: "/en/r24", expectPath: "/en/products/ai-recruiter" },
+  { from: "/en/r24/", expectPath: "/en/products/ai-recruiter" },
+  { from: "/en/leap-ticketing", expectPath: "/en/products/leap-ticketing" },
+  { from: "/en/growth-hacking", expectPath: "/en/solutions/customer-journey" },
+  { from: "/en/quality-management-qm-solutions", expectPath: "/en/solutions/quality-management" },
+  { from: "/en/customer-relationship-management-crm-system", expectPath: "/en/solutions/crm" },
+  { from: "/en/unknown-wordpress-slug-xyz", expectPath: "/en" },
   { from: "/nlu-ai-chatbot", expectPath: "/solutions/nlu-chatbot" },
   { from: "/whatsapp-business-registration", expectPath: "/solutions/whatsapp-business" },
   { from: "/retail-use-case", expectPath: "/use-cases/retail" },
@@ -135,12 +135,11 @@ async function main() {
       return u.includes("/en/")
     }
   })
-  if (enInSitemap.length > 0) {
-    console.error(`FAIL: sitemap must not include /en URLs (${enInSitemap.length} found):`)
-    for (const u of enInSitemap.slice(0, 20)) console.error(`  ${u}`)
+  if (enInSitemap.length === 0) {
+    console.error("FAIL: sitemap must include English /en URLs for GEO")
     process.exitCode = 1
   } else {
-    console.log("OK: sitemap has 0 /en URLs")
+    console.log(`OK: sitemap has ${enInSitemap.length} /en URLs`)
   }
 
   const sitemapRows = []
@@ -204,7 +203,7 @@ async function main() {
     legacyRedirectOkCount: legacyRows.filter((r) => r.ok).length,
     legacyRedirectTotal: legacyRows.length,
     note:
-      "publicSearchSignal uses DuckDuckGo HTML results as a public proxy. Authoritative Google/Bing coverage requires Search Console / Webmaster Tools exports. IndexNow covers Bing ecosystem only. Sitemap must never list /en URLs.",
+      "publicSearchSignal uses DuckDuckGo HTML results as a public proxy. Authoritative Google/Bing coverage requires Search Console / Webmaster Tools exports. IndexNow covers Bing ecosystem only. Sitemap must list English /en URLs.",
   }
 
   const report = { summary, sitemap: sitemapRows, legacyRedirects: legacyRows }

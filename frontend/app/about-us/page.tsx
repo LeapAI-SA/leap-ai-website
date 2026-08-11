@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import { AboutPageContent } from "@/components/pages/about-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
-import { buildPageMetadata, buildStaticPageJsonLd } from "@/lib/seo"
+import { metadataWithRequestLocale, buildStaticPageJsonLd } from "@/lib/seo"
 
-export const metadata: Metadata = buildPageMetadata({
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataWithRequestLocale({
   title: "About Us",
   titleAr: "معلومات عنا",
   description:
@@ -12,7 +13,8 @@ export const metadata: Metadata = buildPageMetadata({
     "تعرف على LeapAI — المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي من إرث BAB International، مع استضافة محلية متوافقة مع نظام حماية البيانات الشخصية وخبرة تتجاوز 23 عامًا.",
   path: "/about-us",
   image: "/pages/about-us.png",
-})
+  })
+}
 
 const pageSchema = buildStaticPageJsonLd({
   title: "About Us",

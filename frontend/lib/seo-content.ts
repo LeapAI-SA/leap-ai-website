@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import type { NavItem } from "./site-data"
 import { buildPageMetadata, absoluteUrl, siteConfig, resolveOgImage, getSiteUrl } from "./seo"
+import type { SiteLang } from "./locale"
 import { resolveContentImage } from "./page-images"
 import { buildContentGeoSchema } from "./geo"
 
@@ -14,6 +15,7 @@ export function buildContentMetadata(
   item: NavItem,
   path: string,
   listLabel: { en: string; ar: string },
+  locale: SiteLang = "ar",
 ): Metadata {
   const { en, ar } = pickDescription(item)
   const image = item.image || resolveContentImage(item.slug)
@@ -26,6 +28,7 @@ export function buildContentMetadata(
     path,
     image,
     type: "article",
+    locale,
   })
 }
 

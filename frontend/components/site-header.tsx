@@ -73,7 +73,7 @@ export function SiteHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
           {/* Logo */}
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <Link href="/" className="flex shrink-0 items-center">
+            <Link href={sitePath("/", lang)} className="flex shrink-0 items-center">
               <Image src={logoSrc} alt="LeapAI" width={150} height={48} priority className="h-8 w-auto sm:h-10" />
             </Link>
           </motion.div>
@@ -83,7 +83,7 @@ export function SiteHeader() {
             {leftNav.map((item) => (
               <Link
                 key={`${item.href}-${item.label.en}`}
-                href={sitePath(item.href)}
+                href={sitePath(item.href, lang)}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {navLinkLabel(item, lang)}
@@ -93,7 +93,7 @@ export function SiteHeader() {
             {/* Solutions - mega menu */}
             <div className="static" onMouseEnter={() => setActive("solutions")}>
               <Link
-                href="/solutions"
+                href={sitePath("/solutions", lang)}
                 className="flex items-center gap-1 text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {t("nav.solutions")}
@@ -104,7 +104,7 @@ export function SiteHeader() {
             {/* Products */}
             <div onMouseEnter={() => setActive("products")}>
               <Link
-                href="/products"
+                href={sitePath("/products", lang)}
                 className="flex items-center gap-1 text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {t("nav.products")}
@@ -115,7 +115,7 @@ export function SiteHeader() {
             {/* Use cases */}
             <div onMouseEnter={() => setActive("use-cases")}>
               <Link
-                href="/use-cases"
+                href={sitePath("/use-cases", lang)}
                 className="flex items-center gap-1 text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {t("nav.useCases")}
@@ -126,7 +126,7 @@ export function SiteHeader() {
             {rightNav.map((item) => (
               <Link
                 key={`${item.href}-${item.label.en}`}
-                href={sitePath(item.href)}
+                href={sitePath(item.href, lang)}
                 className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
               >
                 {navLinkLabel(item, lang)}
@@ -148,7 +148,7 @@ export function SiteHeader() {
                     {solutionsGroups.map((group) => (
                       <div key={group.slug}>
                         <Link
-                          href={`/solutions#${group.slug}`}
+                          href={`${sitePath("/solutions", lang)}#${group.slug}`}
                           className="mb-3 block text-sm font-extrabold text-primary"
                         >
                           {tr(group.title)}
@@ -157,7 +157,7 @@ export function SiteHeader() {
                           {group.items.map((it) => (
                             <li key={it.slug}>
                               <Link
-                                href={`/solutions/${it.slug}`}
+                                href={sitePath(`/solutions/${it.slug}`, lang)}
                                 className="block text-sm leading-relaxed text-foreground/75 transition-colors hover:text-primary"
                               >
                                 {tr(it.title)}
@@ -219,7 +219,7 @@ export function SiteHeader() {
                 {leftNav.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
                     <Link
-                      href={sitePath(item.href)}
+                      href={sitePath(item.href, lang)}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >
@@ -231,7 +231,7 @@ export function SiteHeader() {
                 <MobileGroup
                   id="solutions"
                   label={t("nav.solutions")}
-                  href="/solutions"
+                  href={sitePath("/solutions", lang)}
                   open={mobileSub === "solutions"}
                   onToggle={() => setMobileSub((v) => (v === "solutions" ? null : "solutions"))}
                   onNavigate={() => setOpen(false)}
@@ -241,7 +241,7 @@ export function SiteHeader() {
                 <MobileGroup
                   id="products"
                   label={t("nav.products")}
-                  href="/products"
+                  href={sitePath("/products", lang)}
                   open={mobileSub === "products"}
                   onToggle={() => setMobileSub((v) => (v === "products" ? null : "products"))}
                   onNavigate={() => setOpen(false)}
@@ -251,7 +251,7 @@ export function SiteHeader() {
                 <MobileGroup
                   id="use-cases"
                   label={t("nav.useCases")}
-                  href="/use-cases"
+                  href={sitePath("/use-cases", lang)}
                   open={mobileSub === "use-cases"}
                   onToggle={() => setMobileSub((v) => (v === "use-cases" ? null : "use-cases"))}
                   onNavigate={() => setOpen(false)}
@@ -262,7 +262,7 @@ export function SiteHeader() {
                 {rightNav.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>
                     <Link
-                      href={sitePath(item.href)}
+                      href={sitePath(item.href, lang)}
                       onClick={() => setOpen(false)}
                       className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
                     >
@@ -303,13 +303,13 @@ function DropdownPanel({
 }
 
 function SimpleList({ items, basePath }: { items: NavItem[]; basePath: string }) {
-  const { tr } = useLanguage()
+  const { tr, lang } = useLanguage()
   return (
     <ul className="grid gap-x-8 gap-y-2 md:grid-cols-3">
       {items.map((it) => (
         <li key={it.slug}>
           <Link
-            href={`${basePath}/${it.slug}`}
+            href={sitePath(`${basePath}/${it.slug}`, lang)}
             className="group flex items-start gap-2 rounded-lg p-2 transition-colors hover:bg-secondary"
           >
             <span className="text-sm font-semibold leading-relaxed text-foreground/80 transition-colors group-hover:text-primary">
@@ -341,12 +341,12 @@ function MobileGroup({
   items: NavItem[]
   basePath: string
 }) {
-  const { tr } = useLanguage()
+  const { tr, lang } = useLanguage()
   return (
     <li>
       <div className="flex items-center justify-between rounded-lg pr-1 hover:bg-secondary">
         <Link
-          href={href}
+          href={sitePath(href, lang)}
           onClick={onNavigate}
           className="flex-1 truncate px-3 py-2.5 text-sm font-semibold text-foreground/80 hover:text-primary"
         >
@@ -373,7 +373,7 @@ function MobileGroup({
             {items.map((it) => (
               <li key={it.slug}>
                 <Link
-                  href={`${basePath}/${it.slug}`}
+                  href={sitePath(`${basePath}/${it.slug}`, lang)}
                   onClick={onNavigate}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground/70 transition-colors hover:text-primary"
                 >

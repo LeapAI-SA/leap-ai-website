@@ -4,6 +4,7 @@ import { DetailPageContent } from "@/components/pages/detail-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { allSolutionSlugs, resolveSolution, getSolutionsFromCms } from "@/lib/cms"
 import { buildContentJsonLd, buildContentMetadata } from "@/lib/seo-content"
+import { getRequestLocale } from "@/lib/locale"
 import { solutionsFlat } from "@/lib/site-data"
 
 export const dynamicParams = true
@@ -19,15 +20,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const item = await resolveSolution(slug)
+  const [item, locale] = await Promise.all([resolveSolution(slug), getRequestLocale()])
   if (!item) {
     return buildContentMetadata(
       { slug: "", title: { ar: "حلولنا", en: "Solutions" }, excerpt: { ar: "", en: "" }, description: { ar: "", en: "" }, features: { ar: [], en: [] } },
       "/solutions",
       { en: "Solutions", ar: "حلولنا" },
+      locale,
     )
   }
-  return buildContentMetadata(item, `/solutions/${slug}`, { en: "Solutions", ar: "حلولنا" })
+  return buildContentMetadata(item, `/solutions/${slug}`, { en: "Solutions", ar: "حلولنا" }, locale)
 }
 
 export default async function SolutionDetailPage({

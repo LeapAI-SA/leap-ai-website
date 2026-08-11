@@ -16,16 +16,17 @@ import { GeoFaqSection } from "@/components/geo/faq-section"
 import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
 import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig, buildSiteNavigationSchema } from "@/lib/seo"
+import { getRequestLocale, withLocalePrefix } from "@/lib/locale"
 import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema } from "@/lib/geo"
 import { geoFaqItems } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await fetchPublicSettings()
-  return buildHomeMetadata(settings)
+  const [settings, locale] = await Promise.all([fetchPublicSettings(), getRequestLocale()])
+  return buildHomeMetadata(settings, locale)
 }
 
 export default async function Page() {
-  const settings = await fetchPublicSettings()
+  const [settings, locale] = await Promise.all([fetchPublicSettings(), getRequestLocale()])
   const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
   const exploreLinks = [
     { href: "/about-us", ar: "معلومات عنا", en: "About Us" },
@@ -43,8 +44,8 @@ export default async function Page() {
     "@id": `${getSiteUrl()}/#webpage`,
     name: `${siteConfig.name} — ${siteConfig.taglineEn}`,
     description: siteConfig.descriptionEn,
-    url: absoluteUrl("/"),
-    inLanguage: ["ar", "en"],
+    url: absoluteUrl(withLocalePrefix("/", locale)),
+    inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
     isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
     primaryImageOfPage: resolveOgImage(settings?.images?.hero),
     speakable: {
@@ -90,7 +91,7 @@ export default async function Page() {
               {exploreLinks.map((item) => (
                 <li key={item.href}>
                   <Link
-                    href={item.href}
+                    href={withLocalePrefix(item.href, locale)}
                     className="block rounded-xl border border-border bg-card px-4 py-3 text-center text-sm font-bold text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
                     <span className="block">{item.ar}</span>

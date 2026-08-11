@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { allArticleSlugs, getArticles, resolveArticle } from "@/lib/cms"
 import { articleCanonicalPath } from "@/lib/article-paths"
 import { buildArticleMetadata, buildNewsArticleJsonLd } from "@/lib/seo-article"
+import { getRequestLocale, withLocalePrefix } from "@/lib/locale"
 
 export const dynamicParams = true
 
@@ -19,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const item = await resolveArticle(slug)
+  const [item, locale] = await Promise.all([resolveArticle(slug), getRequestLocale()])
   if (!item) {
     return buildArticleMetadata({
       slug: "",
@@ -29,9 +30,9 @@ export async function generateMetadata({
       excerpt: { ar: "", en: "" },
       description: { ar: "", en: "" },
       features: { ar: [], en: [] },
-    })
+    }, locale)
   }
-  return buildArticleMetadata(item)
+  return buildArticleMetadata(item, locale)
 }
 
 export default async function ResourceArticlePage({
@@ -42,7 +43,10 @@ export default async function ResourceArticlePage({
   const { slug } = await params
   const item = await resolveArticle(slug)
   if (!item) notFound()
-  if (item.kind === "news") permanentRedirect(articleCanonicalPath(item))
+  if (item.kind === "news") {
+    const locale = await getRequestLocale()
+    permanentRedirect(withLocalePrefix(articleCanonicalPath(item), locale))
+  }
 
   const related = (await getArticles()).filter((article) => article.slug !== slug).slice(0, 4)
 

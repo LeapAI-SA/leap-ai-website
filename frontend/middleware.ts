@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
 import { GEO_ROOT_PATHS } from "@/lib/geo-paths"
 import { resolveLegacyPath } from "@/lib/legacy-path-map"
+import { LOCALE_HEADER, stripLocalePrefix } from "@/lib/locale-path"
 import {
   getBasePath,
   isCanonicalSiteHost,
@@ -118,13 +119,15 @@ export async function middleware(request: NextRequest) {
     if (legacy) {
       url.pathname = legacy
     } else if (pathname === "/en" || pathname.startsWith("/en/")) {
+      url.pathname = pathname.replace(/\/+$/, "") || "/en"
+    } else {
       url.pathname = "/"
     }
     url.search = ""
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 
-  // Map legacy WordPress /en/* and old slugs to canonical destinations in one hop.
+  // Map leftover WordPress slugs (including /en/old-slug → /en/new-path).
   const legacyTarget = resolveLegacyPath(pathname)
   const normalizedPath = pathname.replace(/\/+$/, "") || "/"
   if (legacyTarget && legacyTarget !== normalizedPath) {
@@ -133,17 +136,29 @@ export async function middleware(request: NextRequest) {
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
   }
 
-  if (pathname === "/en" || pathname.startsWith("/en/")) {
-    const url = request.nextUrl.clone()
-    url.pathname = resolveLegacyPath(pathname) || "/"
-    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
-  }
-
-  // skipTrailingSlashRedirect: strip trailing slash for non-legacy paths
+  // skipTrailingSlashRedirect: strip trailing slash before /en rewrite
   if (pathname.length > 1 && pathname.endsWith("/")) {
     const url = request.nextUrl.clone()
     url.pathname = normalizedPath
     return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+  }
+
+  // Serve /en and /en/<app-path> as English HTML (rewrite, keep the URL).
+  if (pathname === "/en" || pathname.startsWith("/en/")) {
+    const rest = stripLocalePrefix(pathname)
+    if (rest.startsWith("/dashboard") || rest.startsWith("/api")) {
+      const url = request.nextUrl.clone()
+      url.pathname = rest
+      return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+    }
+    const url = request.nextUrl.clone()
+    url.pathname = rest
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set(LOCALE_HEADER, "en")
+    return withNoIndexIfNonCanonical(
+      request,
+      NextResponse.rewrite(url, { request: { headers: requestHeaders } }),
+    )
   }
 
   const basePathRedirect = redirectBarePathToBasePath(request)

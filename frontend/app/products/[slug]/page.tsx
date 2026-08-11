@@ -4,6 +4,7 @@ import { DetailPageContent } from "@/components/pages/detail-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { allProductSlugs, resolveProduct, getProductsFromCms } from "@/lib/cms"
 import { buildContentJsonLd, buildContentMetadata } from "@/lib/seo-content"
+import { getRequestLocale } from "@/lib/locale"
 import { products } from "@/lib/site-data"
 
 export const dynamicParams = true
@@ -19,15 +20,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const item = await resolveProduct(slug)
+  const [item, locale] = await Promise.all([resolveProduct(slug), getRequestLocale()])
   if (!item) {
     return buildContentMetadata(
       { slug: "", title: { ar: "منتجاتنا", en: "Products" }, excerpt: { ar: "", en: "" }, description: { ar: "", en: "" }, features: { ar: [], en: [] } },
       "/products",
       { en: "Products", ar: "منتجاتنا" },
+      locale,
     )
   }
-  return buildContentMetadata(item, `/products/${slug}`, { en: "Products", ar: "منتجاتنا" })
+  return buildContentMetadata(item, `/products/${slug}`, { en: "Products", ar: "منتجاتنا" }, locale)
 }
 
 export default async function ProductDetailPage({

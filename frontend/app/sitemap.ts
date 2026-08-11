@@ -27,6 +27,7 @@ function changeFrequencyFor(path: string): MetadataRoute.Sitemap[number]["change
     path === "/resources" ||
     path.startsWith("/resources/") ||
     path.startsWith("/news/") ||
+    path.startsWith("/en") ||
     path.startsWith("/llms") ||
     path.includes("ai.txt")
   ) {
@@ -39,22 +40,34 @@ function changeFrequencyFor(path: string): MetadataRoute.Sitemap[number]["change
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date()
+  try {
+    const now = new Date()
 
-  return getSitemapPaths().map((path) => ({
-    url: absoluteUrl(path),
-    lastModified: now,
-    changeFrequency: changeFrequencyFor(path),
-    priority:
-      PRIORITY[path] ??
-      (path.startsWith("/llms") || path.includes("ai.txt")
-        ? 0.6
-        : path.startsWith("/news/")
-          ? 0.9
-          : path.startsWith("/solutions/") ||
-              path.startsWith("/products/") ||
-              path.startsWith("/use-cases/")
-            ? 0.8
-            : 0.7),
-  }))
+    return getSitemapPaths().map((path) => ({
+      url: absoluteUrl(path),
+      lastModified: now,
+      changeFrequency: changeFrequencyFor(path),
+      priority:
+        PRIORITY[path] ??
+        (path.startsWith("/llms") || path.includes("ai.txt")
+          ? 0.6
+          : path.startsWith("/news/")
+            ? 0.9
+            : path.startsWith("/solutions/") ||
+                path.startsWith("/products/") ||
+                path.startsWith("/use-cases/")
+              ? 0.8
+              : 0.7),
+    }))
+  } catch (err) {
+    console.error("[sitemap] failed to build full sitemap; serving homepage fallback", err)
+    return [
+      {
+        url: absoluteUrl("/"),
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 1,
+      },
+    ]
+  }
 }

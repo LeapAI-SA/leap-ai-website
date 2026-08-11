@@ -1,8 +1,9 @@
 import { withBasePath } from "./media"
 import { getBasePath } from "./site-url"
+import { withLocalePrefix, type SiteLang } from "./locale-path"
 
 /** Normalize CMS or hardcoded internal paths for Next.js Link. */
-export function sitePath(path: string): string {
+export function sitePath(path: string, lang?: SiteLang): string {
   if (!path) return "/"
   if (path.startsWith("mailto:") || path.startsWith("tel:") || path.startsWith("#")) return path
 
@@ -22,7 +23,7 @@ export function sitePath(path: string): string {
     normalized = normalized.slice(basePath.length) || "/"
   }
 
-  return normalized
+  return lang ? withLocalePrefix(normalized, lang) : normalized
 }
 
 /** Full browser URL for an internal route (includes origin + base path). */

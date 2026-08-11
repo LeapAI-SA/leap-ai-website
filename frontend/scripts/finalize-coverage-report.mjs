@@ -21,24 +21,24 @@ const GOOGLE_OBSERVED = new Set(["/"])
  * After deploy they must 301/308 to canonical destinations (see legacy-redirects.mjs).
  */
 const LEGACY_REDIRECT_CHECKS = [
-  { path: "/en/", expect: "/" },
-  { path: "/en/about-us/", expect: "/about-us" },
-  { path: "/en/contact-us/", expect: "/contact-us" },
-  { path: "/en/become-a-partner/", expect: "/become-a-partner" },
-  { path: "/en/healthcare-use-case/", expect: "/use-cases/healthcare" },
-  { path: "/en/insurance-use-case/", expect: "/use-cases/insurance" },
-  { path: "/en/telecom-use-case/", expect: "/use-cases/telecom" },
-  { path: "/en/banking-use-case/", expect: "/use-cases/banking" },
-  { path: "/en/retail-use-case/", expect: "/use-cases/retail" },
-  { path: "/en/nlu-ai-chatbot/", expect: "/solutions/nlu-chatbot" },
-  { path: "/en/ai-voice-bot/", expect: "/solutions/voice-bot" },
-  { path: "/en/whatsapp-business-registration/", expect: "/solutions/whatsapp-business" },
-  { path: "/en/whatsapp-business/", expect: "/solutions/whatsapp-business" },
-  { path: "/en/omni-channel-contact-center/", expect: "/solutions" },
-  { path: "/en/leap-space-2/", expect: "/" },
-  { path: "/en/r24/", expect: "/products/ai-recruiter" },
-  { path: "/en/leap-ticketing/", expect: "/products/leap-ticketing" },
-  { path: "/en/growth-hacking/", expect: "/solutions/customer-journey" },
+  { path: "/en/", expect: "/en" },
+  { path: "/en/about-us/", expect: "/en/about-us" },
+  { path: "/en/contact-us/", expect: "/en/contact-us" },
+  { path: "/en/become-a-partner/", expect: "/en/become-a-partner" },
+  { path: "/en/healthcare-use-case/", expect: "/en/use-cases/healthcare" },
+  { path: "/en/insurance-use-case/", expect: "/en/use-cases/insurance" },
+  { path: "/en/telecom-use-case/", expect: "/en/use-cases/telecom" },
+  { path: "/en/banking-use-case/", expect: "/en/use-cases/banking" },
+  { path: "/en/retail-use-case/", expect: "/en/use-cases/retail" },
+  { path: "/en/nlu-ai-chatbot/", expect: "/en/solutions/nlu-chatbot" },
+  { path: "/en/ai-voice-bot/", expect: "/en/solutions/voice-bot" },
+  { path: "/en/whatsapp-business-registration/", expect: "/en/solutions/whatsapp-business" },
+  { path: "/en/whatsapp-business/", expect: "/en/solutions/whatsapp-business" },
+  { path: "/en/omni-channel-contact-center/", expect: "/en/solutions" },
+  { path: "/en/leap-space-2/", expect: "/en" },
+  { path: "/en/r24/", expect: "/en/products/ai-recruiter" },
+  { path: "/en/leap-ticketing/", expect: "/en/products/leap-ticketing" },
+  { path: "/en/growth-hacking/", expect: "/en/solutions/customer-journey" },
   { path: "/retail-use-case/", expect: "/use-cases/retail" },
   { path: "/banking-use-case-ar/", expect: "/use-cases/banking" },
 ]
@@ -90,8 +90,8 @@ async function main() {
   }
 
   const enInSitemap = urls.filter((p) => p === "/en" || p.startsWith("/en/"))
-  if (enInSitemap.length) {
-    console.error(`FAIL: sitemap paths include /en: ${enInSitemap.join(", ")}`)
+  if (!enInSitemap.length) {
+    console.error("FAIL: sitemap must include English /en URLs")
   }
 
   const rows = []
@@ -161,12 +161,12 @@ async function main() {
     `## Verdict`,
     ``,
     `- Live sitemap pages: **${summary.liveOk}/${summary.sitemapCount}** HTTP 200`,
-    `- Sitemap /en URLs: **${summary.enInSitemap}** (must be 0)`,
+    `- Sitemap /en URLs: **${summary.enInSitemap}** (required for English GEO)`,
     `- New canonical URLs observed in Google organic: **${summary.googleObservedAsNewUrl}/${summary.sitemapCount}**`,
     `- Legacy /en redirect checks OK: **${summary.legacyRedirectOk}/${summary.legacyRedirectTotal}**`,
     `- Bing: confirm coverage in Webmaster Tools after IndexNow + sitemap resubmit`,
     ``,
-    `## All sitemap URLs (canonical only — no /en)`,
+    `## All sitemap URLs (Arabic + English /en)`,
     ``,
     `| Path | Live | Google (new URL) | Bing |`,
     `|---|---|---|---|`,

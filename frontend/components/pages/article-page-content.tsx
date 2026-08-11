@@ -61,7 +61,7 @@ export function ArticlePageContent({
             <h2 className="text-xl font-bold">{t("detail.ctaTitle")}</h2>
             <p className="mt-2 text-navy-foreground/80">{t("detail.ctaTextAlt")}</p>
             <Link
-              href={sitePath("/contact-us")}
+              href={sitePath("/contact-us", lang)}
               className="mt-5 inline-block rounded-full bg-amber px-6 py-3 text-sm font-bold text-amber-foreground"
             >
               {t("detail.demoBtn")}
@@ -75,7 +75,7 @@ export function ArticlePageContent({
                 {related.map((other) => (
                   <li key={other.slug}>
                     <Link
-                      href={sitePath(articleCanonicalPath(other))}
+                      href={sitePath(articleCanonicalPath(other), lang)}
                       className="font-semibold text-primary hover:underline"
                     >
                       {tr(other.title)}

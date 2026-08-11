@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { sitePath } from "@/lib/site-path"
+import { useLanguage } from "@/lib/i18n"
 
 type Crumb = { label: string; href?: string }
 
@@ -15,6 +16,7 @@ export function PageHero({
   subtitle?: string
   crumbs: Crumb[]
 }) {
+  const { lang } = useLanguage()
   return (
     <section className="relative overflow-hidden bg-navy text-navy-foreground">
       <div className="pointer-events-none absolute -left-24 top-0 size-72 rounded-full bg-primary/20 blur-3xl" />
@@ -25,7 +27,7 @@ export function PageHero({
             <span key={`${c.label}-${i}`} className="flex items-center gap-1">
               {i > 0 && <ChevronLeft className="size-3.5 opacity-50 rtl:rotate-180" />}
               {c.href ? (
-                <Link href={sitePath(c.href)} className="transition-colors hover:text-amber">
+                <Link href={sitePath(c.href, lang)} className="transition-colors hover:text-amber">
                   {c.label}
                 </Link>
               ) : (

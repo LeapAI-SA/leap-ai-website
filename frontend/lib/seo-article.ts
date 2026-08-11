@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import type { ArticleItem } from "./articles"
 import { articleCanonicalPath } from "./article-paths"
+import { withLocalePrefix, type SiteLang } from "./locale"
 import { absoluteUrl, buildPageMetadata, getSiteUrl, resolveOgImage, siteConfig } from "./seo"
 
-export function buildArticleMetadata(item: ArticleItem): Metadata {
+export function buildArticleMetadata(item: ArticleItem, locale: SiteLang = "ar"): Metadata {
   return buildPageMetadata({
     title: item.title.en || item.title.ar,
     titleAr: item.title.ar,
@@ -12,11 +13,12 @@ export function buildArticleMetadata(item: ArticleItem): Metadata {
     path: articleCanonicalPath(item),
     image: item.image,
     type: "article",
+    locale,
   })
 }
 
-export function buildNewsArticleJsonLd(item: ArticleItem) {
-  const url = absoluteUrl(articleCanonicalPath(item))
+export function buildNewsArticleJsonLd(item: ArticleItem, locale: SiteLang = "ar") {
+  const url = absoluteUrl(withLocalePrefix(articleCanonicalPath(item), locale))
   const schemaType = item.kind === "news" ? "NewsArticle" : "Article"
   return {
     "@context": "https://schema.org",

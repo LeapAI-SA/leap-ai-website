@@ -5,6 +5,7 @@ import { JsonLd } from '@/components/seo/json-ld'
 import { getNavContent, staticNavContent } from '@/lib/cms'
 import { fetchPublicSettings } from '@/lib/api'
 import { buildRootMetadata, buildWebsiteSchema } from '@/lib/seo'
+import { getRequestLocale } from '@/lib/locale'
 import { buildEnhancedOrganizationSchema, buildSoftwareApplicationSchema, buildCorporationSchema } from '@/lib/geo'
 import './globals.css'
 
@@ -19,8 +20,8 @@ const geistMono = Geist_Mono({
 })
 
 export async function generateMetadata() {
-  const settings = await fetchPublicSettings()
-  return buildRootMetadata(settings)
+  const [settings, locale] = await Promise.all([fetchPublicSettings(), getRequestLocale()])
+  return buildRootMetadata(settings, locale)
 }
 
 export const viewport: Viewport = {
@@ -37,9 +38,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [settings, nav] = await Promise.all([
+  const [settings, nav, locale] = await Promise.all([
     fetchPublicSettings(),
     getNavContent().catch(() => staticNavContent),
+    getRequestLocale(),
   ])
 
   const organizationSchema = buildEnhancedOrganizationSchema(settings ?? undefined)
@@ -51,14 +53,14 @@ export default async function RootLayout({
 
   return (
     <html
-      lang={settings?.defaultLanguage ?? 'ar'}
-      dir={(settings?.defaultLanguage ?? 'ar') === 'ar' ? 'rtl' : 'ltr'}
+      lang={locale}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
       suppressHydrationWarning
       className={`${tajawal.variable} ${geistMono.variable} bg-background`}
     >
       <body className="font-sans antialiased" suppressHydrationWarning>
         <JsonLd data={globalGeoSchemas} />
-        <AppProviders initialSettings={settings} nav={nav}>{children}</AppProviders>
+        <AppProviders initialSettings={settings} nav={nav} locale={locale}>{children}</AppProviders>
       </body>
     </html>
   )
