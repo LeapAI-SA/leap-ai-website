@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { AboutPageContent } from "@/components/pages/about-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
-import { metadataWithRequestLocale, buildStaticPageJsonLd } from "@/lib/seo"
+import { buildStaticPageJsonLd } from "@/lib/seo"
+import { metadataWithRequestLocale } from "@/lib/seo-locale"
 
 export async function generateMetadata(): Promise<Metadata> {
   return metadataWithRequestLocale({

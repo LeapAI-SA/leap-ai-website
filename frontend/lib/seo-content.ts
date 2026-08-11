@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import type { NavItem } from "./site-data"
 import { buildPageMetadata, absoluteUrl, siteConfig, resolveOgImage, getSiteUrl } from "./seo"
-import type { SiteLang } from "./locale"
+import type { SiteLang } from "./locale-path"
 import { resolveContentImage } from "./page-images"
 import { buildContentGeoSchema } from "./geo"
 

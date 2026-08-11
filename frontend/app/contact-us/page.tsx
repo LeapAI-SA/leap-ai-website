@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { ContactPageContent } from "@/components/pages/contact-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
-import { metadataWithRequestLocale, buildStaticPageJsonLd } from "@/lib/seo"
+import { buildStaticPageJsonLd } from "@/lib/seo"
+import { metadataWithRequestLocale } from "@/lib/seo-locale"
 import { buildContactPageSchema } from "@/lib/geo"
 import { fetchPublicSettings } from "@/lib/api"
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { ResourcesPageContent } from "@/components/pages/resources-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { getArticles } from "@/lib/cms"
-import { metadataWithRequestLocale } from "@/lib/seo"
+import { metadataWithRequestLocale } from "@/lib/seo-locale"
 import { buildResourcesListJsonLd } from "@/lib/seo-article"
 
 export async function generateMetadata(): Promise<Metadata> {

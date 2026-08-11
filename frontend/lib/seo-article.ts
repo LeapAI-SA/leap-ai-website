@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import type { ArticleItem } from "./articles"
 import { articleCanonicalPath } from "./article-paths"
-import { withLocalePrefix, type SiteLang } from "./locale"
+import { withLocalePrefix, type SiteLang } from "./locale-path"
 import { absoluteUrl, buildPageMetadata, getSiteUrl, resolveOgImage, siteConfig } from "./seo"
 
 export function buildArticleMetadata(item: ArticleItem, locale: SiteLang = "ar"): Metadata {

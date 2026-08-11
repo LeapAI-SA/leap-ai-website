@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { resolveAssetPath, withBasePath } from "./media"
 import type { PublicSiteSettings } from "./api"
 import { getPublicSiteUrl, getBasePath } from "./site-url"
-import { getRequestLocale, stripLocalePrefix, withLocalePrefix, type SiteLang } from "./locale"
+import { stripLocalePrefix, withLocalePrefix, type SiteLang } from "./locale-path"
 
 export function getSiteUrl() {
   return getPublicSiteUrl()
@@ -335,13 +335,6 @@ export function buildHomeMetadata(
     image: settings?.images?.hero || siteConfig.defaultOgImage,
     locale,
   })
-}
-
-export async function metadataWithRequestLocale(
-  input: Omit<PageMetaInput, "locale">,
-): Promise<Metadata> {
-  const locale = await getRequestLocale()
-  return buildPageMetadata({ ...input, locale })
 }
 
 export function buildRootMetadata(

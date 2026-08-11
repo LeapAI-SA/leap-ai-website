@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { SolutionsPageContent } from "@/components/pages/solutions-page-content"
 import { JsonLd } from "@/components/seo/json-ld"
 import { getNavContent } from "@/lib/cms"
-import { metadataWithRequestLocale } from "@/lib/seo"
+import { metadataWithRequestLocale } from "@/lib/seo-locale"
 import { buildListPageJsonLd } from "@/lib/seo-content"
 
 export async function generateMetadata(): Promise<Metadata> {
