@@ -16,9 +16,14 @@
 import { writeFileSync, mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
+import {
+  filterIndexableUrls,
+  getFallbackSitemapUrls,
+  getGscPriorityUrls,
+} from "./indexable-urls.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY?.trim() || "a7f3c9e2b1d84f6a9c0e5b2d8f1a4c7e"
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY?.trim() || "5711d8a3f8144f3abbb4695a82809c61"
 const hostArg = process.argv.find((a) => a.startsWith("--host="))?.slice("--host=".length)
 const HOST = (hostArg || process.env.NEXT_PUBLIC_SITE_URL || "https://leapai.ai").replace(/\/$/, "")
 
@@ -30,7 +35,7 @@ async function fetchSitemapUrls(host) {
   const xml = await res.text()
   const urls = [...xml.matchAll(/<loc>\s*([^<]+)\s*<\/loc>/gi)].map((m) => m[1].trim())
   if (!urls.length) throw new Error("No <loc> entries found in sitemap.xml")
-  return urls
+  return filterIndexableUrls(host, urls)
 }
 
 async function ensureKeyLive(host, key) {
@@ -89,14 +94,37 @@ async function main() {
     )
   }
 
-  const urls = await fetchSitemapUrls(HOST)
-  console.log(`Sitemap URLs: ${urls.length}`)
-
-  const result = await submitIndexNow(HOST, INDEXNOW_KEY, urls)
-  for (const e of result.engines) {
-    console.log(`  ${e.endpoint} → HTTP ${e.status} ok=${e.ok}${e.body ? ` ${e.body.slice(0, 120)}` : ""}`)
+  const priority = getGscPriorityUrls(HOST)
+  let urls
+  let sitemapSource = "live"
+  try {
+    urls = await fetchSitemapUrls(HOST)
+    console.log(`Sitemap URLs: ${urls.length} (live, 308 slugs excluded)`)
+  } catch (err) {
+    sitemapSource = "fallback"
+    urls = getFallbackSitemapUrls(HOST)
+    console.warn(
+      `Live sitemap unavailable (${err instanceof Error ? err.message : err}). Using fallback list (${urls.length} URLs).`,
+    )
   }
-  console.log(`IndexNow overall: status=${result.status} ok=${result.ok}`)
+
+  const remaining = urls.filter((url) => !priority.includes(url))
+  console.log(`GSC/IndexNow priority: ${priority.length}`)
+  console.log(`Remaining indexable: ${remaining.length}`)
+
+  console.log("\nSubmitting priority URLs…")
+  const priorityResult = await submitIndexNow(HOST, INDEXNOW_KEY, priority)
+  for (const e of priorityResult.engines) {
+    console.log(`  [priority] ${e.endpoint} → HTTP ${e.status} ok=${e.ok}${e.body ? ` ${e.body.slice(0, 120)}` : ""}`)
+  }
+
+  console.log("\nSubmitting remaining sitemap URLs…")
+  const result = await submitIndexNow(HOST, INDEXNOW_KEY, remaining)
+  for (const e of result.engines) {
+    console.log(`  [rest] ${e.endpoint} → HTTP ${e.status} ok=${e.ok}${e.body ? ` ${e.body.slice(0, 120)}` : ""}`)
+  }
+  const ok = priorityResult.ok || result.ok
+  console.log(`IndexNow overall: priority=${priorityResult.ok} rest=${result.ok} ok=${ok}`)
   const bing = result.engines.find((e) => e.endpoint.includes("indexnow.org"))
   if (bing && !bing.ok && /UserForbiddedToAccessSite|unauthorized to access the site/i.test(bing.body || "")) {
     console.warn(
@@ -114,21 +142,33 @@ async function main() {
     generatedAt: new Date().toISOString(),
     host: HOST,
     keyLive: keyCheck.ok,
+    sitemapSource,
+    skipped308: [
+      `${HOST}/resources/leap-ai-saudi-ai-native-cx-platform`,
+      `${HOST}/en/resources/leap-ai-saudi-ai-native-cx-platform`,
+    ],
+    priority,
     indexNow: {
       status: result.status,
-      ok: result.ok,
+      ok,
       body: result.body,
-      submitted: urls.length,
+      submitted: priority.length + remaining.length,
+      prioritySubmitted: priority.length,
+      remainingSubmitted: remaining.length,
+      priorityEngines: priorityResult.engines,
       engines: result.engines,
     },
     googleSearchConsole: {
       action: "manual",
       sitemapUrl: `${HOST}/sitemap.xml`,
       consoleUrl: "https://search.google.com/search-console",
+      priorityUrls: priority,
       steps: [
         "Open Google Search Console property for https://leapai.ai",
-        "Sitemaps → Add new sitemap → sitemap.xml",
-        "URL Inspection → request indexing for priority pages after redirects deploy",
+        "Sitemaps → Add new sitemap → sitemap.xml (when HTTP 200)",
+        "URL Inspection → Request indexing for the 5 priority URLs first",
+        "Do not request indexing for 308 /resources/leap-ai-saudi-ai-native-cx-platform (use dated /news/ URL)",
+        "Then batch-request remaining URLs from sitemap-urls.txt",
       ],
     },
     bingWebmaster: {
@@ -145,15 +185,20 @@ async function main() {
   }
   const outPath = join(outDir, "indexnow-submit-report.json")
   writeFileSync(outPath, JSON.stringify(report, null, 2))
+  writeFileSync(join(outDir, "gsc-priority-urls.txt"), priority.join("\n") + "\n")
+  writeFileSync(join(outDir, "sitemap-urls.txt"), urls.join("\n") + "\n")
   console.log(`Wrote ${outPath}`)
+  console.log(`Wrote ${join(outDir, "gsc-priority-urls.txt")}`)
 
   console.log("\n--- Google Search Console (required; IndexNow does not cover Google) ---")
   for (const step of report.googleSearchConsole.steps) console.log(`  • ${step}`)
+  console.log("\nPriority URLs:")
+  for (const url of priority) console.log(`  ${url}`)
   console.log("\n--- Bing Webmaster ---")
   for (const step of report.bingWebmaster.steps) console.log(`  • ${step}`)
 
-  if (!result.ok && !keyCheck.ok) process.exitCode = 2
-  else if (!result.ok) process.exitCode = 1
+  if (!ok && !keyCheck.ok) process.exitCode = 2
+  else if (!ok) process.exitCode = 1
 }
 
 main().catch((err) => {

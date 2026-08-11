@@ -32,6 +32,9 @@ type IndexNowStatus = {
   keyLocation: string
   urlCount: number
   sitemapUrl: string
+  priorityUrls?: string[]
+  skipUrls?: string[]
+  urls?: string[]
 }
 
 type IndexNowEngineResult = {
@@ -425,14 +428,59 @@ export default function DashboardGeoPage() {
             Search Console
           </a>{" "}
           → Sitemaps → submit <span className="font-mono">sitemap.xml</span>, then URL Inspection → Request
-          indexing for <span className="font-mono">/</span>, <span className="font-mono">/en</span>,{" "}
-          <span className="font-mono">/llms.txt</span>,{" "}
-          <span className="font-mono">/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform</span>, and{" "}
-          <span className="font-mono">/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform</span>. Removals /
-          Clear cached URL for leftover <span className="font-mono">/en/*</span> WordPress paths. Gemini uses
-          Google Search — IndexNow does not notify Google. After deploy, ask ChatGPT, Gemini, Copilot, Claude,
-          and Perplexity: “What is Saudi Arabia’s premier AI-native CX platform?” and “LeapAI vs Unifonic.”
+          indexing for the five priority URLs below. Do not request the 308{" "}
+          <span className="font-mono">/resources/leap-ai-saudi-ai-native-cx-platform</span> slug — use the dated{" "}
+          <span className="font-mono">/news/…</span> URL. Do not GSC-remove <span className="font-mono">/en</span> or{" "}
+          <span className="font-mono">/en/about-us</span>. Gemini uses Google Search — IndexNow does not notify
+          Google.
         </p>
+      </Panel>
+
+      <Panel
+        title="URLs to request indexing"
+        description="Paste these in Google Search Console → URL Inspection. IndexNow already uses the same lists."
+      >
+        <div className="space-y-4 text-sm">
+          <div>
+            <p className="font-semibold text-navy">Do first (GEO — 5 URLs)</p>
+            <ul className="mt-2 list-inside list-disc space-y-1 break-all font-mono text-xs text-muted-foreground">
+              {(indexNow?.priorityUrls?.length
+                ? indexNow.priorityUrls
+                : [
+                    `${siteUrl}/`,
+                    `${siteUrl}/en`,
+                    `${siteUrl}/llms.txt`,
+                    `${siteUrl}/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`,
+                    `${siteUrl}/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`,
+                  ]
+              ).map((url) => (
+                <li key={url}>{url}</li>
+              ))}
+            </ul>
+          </div>
+          {indexNow?.skipUrls?.length ? (
+            <div>
+              <p className="font-semibold text-navy">Skip (308 redirects)</p>
+              <ul className="mt-2 list-inside list-disc space-y-1 break-all font-mono text-xs text-muted-foreground">
+                {indexNow.skipUrls.map((url) => (
+                  <li key={url}>{url}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {indexNow?.urls?.length ? (
+            <details className="rounded-xl border border-border/60 bg-muted/20 p-4">
+              <summary className="cursor-pointer font-semibold text-navy">
+                All sitemap URLs ({indexNow.urls.length})
+              </summary>
+              <ul className="mt-3 max-h-64 list-inside list-disc space-y-1 overflow-auto break-all font-mono text-xs text-muted-foreground">
+                {indexNow.urls.map((url) => (
+                  <li key={url}>{url}</li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+        </div>
       </Panel>
 
       <Panel title="What is GEO?" description="Simple explanation — no extra setup required">

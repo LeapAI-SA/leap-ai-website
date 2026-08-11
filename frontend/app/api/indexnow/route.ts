@@ -13,7 +13,7 @@ import {
   indexNowKeyLocation,
   checkIndexNowKeyLive,
 } from "@/lib/indexnow"
-import { getSitemapUrls } from "@/lib/sitemap-urls"
+import { getGscPriorityUrls, getRedirectOnlyUrls, getSitemapUrls } from "@/lib/sitemap-urls"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
@@ -105,12 +105,17 @@ export async function GET(request: Request) {
   }
 
   const key = await checkIndexNowKeyLive()
+  const urls = getSitemapUrls()
+  const priorityUrls = getGscPriorityUrls()
   return NextResponse.json({
     key: INDEXNOW_KEY,
     keyLocation: key.keyLocation,
     keyLive: key.live,
     keyHttpStatus: key.status,
-    urlCount: getSitemapUrls().length,
+    urlCount: urls.length,
     sitemapUrl: `${indexNowKeyLocation().replace(`/${INDEXNOW_KEY}.txt`, "")}/sitemap.xml`,
+    priorityUrls,
+    skipUrls: getRedirectOnlyUrls(),
+    urls,
   })
 }
