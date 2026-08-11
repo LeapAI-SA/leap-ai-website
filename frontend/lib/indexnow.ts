@@ -7,7 +7,7 @@ import { getSitemapUrls } from "@/lib/sitemap-urls"
  * Rotate with: node scripts/rotate-indexnow-key.mjs --key=<newkey>
  */
 export const INDEXNOW_KEY =
-  process.env.INDEXNOW_KEY?.trim() || "5711d8a3f8144f3abbb4695a82809c61"
+  process.env.INDEXNOW_KEY?.trim() || "a0d1d00c073c48c2b85694d1a36ccfbf"
 
 /** Shared hub (Bing / partners) + direct Yandex — Bing can 403 while Yandex accepts. */
 export const INDEXNOW_ENDPOINTS = [

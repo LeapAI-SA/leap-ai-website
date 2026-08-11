@@ -23,7 +23,7 @@ import {
 } from "./indexable-urls.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const INDEXNOW_KEY = process.env.INDEXNOW_KEY?.trim() || "5711d8a3f8144f3abbb4695a82809c61"
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY?.trim() || "a0d1d00c073c48c2b85694d1a36ccfbf"
 const hostArg = process.argv.find((a) => a.startsWith("--host="))?.slice("--host=".length)
 const HOST = (hostArg || process.env.NEXT_PUBLIC_SITE_URL || "https://leapai.ai").replace(/\/$/, "")
 
