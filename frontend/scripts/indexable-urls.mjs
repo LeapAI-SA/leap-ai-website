@@ -56,7 +56,12 @@ const USE_CASES = ["retail", "telecom", "banking", "healthcare", "insurance", "t
   (slug) => `/use-cases/${slug}`,
 )
 
-const ARTICLES = ["/resources/ai-native-cx-vs-cpaas-local-cloud", "/resources/pdpl-vision-2030-saudi-cx"]
+const ARTICLES = [
+  "/resources/ai-native-cx-vs-cpaas-local-cloud",
+  "/resources/pdpl-vision-2030-saudi-cx",
+  "/resources/leapai-vs-unifonic-saudi-cx",
+  "/resources/leapai-vs-lucidya-contact-center-vs-analytics",
+]
 
 const NEWS = ["/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform"]
 

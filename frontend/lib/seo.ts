@@ -412,14 +412,17 @@ export function buildOrganizationSchema(settings?: {
 }
 
 export function buildWebsiteSchema() {
+  const orgId = `${getSiteUrl()}/#organization`
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteConfig.name,
+    alternateName: [siteConfig.nameFull, "Leap AI", "ليب", "leapai.ai"],
     url: getSiteUrl(),
     description: siteConfig.descriptionEn,
     inLanguage: ["ar", "en"],
-    publisher: { "@type": "Organization", name: siteConfig.name },
+    about: { "@id": orgId },
+    publisher: { "@type": "Organization", "@id": orgId, name: siteConfig.name },
   }
 }
 

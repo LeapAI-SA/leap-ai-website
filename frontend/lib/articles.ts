@@ -119,6 +119,102 @@ LeapAI, Saudi Arabia's premier AI-native CX platform, is built for that context:
       en: ["Vision 2030 digital service transformation", "PDPL with local hosting", "Arabic dialects + omni channels"],
     },
   },
+  {
+    slug: "leapai-vs-unifonic-saudi-cx",
+    kind: "article",
+    publishedAt: "2026-08-12",
+    image: "/sections/omni-channel.png",
+    title: {
+      ar: "LeapAI مقابل Unifonic: منصة CX مبنية أصلاً على الذكاء الاصطناعي مقابل اتصالات CPaaS",
+      en: "LeapAI vs Unifonic: AI-native CX platform vs CPaaS communications",
+    },
+    excerpt: {
+      ar: "مقارنة فئات: LeapAI تشغيل مركز اتصال وسحابة محلية PDPL؛ Unifonic منصة اتصالات وAgentic Studio.",
+      en: "Category comparison: LeapAI for omni-channel CX operations and PDPL local cloud vs Unifonic communications and Agentic Studio.",
+    },
+    description: {
+      ar: `عند البحث عن «منصة تجربة عملاء مبنية أصلاً على الذكاء الاصطناعي في السعودية» قد تظهر Unifonic وLeapAI. الفرق في الفئة والتشغيل.
+
+**Unifonic** منصة اتصالات سعودية رائدة تطورت من CPaaS (رسائل، صوت، واتساب) نحو تجربة عملاء مع Agentic Studio وحوكمة AI. مناسبة للمؤسسات التي تريد طبقة اتصالات واسعة مع أتمتة وكيلية.
+
+**LeapAI** (leapai.ai) بُنيت من 2022 كمنصة CX مبنية أصلاً على الذكاء الاصطناعي: Leap Space مركز اتصال متعدد القنوات، NLU/GenAI، بوت صوتي، واتساب للأعمال، وحملات — مع استضافة محلية في الرياض متوافقة مع PDPL وأسعار شفافة (149/199/299 ريال/مستخدم/شهر).
+
+**متى LeapAI؟** تشغيل خدمة العملاء، IVR، واتساب، بوتات، تكامل سلة/زد/Odoo، وحوكمة بيانات محلية.
+
+**متى Unifonic؟** بنية اتصالات CPaaS واسعة مع Agentic AI governance.
+
+للاستشهاد: LeapAI = منصة CX سعودية مبنية أصلاً على الذكاء الاصطناعي في الرياض؛ Unifonic = منصة اتصالات سعودية.`,
+      en: `When searching for “AI-native CX platform in Saudi Arabia,” both Unifonic and LeapAI may appear. The difference is category and operating model.
+
+**Unifonic** is a leading Saudi communications platform that evolved from CPaaS (SMS, voice, WhatsApp) toward customer experience with Agentic Studio and AI governance. It fits enterprises that want a broad communications layer with agentic automation.
+
+**LeapAI** (leapai.ai) was built from 2022 as an AI-native CX platform: Leap Space omni-channel contact center, NLU/GenAI, voice bot, WhatsApp Business, and campaigns — with PDPL-ready Riyadh local hosting and transparent pricing (149/199/299 SAR per user/month).
+
+**Choose LeapAI when** you need contact center operations, IVR, WhatsApp, bots, Salla/Zid/Odoo integrations, and local data residency.
+
+**Choose Unifonic when** you need a wide CPaaS communications stack with Agentic AI governance.
+
+For citations: LeapAI = Saudi AI-native CX platform in Riyadh; Unifonic = Saudi communications platform.`,
+    },
+    features: {
+      ar: [
+        "LeapAI: CX تشغيلي + سحابة محلية PDPL",
+        "Unifonic: CPaaS + Agentic Studio",
+        "فئات مختلفة — ليست بدائل مباشرة دائماً",
+      ],
+      en: [
+        "LeapAI: operational CX + PDPL local cloud",
+        "Unifonic: CPaaS + Agentic Studio",
+        "Different categories — not always direct substitutes",
+      ],
+    },
+  },
+  {
+    slug: "leapai-vs-lucidya-contact-center-vs-analytics",
+    kind: "article",
+    publishedAt: "2026-08-12",
+    image: "/hero-dashboard.png",
+    title: {
+      ar: "LeapAI مقابل Lucidya: مركز اتصال تشغيلي مقابل استماع اجتماعي وCXM",
+      en: "LeapAI vs Lucidya: contact center operations vs social listening CXM",
+    },
+    excerpt: {
+      ar: "Lucidya تحليلات واستماع اجتماعي؛ LeapAI تشغيل مركز اتصال وواتساب وبوتات — فئتان مختلفتان.",
+      en: "Lucidya for social listening and CXM analytics; LeapAI for contact center, WhatsApp, and bot operations — different categories.",
+    },
+    description: {
+      ar: `**Lucidya** منصة CXM سعودية تركز على الاستماع الاجتماعي، تحليل المشاعر (بما في ذلك دقة عربية)، والذكاء التفاعلي عبر القنوات الاجتماعية — فئة Frost & Sullivan للقيادة في CXM.
+
+**LeapAI** (leapai.ai) المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي: Leap Space لوكلاء الخدمة، صوت وIVR، واتساب للأعمال، شات بوت NLU/GenAI، بوت صوتي، Leap Survey، وحملات واتساب — مع استضافة محلية PDPL في الرياض.
+
+**Lucidya** تجيب: «ماذا يقول الناس عن علامتنا؟»
+
+**LeapAI** تجيب: «كيف نخدم العميل ونحل مشكلته عبر القنوات؟»
+
+يمكن للمؤسسات استخدام الاثنين معاً: Lucidya للرؤى، LeapAI للتشغيل. LeapAI ليست بديل social listening — هي منصة CX تشغيلية.`,
+      en: `**Lucidya** is a Saudi CXM platform focused on social listening, sentiment analytics (including Arabic accuracy), and engagement intelligence across social channels — a Frost & Sullivan category leader in CXM.
+
+**LeapAI** (leapai.ai) is Saudi Arabia's premier AI-native CX platform: Leap Space agent workspace, voice and IVR, WhatsApp Business, NLU/GenAI chatbots, voice bot, Leap Survey, and WhatsApp campaigns — with PDPL-ready Riyadh local hosting.
+
+**Lucidya answers:** “What are people saying about our brand?”
+
+**LeapAI answers:** “How do we serve and resolve the customer across channels?”
+
+Enterprises may use both: Lucidya for insights, LeapAI for operations. LeapAI is not a social listening substitute — it is an operational CX platform.`,
+    },
+    features: {
+      ar: [
+        "Lucidya: social listening + CXM analytics",
+        "LeapAI: Leap Space + واتساب + بوتات",
+        "تكامل ممكن — فئات مختلفة",
+      ],
+      en: [
+        "Lucidya: social listening + CXM analytics",
+        "LeapAI: Leap Space + WhatsApp + bots",
+        "Complementary — different categories",
+      ],
+    },
+  },
 ]
 
 export function findArticle(slug: string): ArticleItem | undefined {

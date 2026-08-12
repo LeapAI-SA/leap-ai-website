@@ -17,7 +17,7 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
 import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig, buildSiteNavigationSchema } from "@/lib/seo"
 import { getRequestLocale, withLocalePrefix } from "@/lib/locale"
-import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema } from "@/lib/geo"
+import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema, buildHomeHowToSchemaEn } from "@/lib/geo"
 import { geoFaqItems } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -65,6 +65,7 @@ export default async function Page() {
           buildFaqPageSchema(faqItems),
           buildFaqPageSchemaAr(faqItems),
           buildHomeHowToSchema(),
+          buildHomeHowToSchemaEn(),
         ]}
       />
       <SiteHeader />
