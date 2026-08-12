@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { Pencil, Plus, Search } from "lucide-react"
 import { adminFetch, type ContentItemPublic } from "@/lib/api"
+import { useLanguage } from "@/lib/i18n"
 import {
   PageHeader,
   DashButton,
@@ -21,6 +22,7 @@ const typeLabels: Record<ContentItemPublic["type"], string> = {
 }
 
 export default function DashboardContentPage() {
+  const { t } = useLanguage()
   const [items, setItems] = useState<ContentItemPublic[]>([])
   const [filter, setFilter] = useState<"all" | ContentItemPublic["type"]>("all")
   const [query, setQuery] = useState("")
@@ -57,12 +59,12 @@ export default function DashboardContentPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Content Library"
-        description="Manage solutions, products, use cases, and Resources articles displayed on your public website."
+        title={t("admin.content.title")}
+        description={t("admin.content.desc")}
         actions={
           <DashButton href="/dashboard/content/new" variant="amber">
             <Plus className="size-4" />
-            Add content
+            {t("admin.nav.addContent")}
           </DashButton>
         }
       />
@@ -85,22 +87,22 @@ export default function DashboardContentPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by title or slug..."
+            placeholder={t("admin.content.searchPlaceholder")}
             className="form-input ps-10"
           />
         </div>
       </div>
 
       {loading ? (
-        <LoadingBlock label="Loading content..." />
+        <LoadingBlock label={t("admin.common.loadingContent")} />
       ) : filtered.length === 0 ? (
         <EmptyState
-          title="No content found"
+          title={t("admin.content.noContent")}
           description={items.length === 0 ? "Run the backend seed or create your first content item." : "Try a different search or filter."}
           action={
             items.length === 0 ? (
               <DashButton href="/dashboard/content/new" variant="primary">
-                Create first item
+                {t("admin.content.createFirst")}
               </DashButton>
             ) : undefined
           }
@@ -135,7 +137,7 @@ export default function DashboardContentPage() {
                     </td>
                     <td className="px-5 py-4">
                       <Badge variant={item.published ? "success" : "muted"}>
-                        {item.published ? "Published" : "Draft"}
+                        {item.published ? t("admin.content.published") : t("admin.content.draft")}
                       </Badge>
                     </td>
                     <td className="px-5 py-4 text-end">
@@ -144,7 +146,7 @@ export default function DashboardContentPage() {
                         className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-bold text-primary transition-colors hover:bg-primary/10"
                       >
                         <Pencil className="size-3.5" />
-                        Edit
+                        {t("admin.common.edit")}
                       </Link>
                     </td>
                   </tr>

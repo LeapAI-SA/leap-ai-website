@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoDisplayUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
 import { getToken } from "@/lib/api"
+import { useLanguage } from "@/lib/i18n"
 import { getBasePath } from "@/lib/site-url"
 import { PageHeader, Panel, StatCard, DashButton, Badge, Alert } from "@/components/dashboard/ui"
 
@@ -118,6 +119,8 @@ function indexNowApiUrl() {
 }
 
 export default function DashboardGeoPage() {
+  const { lang } = useLanguage()
+  const isAr = lang === "ar"
   const [siteUrl, setSiteUrl] = useState("")
   const [fileUrls, setFileUrls] = useState<Record<string, string>>({})
   const [results, setResults] = useState<Record<string, CheckResult>>({})
@@ -153,7 +156,7 @@ export default function DashboardGeoPage() {
       setIndexNow(null)
       setIndexNowMessage({
         variant: "error",
-        text: err instanceof Error ? err.message : "Could not load IndexNow status",
+        text: err instanceof Error ? err.message : isAr ? "تعذر تحميل حالة IndexNow" : "Could not load IndexNow status",
       })
     } finally {
       setIndexNowLoading(false)
@@ -163,7 +166,7 @@ export default function DashboardGeoPage() {
   const submitIndexNow = useCallback(async () => {
     const token = getToken()
     if (!token) {
-      setIndexNowMessage({ variant: "error", text: "Sign in again to submit IndexNow." })
+      setIndexNowMessage({ variant: "error", text: isAr ? "سجل الدخول مرة أخرى لإرسال IndexNow." : "Sign in again to submit IndexNow." })
       return
     }
     setIndexNowSubmitting(true)
@@ -212,7 +215,7 @@ export default function DashboardGeoPage() {
     } catch (err) {
       setIndexNowMessage({
         variant: "error",
-        text: err instanceof Error ? err.message : "IndexNow submit failed",
+        text: err instanceof Error ? err.message : isAr ? "فشل إرسال IndexNow" : "IndexNow submit failed",
       })
     } finally {
       setIndexNowSubmitting(false)
@@ -273,11 +276,15 @@ export default function DashboardGeoPage() {
     <div className="space-y-8">
       <PageHeader
         title="GEO — AI visibility"
-        description="GEO helps ChatGPT, Gemini, Copilot, Claude, and Perplexity find and describe LeapAI as Saudi Arabia's premier AI-native CX platform. Files update when you save Site Settings and Content."
+        description={
+          isAr
+            ? "يساعد GEO أدوات ChatGPT وGemini وCopilot وClaude وPerplexity على العثور على LeapAI ووصفها. يتم تحديث الملفات عند حفظ الإعدادات والمحتوى."
+            : "GEO helps ChatGPT, Gemini, Copilot, Claude, and Perplexity find and describe LeapAI as Saudi Arabia's premier AI-native CX platform. Files update when you save Site Settings and Content."
+        }
         actions={
           <DashButton onClick={() => checkAll()} variant="secondary" disabled={checkingAll}>
             <RefreshCw className={`size-4 ${checkingAll ? "animate-spin" : ""}`} />
-            Check all links
+            {isAr ? "فحص كل الروابط" : "Check all links"}
           </DashButton>
         }
       />
@@ -317,8 +324,8 @@ export default function DashboardGeoPage() {
       </div>
 
       <Panel
-        title="Search engines — IndexNow"
-        description="Push the sitemap to Bing (and partners). Same action as npm run seo:submit-indexnow."
+        title={isAr ? "محركات البحث — IndexNow" : "Search engines — IndexNow"}
+        description={isAr ? "أرسل خريطة الموقع إلى Bing والشركاء. نفس تنفيذ npm run seo:submit-indexnow." : "Push the sitemap to Bing (and partners). Same action as npm run seo:submit-indexnow."}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2 text-sm text-muted-foreground">
@@ -372,7 +379,7 @@ export default function DashboardGeoPage() {
               disabled={indexNowLoading || indexNowSubmitting}
             >
               <RefreshCw className={`size-4 ${indexNowLoading ? "animate-spin" : ""}`} />
-              Refresh status
+              {isAr ? "تحديث الحالة" : "Refresh status"}
             </DashButton>
             <DashButton
               type="button"
@@ -380,7 +387,7 @@ export default function DashboardGeoPage() {
               disabled={indexNowSubmitting || indexNowLoading}
             >
               <Send className={`size-4 ${indexNowSubmitting ? "animate-pulse" : ""}`} />
-              {indexNowSubmitting ? "Submitting…" : "Submit sitemap (IndexNow)"}
+              {indexNowSubmitting ? (isAr ? "جارٍ الإرسال…" : "Submitting…") : (isAr ? "إرسال خريطة الموقع (IndexNow)" : "Submit sitemap (IndexNow)")}
             </DashButton>
           </div>
         </div>

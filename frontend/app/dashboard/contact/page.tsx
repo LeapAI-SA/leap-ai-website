@@ -2,18 +2,20 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Mail, Phone, Trash2, CheckCircle2, Circle, RefreshCw, Eye, X } from "lucide-react"
+import { adminLocale, mapAdminError } from "@/lib/admin-i18n"
 import { adminFetch, type ContactMessage } from "@/lib/api"
 import { PageHeader, Panel, LoadingBlock, Alert, DashButton } from "@/components/dashboard/ui"
+import { useLanguage } from "@/lib/i18n"
 
-function sourceLabel(source: ContactMessage["source"]) {
-  if (source === "partner") return "Partner form"
-  if (source === "demo") return "Book a demo"
-  return "Contact Us"
+function sourceLabel(source: ContactMessage["source"], lang: "ar" | "en") {
+  if (source === "partner") return lang === "ar" ? "نموذج الشركاء" : "Partner form"
+  if (source === "demo") return lang === "ar" ? "احجز تجربة" : "Book a demo"
+  return lang === "ar" ? "تواصل معنا" : "Contact Us"
 }
 
-function formatDate(value: string) {
+function formatDate(value: string, lang: "ar" | "en") {
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(adminLocale(lang), {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(new Date(value))
@@ -23,6 +25,8 @@ function formatDate(value: string) {
 }
 
 export default function DashboardContactPage() {
+  const { lang } = useLanguage()
+  const isAr = lang === "ar"
   const [messages, setMessages] = useState<ContactMessage[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -36,7 +40,7 @@ export default function DashboardContactPage() {
       const data = await adminFetch<ContactMessage[]>("/api/admin/contact-messages")
       setMessages(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load contact messages")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", isAr ? "فشل تحميل رسائل التواصل" : "Failed to load contact messages"))
     } finally {
       if (!silent) setLoading(false)
     }
@@ -83,20 +87,20 @@ export default function DashboardContactPage() {
       })
       setMessages((prev) => prev.map((m) => (m.id === item.id ? updated : m)))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update message")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", isAr ? "فشل تحديث الرسالة" : "Failed to update message"))
     } finally {
       setBusyId(null)
     }
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this contact message?")) return
+    if (!confirm(isAr ? "حذف رسالة التواصل هذه؟" : "Delete this contact message?")) return
     setBusyId(id)
     try {
       await adminFetch(`/api/admin/contact-messages/${id}`, { method: "DELETE" })
       setMessages((prev) => prev.filter((m) => m.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete message")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", isAr ? "فشل حذف الرسالة" : "Failed to delete message"))
     } finally {
       setBusyId(null)
     }
@@ -105,16 +109,20 @@ export default function DashboardContactPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Contact Us"
-        description="View Contact Us, partner, and Book a demo submissions. Demo leads are also emailed to sales@leapai.ai when SMTP is configured."
+        title={isAr ? "رسائل التواصل" : "Contact Us"}
+        description={
+          isAr
+            ? "اعرض رسائل تواصل معنا والشركاء وحجز التجربة. يتم أيضاً إرسال طلبات التجربة إلى sales@leapai.ai عند إعداد SMTP."
+            : "View Contact Us, partner, and Book a demo submissions. Demo leads are also emailed to sales@leapai.ai when SMTP is configured."
+        }
         actions={
           <>
             <DashButton onClick={() => load()} variant="secondary" disabled={loading}>
               <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} />
-              Refresh
+              {isAr ? "تحديث" : "Refresh"}
             </DashButton>
             <DashButton href="/dashboard/settings" variant="secondary">
-              Edit contact info
+              {isAr ? "تعديل معلومات التواصل" : "Edit contact info"}
             </DashButton>
           </>
         }
@@ -124,13 +132,15 @@ export default function DashboardContactPage() {
 
       <Panel
         title={`Inbox${unreadCount ? ` (${unreadCount} unread)` : ""}`}
-        description="Messages from leapai.ai/contact-us"
+        description={isAr ? "رسائل من leapai.ai/contact-us" : "Messages from leapai.ai/contact-us"}
       >
         {loading ? (
-          <LoadingBlock label="Loading contact messages..." />
+          <LoadingBlock label={isAr ? "جارٍ تحميل رسائل التواصل..." : "Loading contact messages..."} />
         ) : messages.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            No contact messages yet. Submissions from the public Contact Us page will appear here.
+            {isAr
+              ? "لا توجد رسائل تواصل بعد. ستظهر هنا رسائل صفحة تواصل معنا من الموقع."
+              : "No contact messages yet. Submissions from the public Contact Us page will appear here."}
           </p>
         ) : (
           <div className="space-y-4">
@@ -179,9 +189,9 @@ export default function DashboardContactPage() {
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {sourceLabel(item.source)}
+                        {sourceLabel(item.source, lang)}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt)}</td>
+                      <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt, lang)}</td>
                       <td className="px-3 py-2">
                         <div className="flex flex-wrap gap-2">
                           <button
@@ -190,7 +200,7 @@ export default function DashboardContactPage() {
                             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
                           >
                             <Eye className="size-3.5" />
-                            View
+                            {isAr ? "عرض" : "View"}
                           </button>
                           <button
                             type="button"
@@ -199,7 +209,7 @@ export default function DashboardContactPage() {
                             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
                           >
                             {item.read ? <Circle className="size-3.5" /> : <CheckCircle2 className="size-3.5 text-primary" />}
-                            {item.read ? "Unread" : "Read"}
+                            {item.read ? (isAr ? "غير مقروء" : "Unread") : (isAr ? "مقروء" : "Read")}
                           </button>
                           <button
                             type="button"
@@ -208,7 +218,7 @@ export default function DashboardContactPage() {
                             className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 px-2.5 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10"
                           >
                             <Trash2 className="size-3.5" />
-                            Delete
+                            {isAr ? "حذف" : "Delete"}
                           </button>
                         </div>
                       </td>
@@ -239,7 +249,7 @@ export default function DashboardContactPage() {
               type="button"
               onClick={closeView}
               className="absolute end-4 top-4 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Close"
+              aria-label={isAr ? "إغلاق" : "Close"}
             >
               <X className="size-5" />
             </button>
@@ -249,10 +259,10 @@ export default function DashboardContactPage() {
                 {selectedMessage.name}
               </h3>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                {sourceLabel(selectedMessage.source)}
+                {sourceLabel(selectedMessage.source, lang)}
               </span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{formatDate(selectedMessage.createdAt)}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{formatDate(selectedMessage.createdAt, lang)}</p>
 
             <dl className="mt-5 space-y-3 text-sm">
               <div>

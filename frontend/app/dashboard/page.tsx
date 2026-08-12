@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { FileText, Settings, Globe, Server, Shield, ArrowUpRight, Mail, Sparkles } from "lucide-react"
 import { adminFetch } from "@/lib/api"
+import { useLanguage } from "@/lib/i18n"
 import { PageHeader, StatCard, Panel, DashButton, Badge } from "@/components/dashboard/ui"
 
 export default function DashboardHomePage() {
+  const { t } = useLanguage()
   const [stats, setStats] = useState<{
     content: number
     solutions: number
@@ -37,15 +39,15 @@ export default function DashboardHomePage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Good to see you"
-        description="Manage your LeapAI website content, homepage settings, and published pages from one place."
+        title={t("admin.home.title")}
+        description={t("admin.home.desc")}
         actions={
           <>
             <DashButton href="/dashboard/content/new" variant="amber">
-              Add content
+              {t("admin.nav.addContent")}
             </DashButton>
             <DashButton href="/" variant="secondary">
-              Preview site
+              {t("admin.home.previewSite")}
             </DashButton>
           </>
         }
@@ -53,25 +55,25 @@ export default function DashboardHomePage() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Total content"
+          label={t("admin.home.totalContent")}
           value={stats ? String(stats.content) : "—"}
-          hint="Solutions, products & use cases"
+          hint={t("admin.home.solutionsHint")}
           icon={FileText}
           tone="primary"
         />
         <StatCard
-          label="Solutions"
+          label={t("admin.home.solutions")}
           value={stats ? String(stats.solutions) : "—"}
           icon={Globe}
         />
         <StatCard
-          label="Products"
+          label={t("admin.home.products")}
           value={stats ? String(stats.products) : "—"}
           icon={Server}
         />
         <StatCard
-          label="Site status"
-          value={stats?.maintenance ? "Maintenance" : "Live"}
+          label={t("admin.home.siteStatus")}
+          value={stats?.maintenance ? t("admin.home.maintenance") : t("admin.common.live")}
           hint={stats ? `Default: ${stats.defaultLanguage.toUpperCase()}` : undefined}
           icon={Shield}
           tone={stats?.maintenance ? "warning" : "success"}
@@ -79,7 +81,7 @@ export default function DashboardHomePage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <Panel title="Quick actions" description="Common tasks to manage your site" className="lg:col-span-3">
+        <Panel title={t("admin.home.quickActions")} description={t("admin.home.quickActionsDesc")} className="lg:col-span-3">
           <div className="grid gap-3 sm:grid-cols-2">
             {[
               {
@@ -143,7 +145,7 @@ export default function DashboardHomePage() {
           </div>
         </Panel>
 
-        <Panel title="System stack" description="Your CMS infrastructure" className="lg:col-span-2">
+        <Panel title={t("admin.home.systemStack")} description={t("admin.home.cmsInfra")} className="lg:col-span-2">
           <ul className="space-y-3">
             {[
               { name: "Frontend", value: "Next.js 16", status: "Running" },

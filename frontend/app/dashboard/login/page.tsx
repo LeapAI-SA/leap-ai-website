@@ -7,7 +7,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "motion/react"
 import { Lock, Mail, ArrowRight, Globe, Database, Zap } from "lucide-react"
+import { mapAdminError } from "@/lib/admin-i18n"
 import { loginAdmin, setToken } from "@/lib/api"
+import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
 
 export default function DashboardLoginPage() {
@@ -16,6 +18,7 @@ export default function DashboardLoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const { t, lang } = useLanguage()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -26,7 +29,7 @@ export default function DashboardLoginPage() {
       setToken(token)
       router.push("/dashboard")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.login.failed")))
     } finally {
       setLoading(false)
     }
@@ -55,22 +58,22 @@ export default function DashboardLoginPage() {
         <div className="relative space-y-8">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-3 py-1 text-xs font-bold text-[#7ec4ff]">
-              Content Management
+              {t("admin.login.badge")}
             </span>
             <h1 className="mt-6 text-4xl font-extrabold leading-tight">
-              Manage your website
-              <span className="text-amber"> in one place</span>
+              {t("admin.login.heading1")}
+              <span className="text-amber"> {t("admin.login.heading2")}</span>
             </h1>
             <p className="mt-4 max-w-md text-base leading-relaxed text-navy-foreground/75">
-              Update homepage content, hero sections, stats, and all solutions — in Arabic and English — without touching code.
+              {t("admin.login.sub")}
             </p>
           </div>
 
           <ul className="space-y-4">
             {[
-              { icon: Globe, text: "Bilingual AR / EN content editing" },
-              { icon: Database, text: "Powered by MongoDB & Redis" },
-              { icon: Zap, text: "Changes reflect on the live site instantly" },
+              { icon: Globe, text: t("admin.login.f1") },
+              { icon: Database, text: t("admin.login.f2") },
+              { icon: Zap, text: t("admin.login.f3") },
             ].map((item) => (
               <li key={item.text} className="flex items-center gap-3 text-sm text-navy-foreground/85">
                 <span className="flex size-9 items-center justify-center rounded-lg bg-primary/15">
@@ -82,7 +85,7 @@ export default function DashboardLoginPage() {
           </ul>
         </div>
 
-        <p className="relative text-xs text-navy-foreground/50">© LeapAI — Admin Portal</p>
+        <p className="relative text-xs text-navy-foreground/50">© {t("admin.login.portal")}</p>
       </div>
 
       {/* Form panel */}
@@ -108,8 +111,8 @@ export default function DashboardLoginPage() {
             <div className="mb-6 flex size-12 items-center justify-center rounded-2xl bg-primary/10">
               <Lock className="size-6 text-primary" />
             </div>
-            <h2 className="text-2xl font-extrabold text-navy">Welcome back</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Sign in to your CMS dashboard</p>
+            <h2 className="text-2xl font-extrabold text-navy">{t("admin.login.welcome")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("admin.login.subtitle")}</p>
 
             {error && (
               <p className="mt-4 rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
@@ -119,7 +122,7 @@ export default function DashboardLoginPage() {
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <label className="block">
-                <span className="text-sm font-semibold text-navy">Email address</span>
+                <span className="text-sm font-semibold text-navy">{t("admin.login.email")}</span>
                 <div className="relative mt-2">
                   <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
@@ -135,7 +138,7 @@ export default function DashboardLoginPage() {
               </label>
 
               <label className="block">
-                <span className="text-sm font-semibold text-navy">Password</span>
+                <span className="text-sm font-semibold text-navy">{t("admin.login.password")}</span>
                 <div className="relative mt-2">
                   <Lock className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
@@ -155,7 +158,7 @@ export default function DashboardLoginPage() {
                 disabled={loading}
                 className="dash-cta mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all disabled:opacity-60"
               >
-                {loading ? "Signing in..." : "Sign in to dashboard"}
+                {loading ? t("admin.login.signingIn") : t("admin.login.signIn")}
                 {!loading && <ArrowRight className="size-4" />}
               </button>
             </form>
@@ -163,7 +166,7 @@ export default function DashboardLoginPage() {
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             <Link href="/" className="font-semibold text-primary hover:underline">
-              ← Back to website
+              ← {t("admin.common.backToWebsite")}
             </Link>
           </p>
         </motion.div>

@@ -3,8 +3,8 @@ import { buildPageMetadata } from "@/lib/seo"
 import { DashboardAuthLayout } from "@/components/dashboard/dashboard-auth-layout"
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Admin Dashboard",
-  description: "LeapAI CMS admin dashboard",
+  title: "Admin Dashboard | لوحة الإدارة",
+  description: "LeapAI CMS admin dashboard (Arabic + English)",
   path: "/dashboard",
   noIndex: true,
 })

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { mapAdminError } from "@/lib/admin-i18n"
 import { adminFetch, type PublicSiteSettings } from "@/lib/api"
 import {
   PageHeader,
@@ -47,6 +48,7 @@ import {
   type CtaLabels,
 } from "@/lib/site-marketing"
 import type { PricingPlan } from "@/lib/site-data"
+import { useLanguage } from "@/lib/i18n"
 
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
@@ -487,6 +489,8 @@ function updateNavigationSection(
 }
 
 export default function DashboardSettingsPage() {
+  const { lang } = useLanguage()
+  const isAr = lang === "ar"
   const [settings, setSettings] = useState<PublicSiteSettings | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -496,8 +500,10 @@ export default function DashboardSettingsPage() {
   useEffect(() => {
     adminFetch<PublicSiteSettings>("/api/admin/settings")
       .then((data) => setSettings(normalizeSettings(data)))
-      .catch((err) => setLoadError(err instanceof Error ? err.message : "Failed to load settings"))
-  }, [])
+      .catch((err) =>
+        setLoadError(mapAdminError(lang, err instanceof Error ? err.message : "", isAr ? "فشل تحميل الإعدادات" : "Failed to load settings")),
+      )
+  }, [isAr, lang])
 
   async function save() {
     if (!settings) return
@@ -510,9 +516,17 @@ export default function DashboardSettingsPage() {
       })
       setSettings(normalizeSettings(updated))
       notifySettingsUpdated()
-      setMessage({ text: "Settings saved. Open the public site tab — changes appear within a few seconds.", type: "success" })
+      setMessage({
+        text: isAr
+          ? "تم حفظ الإعدادات. افتح تبويب الموقع العام وستظهر التغييرات خلال ثوانٍ."
+          : "Settings saved. Open the public site tab — changes appear within a few seconds.",
+        type: "success",
+      })
     } catch (err) {
-      setMessage({ text: err instanceof Error ? err.message : "Save failed", type: "error" })
+      setMessage({
+        text: mapAdminError(lang, err instanceof Error ? err.message : "", isAr ? "فشل الحفظ" : "Save failed"),
+        type: "error",
+      })
     } finally {
       setSaving(false)
     }
@@ -533,13 +547,24 @@ export default function DashboardSettingsPage() {
       notifySettingsUpdated()
       setMessage({
         text: maintenanceMode
-          ? "Maintenance mode enabled. Public visitors will see the maintenance page."
-          : "Maintenance mode disabled. The public site is live again.",
+          ? isAr
+            ? "تم تفعيل وضع الصيانة. سيرى الزوار صفحة الصيانة."
+            : "Maintenance mode enabled. Public visitors will see the maintenance page."
+          : isAr
+            ? "تم إيقاف وضع الصيانة. الموقع العام عاد للعمل."
+            : "Maintenance mode disabled. The public site is live again.",
         type: "success",
       })
     } catch (err) {
       setSettings({ ...settings, maintenanceMode: previous })
-      setMessage({ text: err instanceof Error ? err.message : "Failed to update maintenance mode", type: "error" })
+      setMessage({
+        text: mapAdminError(
+          lang,
+          err instanceof Error ? err.message : "",
+          isAr ? "فشل تحديث وضع الصيانة" : "Failed to update maintenance mode",
+        ),
+        type: "error",
+      })
     } finally {
       setSavingMaintenance(false)
     }
@@ -548,7 +573,14 @@ export default function DashboardSettingsPage() {
   if (!settings) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Site Settings" description="Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English." />
+        <PageHeader
+          title={isAr ? "إعدادات الموقع" : "Site Settings"}
+          description={
+            isAr
+              ? "إدارة الصفحة الرئيسية والتواصل والقوائم وSEO والصور والأسئلة الشائعة والصيانة بالعربية والإنجليزية."
+              : "Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English."
+          }
+        />
         {loadError ? (
           <Alert variant="error">{loadError}</Alert>
         ) : (
@@ -569,8 +601,12 @@ export default function DashboardSettingsPage() {
   return (
     <div className="space-y-8 pb-24">
       <PageHeader
-        title="Site Settings"
-        description="Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English."
+        title={isAr ? "إعدادات الموقع" : "Site Settings"}
+        description={
+          isAr
+            ? "إدارة الصفحة الرئيسية والتواصل والقوائم وSEO والصور والأسئلة الشائعة والصيانة بالعربية والإنجليزية."
+            : "Manage homepage, contact, menus, SEO, images, FAQ, and maintenance — Arabic and English."
+        }
       />
 
       {message && <Alert variant={message.type === "success" ? "success" : "error"}>{message.text}</Alert>}

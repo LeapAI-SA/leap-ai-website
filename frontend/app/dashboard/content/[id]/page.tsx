@@ -3,14 +3,17 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
+import { mapAdminError } from "@/lib/admin-i18n"
 import { adminFetch } from "@/lib/api"
 import { notifyContentUpdated } from "@/lib/cms-refresh"
 import { LoadingBlock, Alert } from "@/components/dashboard/ui"
 import { ContentForm, type ContentFormValues } from "@/components/dashboard/content-form"
+import { useLanguage } from "@/lib/i18n"
 
 export default function EditContentPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
+  const { t, lang } = useLanguage()
   const [form, setForm] = useState<ContentFormValues | null>(null)
   const [error, setError] = useState("")
   const [saving, setSaving] = useState(false)
@@ -33,8 +36,10 @@ export default function EditContentPage() {
           sortOrder: item.sortOrder,
         })
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load content"))
-  }, [id])
+      .catch((err) =>
+        setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.contentForm.loadFailed"))),
+      )
+  }, [id, lang, t])
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -46,34 +51,34 @@ export default function EditContentPage() {
       notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Save failed")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.contentForm.saveFailed")))
     } finally {
       setSaving(false)
     }
   }
 
   async function remove() {
-    if (!confirm("Delete this content item permanently?")) return
+    if (!confirm(t("admin.contentForm.deleteConfirm"))) return
     try {
       await adminFetch(`/api/admin/content/${id}`, { method: "DELETE" })
       notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete failed")
+      setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.contentForm.deleteFailed")))
     }
   }
 
   if (!form) {
     return (
       <div className="space-y-6">
-        {error ? <Alert variant="error">{error}</Alert> : <LoadingBlock label="Loading content..." />}
+        {error ? <Alert variant="error">{error}</Alert> : <LoadingBlock label={t("admin.common.loadingContent")} />}
       </div>
     )
   }
 
   return (
     <ContentForm
-      title="Edit content"
+      title={t("admin.contentForm.editTitle")}
       description={`Editing /${form.slug}`}
       form={form}
       setForm={setForm}
@@ -81,6 +86,7 @@ export default function EditContentPage() {
       saving={saving}
       error={error}
       onDelete={remove}
+      locale={lang}
     />
   )
 }

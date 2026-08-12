@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Loader2, Upload, X } from "lucide-react"
 import { uploadAdminImage } from "@/lib/api"
+import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
 
 export function PageHeader({
@@ -213,10 +214,11 @@ export function EmptyState({
 }
 
 export function LoadingBlock({ label = "Loading..." }: { label?: string }) {
+  const { lang } = useLanguage()
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-card p-8 text-muted-foreground">
       <Loader2 className="size-5 animate-spin text-primary" />
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-sm font-medium">{label === "Loading..." && lang === "ar" ? "جارٍ التحميل..." : label}</span>
     </div>
   )
 }
@@ -274,11 +276,12 @@ export function LocalizedFieldGroup({
   onChange: (v: { ar: string; en: string }) => void
   rows?: number
 }) {
+  const { lang } = useLanguage()
   return (
     <div className="rounded-xl border border-border/60 bg-muted/10 p-4">
       <p className="mb-3 text-sm font-bold text-navy">{label}</p>
       <div className="grid gap-4 md:grid-cols-2">
-        <FormField label="Arabic">
+        <FormField label={lang === "ar" ? "العربية" : "Arabic"}>
           <textarea
             rows={rows}
             value={value.ar}
@@ -286,7 +289,7 @@ export function LocalizedFieldGroup({
             className="form-input resize-none"
           />
         </FormField>
-        <FormField label="English">
+        <FormField label={lang === "ar" ? "الإنجليزية" : "English"}>
           <textarea
             rows={rows}
             dir="ltr"
@@ -309,6 +312,7 @@ export function StickySaveBar({
   saving: boolean
   label?: string
 }) {
+  const { lang } = useLanguage()
   return (
     <div className="sticky bottom-4 z-20 flex justify-end">
       <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-card/95 px-4 py-3 shadow-lg backdrop-blur-md">
@@ -316,10 +320,10 @@ export function StickySaveBar({
           {saving ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              Saving...
+              {lang === "ar" ? "جارٍ الحفظ..." : "Saving..."}
             </>
           ) : (
-            label
+            label === "Save changes" && lang === "ar" ? "حفظ التغييرات" : label
           )}
         </DashButton>
       </div>
@@ -338,6 +342,7 @@ export function ImageUploadField({
   value: string
   onChange: (url: string) => void
 }) {
+  const { lang } = useLanguage()
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState("")
@@ -349,7 +354,7 @@ export function ImageUploadField({
       const url = await uploadAdminImage(file)
       onChange(url)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed")
+      setError(err instanceof Error ? err.message : lang === "ar" ? "فشل الرفع" : "Upload failed")
     } finally {
       setUploading(false)
     }
@@ -374,7 +379,7 @@ export function ImageUploadField({
             </div>
           ) : (
             <div className="flex h-24 w-40 items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 text-xs text-muted-foreground">
-              No image
+              {lang === "ar" ? "لا توجد صورة" : "No image"}
             </div>
           )}
           <div className="flex min-w-[200px] flex-1 flex-col gap-2">
@@ -383,7 +388,7 @@ export function ImageUploadField({
               dir="ltr"
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              placeholder="/hero-dashboard.png or /uploads/..."
+              placeholder={lang === "ar" ? "/hero-dashboard.png أو /uploads/..." : "/hero-dashboard.png or /uploads/..."}
               className="form-input font-mono text-xs"
             />
             <input
@@ -405,7 +410,7 @@ export function ImageUploadField({
               className="w-fit"
             >
               {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-              {uploading ? "Uploading..." : "Upload image"}
+              {uploading ? (lang === "ar" ? "جارٍ الرفع..." : "Uploading...") : (lang === "ar" ? "رفع صورة" : "Upload image")}
             </DashButton>
           </div>
         </div>
