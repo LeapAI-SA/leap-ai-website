@@ -14,11 +14,11 @@ LeapAI monorepo for:
 
 ## Local URLs (default — site at domain root)
 
-- Website: `http://localhost:3000`
-- Dashboard: `http://localhost:3000/dashboard`
-- Dashboard login: `http://localhost:3000/dashboard/login`
+- Website: `http://localhost:3002`
+- Dashboard: `http://localhost:3002/dashboard`
+- Dashboard login: `http://localhost:3002/dashboard/login`
 - Backend API: `http://localhost:4000`
-- Same-origin proxy: `http://localhost:3000/backend/...`
+- Same-origin proxy: `http://localhost:3002/backend/...`
 
 ## Admin Credentials (default)
 
@@ -58,7 +58,7 @@ PORT=4000
 MONGODB_URI=mongodb://leap:leapsecret@localhost:27017/leapai?authSource=admin
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=dev-jwt-secret-change-in-production
-CORS_ORIGIN=http://localhost:3000
+CORS_ORIGIN=http://localhost:3002
 ADMIN_EMAIL=admin@leapai.ai
 ADMIN_PASSWORD=admin123
 ```
@@ -67,7 +67,7 @@ ADMIN_PASSWORD=admin123
 
 ```env
 NEXT_PUBLIC_API_URL=/backend
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3002
 NEXT_PUBLIC_BASE_PATH=
 API_URL=http://localhost:4000
 INTERNAL_API_URL=http://localhost:4000
@@ -77,7 +77,7 @@ For direct API calls without the Next.js proxy:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3002
 ```
 
 ### 3) Start MongoDB and Redis
@@ -86,7 +86,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 docker compose up -d mongodb redis
 ```
 
-Stop the Docker app containers if they are running (PM2 needs ports 3000 and 4000):
+Stop the Docker app containers if they are running (PM2 needs ports 3002 and 4000):
 
 ```powershell
 docker compose stop backend frontend
@@ -126,8 +126,8 @@ pm2 start ecosystem.config.cjs
 
 Verify:
 
-- API health: `http://localhost:3000/backend/api/public/health`
-- Login: `http://localhost:3000/dashboard/login`
+- API health: `http://localhost:3002/backend/api/public/health`
+- Login: `http://localhost:3002/dashboard/login`
 
 ---
 
@@ -137,8 +137,8 @@ Verify:
 docker compose up --build -d
 ```
 
-- Site: `http://localhost:3000`
-- API health: `http://localhost:3000/backend/api/public/health`
+- Site: `http://localhost:3002`
+- API health: `http://localhost:3002/backend/api/public/health`
 
 ---
 
@@ -174,7 +174,7 @@ Set `frontend/.env`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3002
 ```
 
 ---
@@ -316,7 +316,7 @@ The script checks:
 - Homepage includes `FAQPage` JSON-LD and `#faq` section
 - A detail page includes `Question` schema
 
-Open the site at `http://localhost:3000` (or set `GEO_TEST_URL` / `-BaseUrl` in verify scripts).
+Open the site at `http://localhost:3002` (or set `GEO_TEST_URL` / `-BaseUrl` in verify scripts).
 
 ### Verify on production
 

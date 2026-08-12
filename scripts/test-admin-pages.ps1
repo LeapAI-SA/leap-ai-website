@@ -1,5 +1,5 @@
 param(
-  [string]$WebBase = "http://localhost:3000",
+  [string]$WebBase = "http://localhost:3002",
   [string]$ApiBase = "http://localhost:4000",
   [string]$Email = "admin@leapai.ai",
   [string]$Password = "admin123"

@@ -24,7 +24,7 @@ Or PM2: `pm2 restart ecosystem.config.cjs --update-env`
 
 ## 3. Nginx
 
-Docker frontend publishes on **host port 3000** only. Live nginx must use:
+Docker frontend publishes on host port **`${FRONTEND_HOST_PORT:-3002}`** (local default **3002**). On production set `FRONTEND_HOST_PORT=3000` in the root `.env` so nginx can use:
 
 ```nginx
 proxy_pass http://127.0.0.1:3000;
