@@ -1,3 +1,5 @@
+import { adminExtraTranslations } from "./admin-extra-translations"
+
 export type Translation = { ar: string; en: string }
 
 export const translations = {
@@ -540,6 +542,8 @@ export const translations = {
   "admin.contentForm.deleteFailed": { ar: "فشل الحذف", en: "Delete failed" },
   "admin.contentForm.loadFailed": { ar: "فشل تحميل المحتوى", en: "Failed to load content" },
   "admin.contentForm.deleteConfirm": { ar: "حذف هذا العنصر نهائياً؟", en: "Delete this content item permanently?" },
+
+  ...adminExtraTranslations,
 } as const
 
 export type TranslationKey = keyof typeof translations

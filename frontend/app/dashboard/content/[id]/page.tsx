@@ -9,6 +9,7 @@ import { notifyContentUpdated } from "@/lib/cms-refresh"
 import { LoadingBlock, Alert } from "@/components/dashboard/ui"
 import { ContentForm, type ContentFormValues } from "@/components/dashboard/content-form"
 import { useLanguage } from "@/lib/i18n"
+import { adminTf } from "@/lib/admin-tf"
 
 export default function EditContentPage() {
   const { id } = useParams<{ id: string }>()
@@ -79,7 +80,7 @@ export default function EditContentPage() {
   return (
     <ContentForm
       title={t("admin.contentForm.editTitle")}
-      description={`Editing /${form.slug}`}
+      description={adminTf(t, "admin.content.editingSlug", { slug: form.slug })}
       form={form}
       setForm={setForm}
       onSubmit={submit}

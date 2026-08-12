@@ -36,6 +36,58 @@ export default function DashboardHomePage() {
       .catch(() => setStats(null))
   }, [])
 
+  const quickActions = [
+    {
+      href: "/dashboard/settings",
+      title: t("admin.home.qaSettings"),
+      desc: t("admin.home.qaSettingsDesc"),
+      icon: Settings,
+      color: "bg-primary/10 text-primary",
+    },
+    {
+      href: "/dashboard/content",
+      title: t("admin.home.qaContent"),
+      desc: t("admin.home.qaContentDesc"),
+      icon: FileText,
+      color: "bg-amber/15 text-amber-foreground",
+    },
+    {
+      href: "/dashboard/geo",
+      title: t("admin.home.qaGeo"),
+      desc: t("admin.home.qaGeoDesc"),
+      icon: Sparkles,
+      color: "bg-violet-500/10 text-violet-700",
+    },
+    {
+      href: "/dashboard/contact",
+      title: t("admin.home.qaContact"),
+      desc: t("admin.home.qaContactDesc"),
+      icon: Mail,
+      color: "bg-sky-500/10 text-sky-700",
+    },
+    {
+      href: "/dashboard/content/new",
+      title: t("admin.home.qaNew"),
+      desc: t("admin.home.qaNewDesc"),
+      icon: ArrowUpRight,
+      color: "bg-emerald-500/10 text-emerald-600",
+    },
+    {
+      href: "/",
+      title: t("admin.home.qaLive"),
+      desc: t("admin.home.qaLiveDesc"),
+      icon: Globe,
+      color: "bg-navy/10 text-navy",
+    },
+  ]
+
+  const stackRows = [
+    { name: t("admin.home.stackFrontend"), value: "Next.js 16", status: t("admin.home.running") },
+    { name: t("admin.home.stackBackend"), value: "Node.js + Express", status: t("admin.home.running") },
+    { name: t("admin.home.stackDatabase"), value: "MongoDB", status: t("admin.home.connected") },
+    { name: t("admin.home.stackCache"), value: "Redis", status: t("admin.home.active") },
+  ]
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -74,7 +126,11 @@ export default function DashboardHomePage() {
         <StatCard
           label={t("admin.home.siteStatus")}
           value={stats?.maintenance ? t("admin.home.maintenance") : t("admin.common.live")}
-          hint={stats ? `Default: ${stats.defaultLanguage.toUpperCase()}` : undefined}
+          hint={
+            stats
+              ? `${t("admin.home.defaultLang")}: ${stats.defaultLanguage.toUpperCase()}`
+              : undefined
+          }
           icon={Shield}
           tone={stats?.maintenance ? "warning" : "success"}
         />
@@ -83,50 +139,7 @@ export default function DashboardHomePage() {
       <div className="grid gap-6 lg:grid-cols-5">
         <Panel title={t("admin.home.quickActions")} description={t("admin.home.quickActionsDesc")} className="lg:col-span-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            {[
-              {
-                href: "/dashboard/settings",
-                title: "Homepage settings",
-                desc: "Hero, stats, contact & maintenance",
-                icon: Settings,
-                color: "bg-primary/10 text-primary",
-              },
-              {
-                href: "/dashboard/content",
-                title: "Content library",
-                desc: "Edit solutions, products, use cases & Resources",
-                icon: FileText,
-                color: "bg-amber/15 text-amber-foreground",
-              },
-              {
-                href: "/dashboard/geo",
-                title: "GEO — AI visibility",
-                desc: "Check crawler files and AI search readiness",
-                icon: Sparkles,
-                color: "bg-violet-500/10 text-violet-700",
-              },
-              {
-                href: "/dashboard/contact",
-                title: "Contact Us inbox",
-                desc: "Read messages from the contact form",
-                icon: Mail,
-                color: "bg-sky-500/10 text-sky-700",
-              },
-              {
-                href: "/dashboard/content/new",
-                title: "Create new page",
-                desc: "Add a new content item",
-                icon: ArrowUpRight,
-                color: "bg-emerald-500/10 text-emerald-600",
-              },
-              {
-                href: "/",
-                title: "View live website",
-                desc: "Open the public site in a new tab",
-                icon: Globe,
-                color: "bg-navy/10 text-navy",
-              },
-            ].map((action) => (
+            {quickActions.map((action) => (
               <Link
                 key={action.href}
                 href={action.href}
@@ -147,12 +160,7 @@ export default function DashboardHomePage() {
 
         <Panel title={t("admin.home.systemStack")} description={t("admin.home.cmsInfra")} className="lg:col-span-2">
           <ul className="space-y-3">
-            {[
-              { name: "Frontend", value: "Next.js 16", status: "Running" },
-              { name: "Backend", value: "Node.js + Express", status: "Running" },
-              { name: "Database", value: "MongoDB", status: "Connected" },
-              { name: "Cache", value: "Redis", status: "Active" },
-            ].map((row) => (
+            {stackRows.map((row) => (
               <li
                 key={row.name}
                 className="flex items-center justify-between rounded-xl border border-border/50 bg-muted/20 px-4 py-3"

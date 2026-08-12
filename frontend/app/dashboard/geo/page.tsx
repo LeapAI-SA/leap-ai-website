@@ -18,6 +18,7 @@ import {
 import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoDisplayUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
 import { getToken } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
+import { adminTf } from "@/lib/admin-tf"
 import { getBasePath } from "@/lib/site-url"
 import { PageHeader, Panel, StatCard, DashButton, Badge, Alert } from "@/components/dashboard/ui"
 
@@ -119,8 +120,7 @@ function indexNowApiUrl() {
 }
 
 export default function DashboardGeoPage() {
-  const { lang } = useLanguage()
-  const isAr = lang === "ar"
+  const { lang, t } = useLanguage()
   const [siteUrl, setSiteUrl] = useState("")
   const [fileUrls, setFileUrls] = useState<Record<string, string>>({})
   const [results, setResults] = useState<Record<string, CheckResult>>({})
@@ -156,7 +156,7 @@ export default function DashboardGeoPage() {
       setIndexNow(null)
       setIndexNowMessage({
         variant: "error",
-        text: err instanceof Error ? err.message : isAr ? "تعذر تحميل حالة IndexNow" : "Could not load IndexNow status",
+        text: err instanceof Error ? err.message : t("admin.geo.loadIndexNowFailed"),
       })
     } finally {
       setIndexNowLoading(false)
@@ -166,7 +166,7 @@ export default function DashboardGeoPage() {
   const submitIndexNow = useCallback(async () => {
     const token = getToken()
     if (!token) {
-      setIndexNowMessage({ variant: "error", text: isAr ? "سجل الدخول مرة أخرى لإرسال IndexNow." : "Sign in again to submit IndexNow." })
+      setIndexNowMessage({ variant: "error", text: t("admin.geo.signInAgain") })
       return
     }
     setIndexNowSubmitting(true)
@@ -215,7 +215,7 @@ export default function DashboardGeoPage() {
     } catch (err) {
       setIndexNowMessage({
         variant: "error",
-        text: err instanceof Error ? err.message : isAr ? "فشل إرسال IndexNow" : "IndexNow submit failed",
+        text: err instanceof Error ? err.message : t("admin.geo.submitFailed"),
       })
     } finally {
       setIndexNowSubmitting(false)
@@ -243,7 +243,7 @@ export default function DashboardGeoPage() {
     } catch (err) {
       setResults((prev) => ({
         ...prev,
-        [id]: { status: "fail", detail: err instanceof Error ? err.message : "Network error" },
+        [id]: { status: "fail", detail: err instanceof Error ? err.message : t("admin.geo.networkError") },
       }))
       return false
     }
@@ -275,69 +275,61 @@ export default function DashboardGeoPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="GEO — AI visibility"
-        description={
-          isAr
-            ? "يساعد GEO أدوات ChatGPT وGemini وCopilot وClaude وPerplexity على العثور على LeapAI ووصفها. يتم تحديث الملفات عند حفظ الإعدادات والمحتوى."
-            : "GEO helps ChatGPT, Gemini, Copilot, Claude, and Perplexity find and describe LeapAI as Saudi Arabia's premier AI-native CX platform. Files update when you save Site Settings and Content."
-        }
+        title={t("admin.geo.title")}
+        description={t("admin.geo.pageDesc")}
         actions={
           <DashButton onClick={() => checkAll()} variant="secondary" disabled={checkingAll}>
             <RefreshCw className={`size-4 ${checkingAll ? "animate-spin" : ""}`} />
-            {isAr ? "فحص كل الروابط" : "Check all links"}
+            {t("admin.geo.checkAll")}
           </DashButton>
         }
       />
 
       {allPassed ? (
         <Alert variant="success">
-          All {totalChecks} GEO crawler files are online. AI tools can read your public summary pages.
+          {adminTf(t, "admin.geo.allOnlineDetail", { n: totalChecks })}
         </Alert>
       ) : !checkingAll && passedCount > 0 ? (
         <Alert variant="info">
-          {passedCount} of {totalChecks} checks passed. Open failed links below or ask your developer if the site is
-          offline.
+          {adminTf(t, "admin.geo.checksPartial", { ok: passedCount, total: totalChecks })}
         </Alert>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
-          label="Crawler files"
+          label={t("admin.geo.statCrawlerFiles")}
           value={checkingAll ? "…" : `${passedCount}/${totalChecks}`}
-          hint="Should all show OK when the site is live"
+          hint={t("admin.geo.statCrawlerHint")}
           icon={Bot}
           tone={allPassed ? "success" : passedCount > 0 ? "warning" : "default"}
         />
         <StatCard
-          label="Public site URL"
-          value={siteUrl ? "Configured" : "—"}
-          hint={siteUrl || "Set NEXT_PUBLIC_SITE_URL on the server"}
+          label={t("admin.geo.statPublicUrl")}
+          value={siteUrl ? t("admin.geo.statConfigured") : "—"}
+          hint={siteUrl || t("admin.geo.statUrlHint")}
           icon={Sparkles}
           tone="primary"
         />
         <StatCard
-          label="Your role"
-          value="Update content"
-          hint="FAQ, SEO, and Content Library feed GEO automatically"
+          label={t("admin.geo.statYourRole")}
+          value={t("admin.geo.statUpdateContent")}
+          hint={t("admin.geo.statRoleHint")}
           icon={HelpCircle}
         />
       </div>
 
       <Panel
-        title={isAr ? "محركات البحث — IndexNow" : "Search engines — IndexNow"}
-        description={isAr ? "أرسل خريطة الموقع إلى Bing والشركاء. نفس تنفيذ npm run seo:submit-indexnow." : "Push the sitemap to Bing (and partners). Same action as npm run seo:submit-indexnow."}
+        title={t("admin.geo.indexNowPanel")}
+        description={t("admin.geo.desc")}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2 text-sm text-muted-foreground">
             <p className="flex items-start gap-2">
               <Search className="mt-0.5 size-4 shrink-0 text-primary" />
-              <span>
-                Submits all sitemap URLs via IndexNow. Covers <strong className="text-foreground">Bing</strong>,
-                Yandex, Seznam, and Naver — not Google.
-              </span>
+              <span>{t("admin.geo.indexNowHint")}</span>
             </p>
             <p>
-              Sitemap:{" "}
+              {t("admin.geo.sitemapLabel")}:{" "}
               <a
                 href={indexNow?.sitemapUrl || `${siteUrl}/sitemap.xml`}
                 target="_blank"
@@ -346,16 +338,16 @@ export default function DashboardGeoPage() {
               >
                 {indexNow?.sitemapUrl || `${siteUrl}/sitemap.xml`}
               </a>
-              {indexNow ? ` · ${indexNow.urlCount} URLs` : null}
+              {indexNow ? ` · ${adminTf(t, "admin.geo.urlCount", { n: indexNow.urlCount })}` : null}
             </p>
             <p>
-              Key file:{" "}
+              {t("admin.geo.keyFile")}:{" "}
               {indexNowLoading ? (
-                "Checking…"
+                t("admin.common.checking")
               ) : indexNow ? (
                 <>
                   <Badge variant={indexNow.keyLive ? "success" : "warning"}>
-                    {indexNow.keyLive ? "Live" : "Not live"}
+                    {indexNow.keyLive ? t("admin.common.live") : t("admin.common.notLive")}
                   </Badge>{" "}
                   <a
                     href={indexNow.keyLocation}
@@ -379,7 +371,7 @@ export default function DashboardGeoPage() {
               disabled={indexNowLoading || indexNowSubmitting}
             >
               <RefreshCw className={`size-4 ${indexNowLoading ? "animate-spin" : ""}`} />
-              {isAr ? "تحديث الحالة" : "Refresh status"}
+              {t("admin.geo.refreshStatus")}
             </DashButton>
             <DashButton
               type="button"
@@ -387,7 +379,7 @@ export default function DashboardGeoPage() {
               disabled={indexNowSubmitting || indexNowLoading}
             >
               <Send className={`size-4 ${indexNowSubmitting ? "animate-pulse" : ""}`} />
-              {indexNowSubmitting ? (isAr ? "جارٍ الإرسال…" : "Submitting…") : (isAr ? "إرسال خريطة الموقع (IndexNow)" : "Submit sitemap (IndexNow)")}
+              {indexNowSubmitting ? t("admin.geo.submitting") : t("admin.geo.submitIndexNow")}
             </DashButton>
           </div>
         </div>
@@ -444,8 +436,8 @@ export default function DashboardGeoPage() {
       </Panel>
 
       <Panel
-        title="URLs to request indexing"
-        description="Paste these in Google Search Console → URL Inspection. IndexNow already uses the same lists."
+        title={t("admin.geo.urlsToIndex")}
+        description={t("admin.geo.urlsToIndexDesc")}
       >
         <div className="space-y-4 text-sm">
           <div>
@@ -490,7 +482,7 @@ export default function DashboardGeoPage() {
         </div>
       </Panel>
 
-      <Panel title="What is GEO?" description="Simple explanation — no extra setup required">
+      <Panel title={t("admin.geo.whatIsGeo")} description={t("admin.geo.whatIsGeoDesc")}>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-border/60 bg-muted/20 p-4 text-sm leading-relaxed text-muted-foreground">
             <p className="font-semibold text-navy">SEO vs GEO</p>
@@ -523,15 +515,15 @@ export default function DashboardGeoPage() {
         )}
       </Panel>
 
-      <Panel title="Crawler files" description="Open each link in a new tab — you should see plain text, not an error page">
+      <Panel title={t("admin.geo.crawlerFiles")} description={t("admin.geo.crawlerFilesDesc")}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-border/60 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <th className="pb-3 pe-4">File</th>
-                <th className="pb-3 pe-4">Status</th>
-                <th className="pb-3 pe-4">Purpose</th>
-                <th className="pb-3">Actions</th>
+                <th className="pb-3 pe-4">{t("admin.geo.colFile")}</th>
+                <th className="pb-3 pe-4">{t("admin.geo.colStatus")}</th>
+                <th className="pb-3 pe-4">{t("admin.geo.colPurpose")}</th>
+                <th className="pb-3">{t("admin.geo.colActions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -549,27 +541,27 @@ export default function DashboardGeoPage() {
                       {result.status === "checking" && (
                         <Badge variant="muted">
                           <RefreshCw className="me-1 inline size-3 animate-spin" />
-                          Checking
+                          {t("admin.common.checking")}
                         </Badge>
                       )}
                       {result.status === "ok" && (
                         <Badge variant="success">
                           <CheckCircle2 className="me-1 inline size-3" />
-                          OK
+                          {t("admin.common.ok")}
                         </Badge>
                       )}
                       {result.status === "fail" && (
                         <div>
                           <Badge variant="warning">
                             <XCircle className="me-1 inline size-3" />
-                            Failed
+                            {t("admin.common.failed")}
                           </Badge>
                           {result.detail && (
                             <p className="mt-1 text-xs text-muted-foreground">{result.detail}</p>
                           )}
                         </div>
                       )}
-                      {result.status === "idle" && <Badge variant="muted">Waiting</Badge>}
+                      {result.status === "idle" && <Badge variant="muted">{t("admin.common.waiting")}</Badge>}
                     </td>
                     <td className="py-4 pe-4 align-top text-muted-foreground">{item.description}</td>
                     <td className="py-4 align-top">
@@ -581,7 +573,7 @@ export default function DashboardGeoPage() {
                           className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-navy hover:bg-muted"
                         >
                           <ExternalLink className="size-3.5" />
-                          Open
+                          {t("admin.geo.open")}
                         </a>
                         <button
                           type="button"
@@ -589,7 +581,7 @@ export default function DashboardGeoPage() {
                           className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-navy"
                         >
                           <RefreshCw className="size-3.5" />
-                          Recheck
+                          {t("admin.geo.recheck")}
                         </button>
                       </div>
                     </td>
@@ -602,31 +594,31 @@ export default function DashboardGeoPage() {
       </Panel>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title="Content that feeds GEO" description="Update these sections — GEO files refresh automatically on save">
+        <Panel title={t("admin.geo.contentFeedsGeo")} description={t("admin.geo.contentFeedsDesc")}>
           <div className="space-y-3">
             {[
               {
                 href: "/dashboard/settings",
-                title: "Site Settings → Homepage FAQ",
-                desc: "Questions and answers appear in llms-full.txt and on the homepage",
+                title: t("admin.geo.feedFaq"),
+                desc: t("admin.geo.feedFaqDesc"),
                 icon: HelpCircle,
               },
               {
                 href: "/dashboard/settings",
-                title: "Site Settings → SEO",
-                desc: "Site title and meta description used across the public site",
+                title: t("admin.geo.feedSeo"),
+                desc: t("admin.geo.feedSeoDesc"),
                 icon: Settings,
               },
               {
                 href: "/dashboard/settings",
-                title: "Site Settings → Contact",
-                desc: "Phone, email, and address in AI summaries",
+                title: t("admin.geo.feedContact"),
+                desc: t("admin.geo.feedContactDesc"),
                 icon: Settings,
               },
               {
                 href: "/dashboard/content",
-                title: "Content Library",
-                desc: "Solutions, products, and use cases listed in llms.txt",
+                title: t("admin.geo.feedContent"),
+                desc: t("admin.geo.feedContentDesc"),
                 icon: FileText,
               },
             ].map((row) => (
@@ -647,17 +639,17 @@ export default function DashboardGeoPage() {
           </div>
         </Panel>
 
-        <Panel title="Checklist & tips" description="What you need to do — and what happens automatically">
+        <Panel title={t("admin.geo.checklist")} description={t("admin.geo.checklistDesc")}>
           <ul className="space-y-3 text-sm text-muted-foreground">
             {[
-              "Keep the website online on your real domain (not localhost only)",
-              "Fill in Homepage FAQ in Site Settings — Arabic and English",
-              "Keep SEO title and description accurate",
-              "Publish solutions, products, and use cases in Content Library",
-              "All 6 crawler files above should show OK",
-              "If Bing IndexNow 403: Generate key in Bing Webmaster → npm run seo:rotate-indexnow-key -- --key=<key>",
-              "Use Submit sitemap (IndexNow) after deploy (Yandex may succeed even when Bing 403s)",
-              "Be patient — AI may take days or weeks to mention LeapAI",
+              t("admin.geo.checklist1"),
+              t("admin.geo.checklist2"),
+              t("admin.geo.checklist3"),
+              t("admin.geo.checklist4"),
+              t("admin.geo.checklist5"),
+              t("admin.geo.checklist6"),
+              t("admin.geo.checklist7"),
+              t("admin.geo.checklist8"),
             ].map((line) => (
               <li key={line} className="flex gap-2">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />

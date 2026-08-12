@@ -14,12 +14,12 @@ import {
   Badge,
 } from "@/components/dashboard/ui"
 
-const typeLabels: Record<ContentItemPublic["type"], string> = {
-  solution: "Solution",
-  product: "Product",
-  "use-case": "Use Case",
-  article: "Article",
-}
+const typeLabelKeys = {
+  solution: "admin.content.typeSolution",
+  product: "admin.content.typeProduct",
+  "use-case": "admin.content.typeUseCase",
+  article: "admin.content.typeArticle",
+} as const
 
 export default function DashboardContentPage() {
   const { t } = useLanguage()
@@ -74,11 +74,11 @@ export default function DashboardContentPage() {
           value={filter}
           onChange={setFilter}
           options={[
-            { id: "all", label: "All", count: counts.all },
-            { id: "solution", label: "Solutions", count: counts.solution },
-            { id: "product", label: "Products", count: counts.product },
-            { id: "use-case", label: "Use Cases", count: counts["use-case"] },
-            { id: "article", label: "Resources", count: counts.article },
+            { id: "all", label: t("admin.content.filterAll"), count: counts.all },
+            { id: "solution", label: t("admin.content.filterSolutions"), count: counts.solution },
+            { id: "product", label: t("admin.content.filterProducts"), count: counts.product },
+            { id: "use-case", label: t("admin.content.filterUseCases"), count: counts["use-case"] },
+            { id: "article", label: t("admin.content.filterResources"), count: counts.article },
           ]}
         />
         <div className="relative max-w-sm flex-1">
@@ -98,7 +98,7 @@ export default function DashboardContentPage() {
       ) : filtered.length === 0 ? (
         <EmptyState
           title={t("admin.content.noContent")}
-          description={items.length === 0 ? "Run the backend seed or create your first content item." : "Try a different search or filter."}
+          description={items.length === 0 ? t("admin.content.emptySeed") : t("admin.content.emptyFilter")}
           action={
             items.length === 0 ? (
               <DashButton href="/dashboard/content/new" variant="primary">
@@ -113,10 +113,10 @@ export default function DashboardContentPage() {
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/40 text-start">
-                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Title</th>
-                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Type</th>
-                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Slug</th>
-                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
+                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("admin.common.title")}</th>
+                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("admin.common.type")}</th>
+                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("admin.common.slug")}</th>
+                  <th className="px-5 py-3.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">{t("admin.common.status")}</th>
                   <th className="px-5 py-3.5" />
                 </tr>
               </thead>
@@ -130,7 +130,7 @@ export default function DashboardContentPage() {
                       )}
                     </td>
                     <td className="px-5 py-4">
-                      <Badge>{typeLabels[item.type]}</Badge>
+                      <Badge>{t(typeLabelKeys[item.type])}</Badge>
                     </td>
                     <td className="px-5 py-4">
                       <code className="rounded-md bg-muted px-2 py-1 text-xs text-foreground/80">{item.slug}</code>

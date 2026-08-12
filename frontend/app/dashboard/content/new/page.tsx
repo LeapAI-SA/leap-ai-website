@@ -34,7 +34,7 @@ export default function NewContentPage() {
   return (
     <ContentForm
       title={t("admin.contentForm.createTitle")}
-      description="Add a new solution, product, use case, or Resources article to your website."
+      description={t("admin.content.newDesc")}
       form={form}
       setForm={setForm}
       onSubmit={submit}
