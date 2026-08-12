@@ -2,6 +2,9 @@
 const path = require("path")
 
 const PRODUCTION_SITE = "https://leapai.ai"
+/** Local host port — keep free of production leapai.ai on :3000. */
+const LOCAL_PORT = "3002"
+const LOCAL_ORIGIN = `http://localhost:${LOCAL_PORT}`
 
 module.exports = {
   apps: [
@@ -13,7 +16,7 @@ module.exports = {
       interpreter: "node",
       env: {
         NODE_ENV: "development",
-        CORS_ORIGIN: "http://localhost:3000",
+        CORS_ORIGIN: LOCAL_ORIGIN,
       },
       env_production: {
         NODE_ENV: "production",
@@ -27,14 +30,14 @@ module.exports = {
       name: "leap-frontend",
       cwd: path.join(__dirname, "frontend"),
       script: path.join(__dirname, "frontend/node_modules/next/dist/bin/next"),
-      args: "dev -p 3000",
+      args: `dev -p ${LOCAL_PORT}`,
       interpreter: "node",
       env: {
         NODE_ENV: "development",
-        PORT: "3000",
+        PORT: LOCAL_PORT,
         NEXT_PUBLIC_BASE_PATH: "",
         NEXT_PUBLIC_API_URL: "/backend",
-        NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+        NEXT_PUBLIC_SITE_URL: LOCAL_ORIGIN,
         API_URL: "http://localhost:4000",
         INTERNAL_API_URL: "http://localhost:4000",
       },
