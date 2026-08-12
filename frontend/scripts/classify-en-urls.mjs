@@ -9,7 +9,11 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { LEGACY_SLUG_TO_PATH, resolveLegacyPath } from "../lib/legacy-redirects.mjs"
+import {
+  LEGACY_SLUG_TO_PATH,
+  SOLUTION_GROUP_PATH_REDIRECTS,
+  resolveLegacyPath,
+} from "../lib/legacy-redirects.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const hostArg = process.argv.find((a) => a.startsWith("--host="))?.slice("--host=".length)
@@ -28,6 +32,21 @@ const EXTRA_BING_SLUGS = [
   "about-us",
   "contact-us",
   "become-a-partner",
+  "business-messaging",
+  "ai-chatbot",
+  "ai-marketing",
+  "rich-business-messaging",
+]
+
+/** Bing sitelink paths to verify (hub pages + solution group paths). */
+const EXTRA_BING_PATHS = [
+  "/en/about-us/",
+  "/en/use-cases",
+  "/en/use-cases/",
+  ...Object.keys(SOLUTION_GROUP_PATH_REDIRECTS),
+  ...Object.keys(SOLUTION_GROUP_PATH_REDIRECTS).map((p) => `${p}/`),
+  ...Object.keys(SOLUTION_GROUP_PATH_REDIRECTS).map((p) => `/en${p}`),
+  ...Object.keys(SOLUTION_GROUP_PATH_REDIRECTS).map((p) => `/en${p}/`),
 ]
 
 function seedPaths() {
@@ -39,6 +58,9 @@ function seedPaths() {
   for (const slug of EXTRA_BING_SLUGS) {
     paths.add(`/en/${slug}`)
     paths.add(`/en/${slug}/`)
+  }
+  for (const path of EXTRA_BING_PATHS) {
+    paths.add(path)
   }
   try {
     const mapPath = join(__dirname, "../../scripts/page-image-map.json")

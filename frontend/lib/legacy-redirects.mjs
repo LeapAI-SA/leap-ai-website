@@ -36,6 +36,12 @@ export const LEGACY_SLUG_TO_PATH = {
   "business-intelligence-and-analytics-bi-solutions": "/solutions/realtime-dashboard",
   "google-rcs-messaging": "/solutions/google-rcs",
   "google-rcs": "/solutions/google-rcs",
+  "rich-business-messaging": "/solutions/google-rcs",
+
+  // Solution nav group slugs (no detail page — Bing / old WP links)
+  "business-messaging": "/solutions/whatsapp-business",
+  "ai-chatbot": "/solutions/nlu-chatbot",
+  "ai-marketing": "/solutions/customer-journey",
   "apple-messages-for-business": "/solutions/apple-messages",
   "apple-business-messaging-abc": "/solutions/apple-messages",
   "customer-relationship-management-crm-system": "/solutions/crm",
@@ -59,6 +65,14 @@ export const LEGACY_SLUG_TO_PATH = {
   "leap-space-1": "/",
   "leap-space-2": "/",
   "leap-space-3": "/",
+}
+
+/** /solutions/{group-slug} paths that 404 — map to a live detail page. */
+export const SOLUTION_GROUP_PATH_REDIRECTS = {
+  "/solutions/business-messaging": "/solutions/whatsapp-business",
+  "/solutions/ai-chatbot": "/solutions/nlu-chatbot",
+  "/solutions/ai-marketing": "/solutions/customer-journey",
+  "/solutions/ai-voice-bot": "/solutions/voice-bot",
 }
 
 /** Static pages that exist on the new site (served under /en as English HTML). */
@@ -115,6 +129,10 @@ export function resolveLegacyPath(pathname) {
 
   if (!slug) return null
 
+  const normalizedWithoutEn = (withoutEn.startsWith("/") ? withoutEn : `/${withoutEn}`).replace(/\/+$/, "") || "/"
+  const groupPath = SOLUTION_GROUP_PATH_REDIRECTS[normalizedWithoutEn]
+  if (groupPath) return withLocale(groupPath)
+
   const mapped = LEGACY_SLUG_TO_PATH[slug]
   if (mapped) return withLocale(mapped)
 
@@ -146,6 +164,19 @@ export function buildLegacyRedirects() {
     ]) {
       if (src.replace(/\/$/, "") === dest.replace(/\/$/, "")) continue
       out.push({ source: src, destination: dest, permanent: true })
+    }
+  }
+
+  for (const [src, dest] of Object.entries(SOLUTION_GROUP_PATH_REDIRECTS)) {
+    const enDest = `/en${dest}`
+    for (const [from, to] of [
+      [src, dest],
+      [`${src}/`, dest],
+      [`/en${src}`, enDest],
+      [`/en${src}/`, enDest],
+    ]) {
+      if (from.replace(/\/$/, "") === to.replace(/\/$/, "")) continue
+      out.push({ source: from, destination: to, permanent: true })
     }
   }
 

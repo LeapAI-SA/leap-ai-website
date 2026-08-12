@@ -423,9 +423,10 @@ export function buildWebsiteSchema() {
   }
 }
 
-/** Primary hub destinations to strengthen brand sitelinks signals. */
+/** Primary hub destinations to strengthen brand sitelinks signals (verified HTTP 200 paths only). */
 export function buildSiteNavigationSchema() {
   const destinations = [
+    { name: "Home", nameAr: "الرئيسية", path: "/" },
     { name: "About Us", nameAr: "معلومات عنا", path: "/about-us" },
     { name: "Solutions", nameAr: "حلولنا", path: "/solutions" },
     { name: "Products", nameAr: "منتجاتنا", path: "/products" },
@@ -433,21 +434,6 @@ export function buildSiteNavigationSchema() {
     { name: "Resources", nameAr: "الموارد", path: "/resources" },
     { name: "Become a Partner", nameAr: "كن شريكنا", path: "/become-a-partner" },
     { name: "Contact Us", nameAr: "اتصل بنا", path: "/contact-us" },
-    {
-      name: "Connect Digital Chat & Social Messaging Channels",
-      nameAr: "ربط قنوات الدردشة الرقمية ورسائل التواصل الاجتماعي",
-      path: "/solutions/digital-channels",
-    },
-    {
-      name: "WhatsApp Business",
-      nameAr: "واتساب أعمال",
-      path: "/solutions/whatsapp-business",
-    },
-    {
-      name: "Generative AI Chatbot (GenAI)",
-      nameAr: "شات بوت الذكاء الاصطناعي التوليدي GenAI",
-      path: "/solutions/genai-chatbot",
-    },
   ]
 
   return {
