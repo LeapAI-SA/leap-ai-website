@@ -10,7 +10,7 @@ Summary of changes and improvements made to the LeapAI monorepo (public site + C
 |--------|---------|
 | `frontend/` | Next.js 16 app — public site + admin dashboard at `/dashboard` |
 | `backend/` | Express + MongoDB + Redis API |
-| `docker-compose.yml` | MongoDB, Redis, backend (4000), frontend (3002) |
+| `docker-compose.yml` | MongoDB, Redis, backend (4000), frontend (3000) |
 | `scripts/` | Utility scripts (images, GEO verification, CMS startup) |
 
 ---
@@ -44,7 +44,7 @@ Summary of changes and improvements made to the LeapAI monorepo (public site + C
 - Default OG image: `/hero-dashboard.png`
 - JSON-LD on list, static, and detail pages via `seo-content.ts`
 - Added `manifest.ts` and `noindex` on dashboard routes
-- Default site URL set to `http://localhost:3002` for local development
+- Default site URL set to `http://localhost:3000` for local development
 
 ---
 
@@ -174,14 +174,14 @@ npm run start
 ```env
 # frontend/.env
 NEXT_PUBLIC_API_URL=http://localhost:4000
-NEXT_PUBLIC_SITE_URL=http://localhost:3002
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 # backend/.env
 PORT=4000
 MONGODB_URI=mongodb://leap:leapsecret@localhost:27017/leapai?authSource=admin
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=dev-jwt-secret-change-in-production
-CORS_ORIGIN=http://localhost:3002
+CORS_ORIGIN=http://localhost:3000
 ADMIN_EMAIL=admin@leapai.ai
 ADMIN_PASSWORD=admin123
 ```
@@ -216,11 +216,11 @@ cd backend; npm run dev:local
 
 | URL | Description |
 |-----|-------------|
-| http://localhost:3002 | Public website |
-| http://localhost:3002/dashboard | CMS admin |
-| http://localhost:3002/dashboard/login | Admin login |
-| http://localhost:3002/llms.txt | AI crawler summary |
-| http://localhost:3002/llms-full.txt | Full AI summary + FAQs |
+| http://localhost:3000 | Public website |
+| http://localhost:3000/dashboard | CMS admin |
+| http://localhost:3000/dashboard/login | Admin login |
+| http://localhost:3000/llms.txt | AI crawler summary |
+| http://localhost:3000/llms-full.txt | Full AI summary + FAQs |
 | http://localhost:4000 | Backend API |
 
 ---

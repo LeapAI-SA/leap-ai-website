@@ -13,7 +13,7 @@ if (-not $BaseUrl) {
   if ($env:GEO_TEST_URL) {
     $BaseUrl = $env:GEO_TEST_URL.TrimEnd("/")
   } else {
-    $BaseUrl = "http://localhost:3002$BasePath"
+    $BaseUrl = "http://localhost:3000$BasePath"
   }
 }
 

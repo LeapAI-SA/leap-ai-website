@@ -7,7 +7,7 @@ $ErrorActionPreference = "Continue"
 
 if (-not $WebBase) {
   $basePath = if ($env:NEXT_PUBLIC_BASE_PATH) { $env:NEXT_PUBLIC_BASE_PATH.TrimEnd("/") } else { "" }
-  $WebBase = "http://localhost:3002$basePath"
+  $WebBase = "http://localhost:3000$basePath"
 }
 
 $API = $ApiBase.TrimEnd("/")

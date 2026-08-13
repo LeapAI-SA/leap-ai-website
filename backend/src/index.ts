@@ -27,7 +27,7 @@ if (!MONGODB_URI) throw new Error("MONGODB_URI is required")
 const mongoUri = MONGODB_URI
 
 const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379"
-const corsOriginRaw = process.env.CORS_ORIGIN ?? (isProd ? undefined : "http://localhost:3002")
+const corsOriginRaw = process.env.CORS_ORIGIN ?? (isProd ? undefined : "http://localhost:3000")
 if (!corsOriginRaw) throw new Error("CORS_ORIGIN is required")
 const corsOrigin: string = corsOriginRaw
 
@@ -63,8 +63,8 @@ async function start() {
       ...(isProd
         ? []
         : [
-            "http://localhost:3002",
-            "http://127.0.0.1:3002",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
           ]),
     ]),
   ]

@@ -10,7 +10,7 @@ export function isProduction() {
 
 function localDevSiteUrl() {
   const basePath = getBasePath()
-  return `http://localhost:3002${basePath}`
+  return `http://localhost:3000${basePath}`
 }
 
 /** Canonical public site URL (SEO, GEO, sitemap, metadata). */

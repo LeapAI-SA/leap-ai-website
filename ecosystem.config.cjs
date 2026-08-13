@@ -2,8 +2,7 @@
 const path = require("path")
 
 const PRODUCTION_SITE = "https://leapai.ai"
-/** Local host port — keep free of production leapai.ai on :3000. */
-const LOCAL_PORT = "3002"
+const LOCAL_PORT = "3000"
 const LOCAL_ORIGIN = `http://localhost:${LOCAL_PORT}`
 
 module.exports = {

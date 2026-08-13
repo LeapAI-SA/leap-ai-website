@@ -12,7 +12,7 @@
 | **Email** | `admin@leapai.ai` |
 | **Password** | `admin123` |
 
-Local: http://localhost:3002/dashboard/login
+Local: http://localhost:3000/dashboard/login
 
 ---
 

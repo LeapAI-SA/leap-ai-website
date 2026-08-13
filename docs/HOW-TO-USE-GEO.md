@@ -142,7 +142,7 @@ Print or save this list:
 | Setup | Login URL |
 |-------|-----------|
 | Production (root) | `https://your-domain.com/dashboard/login` |
-| Local | `http://localhost:3002/dashboard/login` |
+| Local | `http://localhost:3000/dashboard/login` |
 
 ---
 

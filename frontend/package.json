@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3002",
+    "dev": "next dev -p 3000",
     "prebuild": "node scripts/validate-production-env.mjs",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "next start -p 3000",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "seo:submit-indexnow": "node scripts/submit-indexnow.mjs",
