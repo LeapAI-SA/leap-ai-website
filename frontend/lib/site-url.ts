@@ -75,11 +75,17 @@ export function isLocalDevHost(hostHeader: string | null | undefined) {
   return host === "localhost" || host === "127.0.0.1"
 }
 
-/** True for leapai.ai and www.leapai.ai. */
+/** True only for apex leapai.ai (www is non-canonical and must 301 to apex). */
 export function isCanonicalSiteHost(hostHeader: string | null | undefined) {
   const host = normalizeHostname(hostHeader)
+  return host === getHost(PRODUCTION_SITE_URL)
+}
+
+/** True for www.leapai.ai (redirect target host, not canonical). */
+export function isWwwSiteHost(hostHeader: string | null | undefined) {
+  const host = normalizeHostname(hostHeader)
   const productionHost = getHost(PRODUCTION_SITE_URL)
-  return host === productionHost || host === `www.${productionHost}`
+  return host === `www.${productionHost}`
 }
 
 /** Browser origin + base path when env is unset (client-only). */

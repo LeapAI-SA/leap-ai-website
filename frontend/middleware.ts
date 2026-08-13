@@ -8,6 +8,7 @@ import {
   isCanonicalSiteHost,
   isLocalDevHost,
   isProduction,
+  isWwwSiteHost,
   PRODUCTION_SITE_URL,
 } from "@/lib/site-url"
 
@@ -28,6 +29,28 @@ const BYPASS_EXACT = [
 
 /** Paths that may stay on a non-canonical deploy host (CMS / assets). */
 const NON_CANONICAL_STAY_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend"]
+
+/**
+ * Redirect using the native URL API so Location never reintroduces a trailing slash
+ * (NextURL.clone() + pathname keep the slash and cause 308 loops).
+ */
+function redirectToPath(
+  request: NextRequest,
+  pathname: string,
+  status: 301 | 308 = 308,
+  options?: { clearSearch?: boolean; base?: string },
+) {
+  const dest = new URL(request.url)
+  if (options?.base) {
+    const base = new URL(options.base)
+    dest.protocol = base.protocol
+    dest.host = base.host
+  }
+  const clean = pathname.replace(/\/+$/, "") || "/"
+  dest.pathname = clean
+  if (options?.clearSearch) dest.search = ""
+  return NextResponse.redirect(dest, status)
+}
 
 function redirectBarePathToBasePath(request: NextRequest) {
   const basePath = getBasePath()
@@ -70,6 +93,16 @@ function shouldStayOnNonCanonicalHost(pathname: string) {
   return NON_CANONICAL_STAY_PREFIXES.some((prefix) => path.startsWith(prefix))
 }
 
+/** Apex-only: www.leapai.ai → https://leapai.ai (all paths). */
+function redirectWwwToApex(request: NextRequest) {
+  if (!isProduction()) return null
+  if (!isWwwSiteHost(request.headers.get("host"))) return null
+
+  const { pathname, search } = request.nextUrl
+  const clean = pathname.replace(/\/+$/, "") || "/"
+  return NextResponse.redirect(new URL(`${clean}${search}`, PRODUCTION_SITE_URL), 301)
+}
+
 /** Send public + GEO traffic from deploy aliases (e.g. webhook) to leapai.ai. */
 function redirectNonCanonicalHost(request: NextRequest) {
   if (!isProduction()) return null
@@ -79,8 +112,8 @@ function redirectNonCanonicalHost(request: NextRequest) {
   if (shouldStayOnNonCanonicalHost(request.nextUrl.pathname)) return null
 
   const { pathname, search } = request.nextUrl
-  const target = new URL(`${pathname}${search}`, PRODUCTION_SITE_URL)
-  return NextResponse.redirect(target, 301)
+  const clean = pathname.replace(/\/+$/, "") || "/"
+  return NextResponse.redirect(new URL(`${clean}${search}`, PRODUCTION_SITE_URL), 301)
 }
 
 function withNoIndexIfNonCanonical(request: NextRequest, response: NextResponse) {
@@ -109,47 +142,44 @@ async function isMaintenanceModeEnabled() {
 }
 
 export async function middleware(request: NextRequest) {
+  const wwwRedirect = redirectWwwToApex(request)
+  if (wwwRedirect) return wwwRedirect
+
   const canonicalRedirect = redirectNonCanonicalHost(request)
   if (canonicalRedirect) return canonicalRedirect
 
   const { pathname, searchParams } = request.nextUrl
   if (searchParams.has("s")) {
-    const url = request.nextUrl.clone()
     const legacy = resolveLegacyPath(pathname)
+    let targetPath = "/"
     if (legacy) {
-      url.pathname = legacy
+      targetPath = legacy
     } else if (pathname === "/en" || pathname.startsWith("/en/")) {
-      url.pathname = pathname.replace(/\/+$/, "") || "/en"
-    } else {
-      url.pathname = "/"
+      targetPath = pathname.replace(/\/+$/, "") || "/en"
     }
-    url.search = ""
-    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+    return withNoIndexIfNonCanonical(
+      request,
+      redirectToPath(request, targetPath, 308, { clearSearch: true }),
+    )
   }
 
   // Map leftover WordPress slugs (including /en/old-slug → /en/new-path).
   const legacyTarget = resolveLegacyPath(pathname)
   const normalizedPath = pathname.replace(/\/+$/, "") || "/"
   if (legacyTarget && legacyTarget !== normalizedPath) {
-    const url = request.nextUrl.clone()
-    url.pathname = legacyTarget
-    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+    return withNoIndexIfNonCanonical(request, redirectToPath(request, legacyTarget, 308))
   }
 
   // skipTrailingSlashRedirect: strip trailing slash before /en rewrite
   if (pathname.length > 1 && pathname.endsWith("/")) {
-    const url = request.nextUrl.clone()
-    url.pathname = normalizedPath
-    return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+    return withNoIndexIfNonCanonical(request, redirectToPath(request, normalizedPath, 308))
   }
 
   // Serve /en and /en/<app-path> as English HTML (rewrite, keep the URL).
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     const rest = stripLocalePrefix(pathname)
     if (rest.startsWith("/dashboard") || rest.startsWith("/api")) {
-      const url = request.nextUrl.clone()
-      url.pathname = rest
-      return withNoIndexIfNonCanonical(request, NextResponse.redirect(url, 308))
+      return withNoIndexIfNonCanonical(request, redirectToPath(request, rest, 308))
     }
     const url = request.nextUrl.clone()
     url.pathname = rest

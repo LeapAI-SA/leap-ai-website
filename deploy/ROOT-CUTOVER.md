@@ -53,11 +53,11 @@ That script re-applies [`nginx-root-hosting.conf`](nginx-root-hosting.conf) (pro
 
 After deploy of the Next redirect map: unmapped `/en/*` → `/` (no soft-404 strip). Mapped WordPress slugs → `/solutions|products|use-cases/...`.
 
-### 3b. www SSL (`ERR_CERT_COMMON_NAME_INVALID`)
+### 3b. www SSL (`ERR_CERT_COMMON_NAME_INVALID`) — required for apex-only
+
+Canonical public host is **only** `https://leapai.ai`. `www` must **301** to apex (nginx + Next middleware after deploy).
 
 Browsers require the live certificate SAN to include **both** `leapai.ai` and `www.leapai.ai`. Apex alone is not enough — `https://www.leapai.ai` will fail TLS before any redirect runs.
-
-Canonical host is **apex** (`https://leapai.ai`). After TLS succeeds, www must **301** to apex.
 
 On the Ubuntu host that holds the Let’s Encrypt cert / nginx site:
 
