@@ -1,6 +1,11 @@
 import type { Viewport } from 'next'
 import { Tajawal, Geist_Mono } from 'next/font/google'
 import { AppProviders } from '@/components/app-providers'
+import {
+  getGtmId,
+  GoogleTagManagerHead,
+  GoogleTagManagerNoscript,
+} from '@/components/analytics/google-tag-manager'
 import { JsonLd } from '@/components/seo/json-ld'
 import { getNavContent, staticNavContent } from '@/lib/cms'
 import { fetchPublicSettings } from '@/lib/api'
@@ -50,6 +55,7 @@ export default async function RootLayout({
   const corporationSchema = buildCorporationSchema(settings ?? undefined)
 
   const globalGeoSchemas = [organizationSchema, websiteSchema, softwareSchema, corporationSchema]
+  const gtmId = getGtmId()
 
   return (
     <html
@@ -58,7 +64,11 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${tajawal.variable} ${geistMono.variable} bg-background`}
     >
+      <head>
+        <GoogleTagManagerHead id={gtmId} />
+      </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
+        <GoogleTagManagerNoscript id={gtmId} />
         <JsonLd data={globalGeoSchemas} />
         <AppProviders initialSettings={settings} nav={nav} locale={locale}>{children}</AppProviders>
       </body>

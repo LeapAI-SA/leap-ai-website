@@ -10,10 +10,12 @@ COPY . .
 ARG NEXT_PUBLIC_API_URL=/backend
 ARG NEXT_PUBLIC_BASE_PATH=
 ARG NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions
+ARG NEXT_PUBLIC_GTM_ID=GTM-NC7WPDNV
 ARG API_URL=http://backend:4000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_GTM_ID=$NEXT_PUBLIC_GTM_ID
 ENV SKIP_CMS_FETCH=true
 RUN npm run build
 
@@ -23,6 +25,7 @@ ENV NODE_ENV=production
 ENV NEXT_PUBLIC_API_URL=/backend
 ENV NEXT_PUBLIC_BASE_PATH=
 ENV NEXT_PUBLIC_SITE_URL=https://leapai-webhook.bab.solutions
+ENV NEXT_PUBLIC_GTM_ID=GTM-NC7WPDNV
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
