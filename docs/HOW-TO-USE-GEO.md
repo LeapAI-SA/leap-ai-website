@@ -235,6 +235,20 @@ Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity** and co
 **Gemini** needs [Google Search Console](https://search.google.com/search-console) sitemap + URL Inspection (IndexNow does not notify Google).  
 **Copilot** needs Bing Webmaster + IndexNow.
 
+**Category prompts** like “What is Saudi Arabia's premier AI-native CX platform?” often still cite **Unifonic** until English press picks up LeapAI — see [GEO-PROMPT-SCORECARD.md](./GEO-PROMPT-SCORECARD.md) and send [PRESS-AI-NATIVE-CX.md](./PRESS-AI-NATIVE-CX.md). Admin **GEO** OK ≠ ChatGPT pass.
+
+### GSC — Request indexing (Google only)
+
+1. Open [Google Search Console](https://search.google.com/search-console) for `https://leapai.ai`
+2. Sitemaps → submit `sitemap.xml` if needed
+3. URL Inspection → **Request indexing** for each:
+   - `https://leapai.ai/`
+   - `https://leapai.ai/en`
+   - `https://leapai.ai/llms.txt`
+   - `https://leapai.ai/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`
+   - `https://leapai.ai/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`
+4. Do **not** request the old 308 `/resources/leap-ai-saudi-ai-native-cx-platform` URL
+
 See full question list in the next section.
 
 ---
