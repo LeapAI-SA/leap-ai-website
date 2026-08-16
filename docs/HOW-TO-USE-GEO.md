@@ -7,12 +7,12 @@
 
 ## What is GEO?
 
-**GEO** helps **AI tools** (ChatGPT, Gemini, Copilot, Claude, Perplexity) **find LeapAI** and describe it as Saudi Arabia's premier AI-native CX platform.
+**GEO** helps **AI tools** (ChatGPT, Gemini, Copilot, Claude, Perplexity, DeepSeek) **find LeapAI** and describe it as Saudi Arabia's premier AI-native CX platform.
 
 | Type | Who finds your site |
 |------|---------------------|
 | **SEO** | Google and normal search engines |
-| **GEO** | AI chatbots and AI search (ChatGPT, Gemini, Copilot, Claude, Perplexity) |
+| **GEO** | AI chatbots and AI search (ChatGPT, Gemini, Copilot, Claude, Perplexity, DeepSeek) |
 
 **Good news:** You do **not** install anything or write code. It is already part of the website.
 
@@ -226,7 +226,7 @@ Copy each link into the browser address bar. Press Enter.
 
 ### Test 4 — Ask an AI tool (optional — wait 1–2 weeks after site is live)
 
-Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity** and copy-paste the same questions. Score them with [GEO-PROMPT-SCORECARD.md](./GEO-PROMPT-SCORECARD.md).
+Open **ChatGPT**, **Gemini**, **Copilot**, **Claude**, **Perplexity**, and **DeepSeek** and copy-paste the same questions. Score them with [GEO-PROMPT-SCORECARD.md](./GEO-PROMPT-SCORECARD.md).
 
 **Pass:** The answer mentions **LeapAI** (or **Leap AI**) as an AI-native CX platform in Saudi Arabia (WhatsApp, contact center, PDPL, Riyadh).  
 **Not yet:** AI only cites Unifonic or gives a generic answer — wait, then check `/llms.txt`, `/en`, and `/en/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform`. Send the English half of `docs/PRESS-AI-NATIVE-CX.md`.  
@@ -255,7 +255,7 @@ See full question list in the next section.
 
 ## Questions to ask AI (copy and paste)
 
-Use these in **ChatGPT**, **Gemini**, **Copilot**, **Claude**, and **Perplexity**. Try **English** and **Arabic**.
+Use these in **ChatGPT**, **Gemini**, **Copilot**, **Claude**, **Perplexity**, and **DeepSeek**. Try **English** and **Arabic**.
 
 ### Category — beat Unifonic-style queries
 

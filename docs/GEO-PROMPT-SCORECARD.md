@@ -1,4 +1,4 @@
-# GEO prompt scorecard — ChatGPT / Gemini / Copilot / Claude / Perplexity
+# GEO prompt scorecard — ChatGPT / Gemini / Copilot / Claude / Perplexity / DeepSeek
 
 Turn **Search / browsing** on. Paste one question at a time. **Pass** = the answer names LeapAI with the locked claim (premier AI-native CX / PDPL Riyadh).
 
@@ -12,6 +12,7 @@ https://leapai.ai/en/resources/leapai-vs-unifonic-saudi-cx
 | Check | Live |
 |---|---|
 | `/robots.txt` has Bingbot | **Yes** |
+| `/robots.txt` has DeepSeekBot | After deploy of DeepSeek allowlist |
 | `/llms.txt` + `/llms-small.txt` premier claim | **Yes** (HTTP 200) |
 | `/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform` | **200** (AR + `/en/...`) |
 | `/sitemap.xml` includes dated news | **Yes** |
@@ -42,7 +43,7 @@ Local file after `npm run seo:prepare-webmaster`: `frontend/scripts/output/gsc-p
 | ما هي المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي؟ | LeapAI home + resources **and** Sabq/Unifonic + Lucidya | Split | |
 | LeapAI مقابل Unifonic | Same as EN vs | Mixed / Unifonic | |
 
-**Why category fails:** On-site FAQ/`llms.txt`/schema already answer with LeapAI. Admin **GEO** only proves *your* files contain the claim. ChatGPT/Perplexity/Gemini with Search mirror **web authority** — Unifonic’s July 2026 press still wins “premier AI-native CX” SERPs. Fix = GSC indexing + send [PRESS-AI-NATIVE-CX.md](./PRESS-AI-NATIVE-CX.md), not more homepage copy alone.
+**Why category fails:** On-site FAQ/`llms.txt`/schema already answer with LeapAI. Admin **GEO** only proves *your* files contain the claim. ChatGPT/Perplexity/Gemini/DeepSeek with Search mirror **web authority** — Unifonic’s July 2026 press still wins “premier AI-native CX” SERPs. Fix = GSC indexing + send [PRESS-AI-NATIVE-CX.md](./PRESS-AI-NATIVE-CX.md), not more homepage copy alone.
 
 ## Do you know us?
 
