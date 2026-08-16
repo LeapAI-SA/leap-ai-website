@@ -13,6 +13,7 @@ https://leapai.ai/en/resources/leapai-vs-unifonic-saudi-cx
 |---|---|
 | `/robots.txt` has Bingbot | **Yes** |
 | `/robots.txt` has DeepSeekBot | After deploy of DeepSeek allowlist |
+| `/robots.txt` major LLM allow-list | Expanded (Amazonbot, MistralAI-User, YouBot, Claude-SearchBot, GrokBot, …) — verify after deploy |
 | `/llms.txt` + `/llms-small.txt` premier claim | **Yes** (HTTP 200) |
 | `/news/2026/08/09/leap-ai-saudi-ai-native-cx-platform` | **200** (AR + `/en/...`) |
 | `/sitemap.xml` includes dated news | **Yes** |
