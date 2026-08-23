@@ -20,10 +20,12 @@ Local: http://localhost:3000/dashboard/login
 
 After login you see the main dashboard with:
 
-- **Homepage settings** — hero, contact, menus, SEO, FAQ
+- **Site Settings** — hero, contact, menus, SEO, FAQ (organized in tabs)
+- **Users** — add/remove people who can log in to the dashboard ([full guide](./HOW-TO-USE-DASHBOARD-USERS.md))
 - **GEO** — check AI crawler files and AI search readiness
-- **Content library** — Solutions, Products, Use cases pages
+- **Content library** — Solutions, Products, Use cases, jobs pages
 - **Contact Us inbox** — messages from the contact form
+- **Careers inbox** — job applications and CV downloads
 - **Create new page** — add new content
 
 Always click **Save** at the bottom of Settings when you finish editing.
@@ -34,23 +36,24 @@ Always click **Save** at the bottom of Settings when you finish editing.
 
 ### 1. Site Settings (`Dashboard → Settings`)
 
-| Section | What it controls on the website |
+Settings use **tabs** (General, Links, Brand, Homepage, Menus, Marketing, Pages, GEO) instead of one long scroll. Use **Manage users** at the top to open the Users page.
+
+| Tab / section | What it controls on the website |
 |---------|----------------------------------|
 | **General** | Maintenance mode, default language (Arabic/English) |
-| **Contact information** | Email, phone, business hours, address (header + footer + contact page) |
-| **Social media** | Facebook, Twitter, Instagram, YouTube, LinkedIn links in footer |
-| **Brand / SEO** | Site title, meta description, footer mission text |
-| **Homepage images** | Hero image, section images, logo |
-| **Hero text** | Main homepage headline and button text (AR + EN) |
-| **Homepage stats** | Numbers on homepage (projects, experts, customers) |
-| **Header & footer navigation** | Menu links: Home, About, Partner, Contact, Privacy, FAQ |
-| **Technology partners** | Partner logos on homepage (Meta, Microsoft, etc.) |
-| **Pricing plans** | Leap Space 149 / 199 / 299 cards on homepage |
-| **Add-ons accordion** | Homepage add-ons section title and accordion items |
-| **About Us page** | Full About page text, image, stats, and quote |
-| **Privacy Policy page** | Full Privacy Policy text and sections |
-| **Button labels** | Main CTA buttons (pricing, stores, header signup, etc.) |
-| **Homepage FAQ** | Questions and answers on homepage (`/#faq`) |
+| **Links** | Contact email, phone, hours, address, social links |
+| **Brand** | Site title, meta description, footer mission text |
+| **Homepage** | Hero image/text, section images, logo, stats, FAQ |
+| **Menus** | Header & footer navigation links |
+| **Marketing** | Partners, pricing plans, add-ons, CTA button labels |
+| **Pages** | About Us and Privacy Policy content |
+| **GEO** | AI crawler / ai.txt related fields |
+
+---
+
+### 1b. Dashboard users (`Dashboard → Users`)
+
+Add or remove admins who can log in. Full step-by-step with screenshots: **[How to Manage Dashboard Users](./HOW-TO-USE-DASHBOARD-USERS.md)**
 
 ---
 
@@ -117,6 +120,8 @@ You do **not** need to run scripts or edit code.
 | A product or solution page | Content → open page → edit |
 | Put site in maintenance | Settings → General → Maintenance mode |
 | Read contact form messages | Contact Us inbox |
+| Add someone to the dashboard | Users → Add user |
+| Remove dashboard access | Users → Delete |
 
 ---
 
@@ -178,4 +183,4 @@ If you need these editable too, ask your developer.
 
 ---
 
-*Last updated: July 2026*
+*Last updated: August 2026*
