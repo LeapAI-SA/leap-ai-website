@@ -15,6 +15,8 @@ import {
   StickySaveBar,
   ImageUploadField,
   DashButton,
+  FilterTabs,
+  StatCard,
 } from "@/components/dashboard/ui"
 
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
@@ -56,6 +58,17 @@ import {
 } from "@/lib/site-marketing"
 import type { PricingPlan } from "@/lib/site-data"
 import { useLanguage } from "@/lib/i18n"
+import { Users, Sparkles, Globe, Languages } from "lucide-react"
+
+type SettingsSection =
+  | "general"
+  | "links"
+  | "brand"
+  | "homepage"
+  | "nav"
+  | "marketing"
+  | "pages"
+  | "geo"
 
 const DEFAULT_IMAGES = {
   hero: "/hero-dashboard.png",
@@ -517,6 +530,7 @@ export default function DashboardSettingsPage() {
   const [saving, setSaving] = useState(false)
   const [savingMaintenance, setSavingMaintenance] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null)
+  const [section, setSection] = useState<SettingsSection>("general")
 
   useEffect(() => {
     adminFetch<PublicSiteSettings>("/api/admin/settings")
@@ -612,10 +626,53 @@ export default function DashboardSettingsPage() {
       <PageHeader
         title={t("admin.settings.title")}
         description={t("admin.settings.desc")}
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <DashButton href="/dashboard/users" variant="secondary">
+              <Users className="size-4" />
+              {t("admin.settings.manageUsers")}
+            </DashButton>
+            <DashButton href="/dashboard/geo" variant="secondary">
+              <Sparkles className="size-4" />
+              {t("admin.settings.openGeoTools")}
+            </DashButton>
+          </div>
+        }
       />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <StatCard
+          label={t("admin.settings.panel.general")}
+          value={settings.maintenanceMode ? t("admin.settings.inMaintenance") : t("admin.settings.live")}
+          icon={Globe}
+          tone={settings.maintenanceMode ? "warning" : "success"}
+        />
+        <StatCard
+          label={t("admin.settings.defaultLanguage")}
+          value={settings.defaultLanguage === "ar" ? t("admin.settings.langArabic") : t("admin.settings.langEnglish")}
+          icon={Languages}
+          tone="primary"
+        />
+      </div>
 
       {message && <Alert variant={message.type === "success" ? "success" : "error"}>{message.text}</Alert>}
 
+      <FilterTabs
+        value={section}
+        onChange={setSection}
+        options={[
+          { id: "general", label: t("admin.settings.tab.general") },
+          { id: "links", label: t("admin.settings.tab.links") },
+          { id: "brand", label: t("admin.settings.tab.brand") },
+          { id: "homepage", label: t("admin.settings.tab.homepage") },
+          { id: "nav", label: t("admin.settings.tab.nav") },
+          { id: "marketing", label: t("admin.settings.tab.marketing") },
+          { id: "pages", label: t("admin.settings.tab.pages") },
+          { id: "geo", label: t("admin.settings.tab.geo") },
+        ]}
+      />
+
+      {section === "general" && (
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title={t("admin.settings.panel.general")} description={t("admin.settings.panel.generalDesc")}>
           <div className="space-y-4">
@@ -688,7 +745,10 @@ export default function DashboardSettingsPage() {
           </div>
         </Panel>
       </div>
+      )}
 
+      {section === "links" && (
+      <>
       <Panel title={t("admin.settings.panel.social")} description={t("admin.settings.panel.socialDesc")}>
         <div className="grid gap-4 md:grid-cols-2">
           {SOCIAL_PLATFORMS.map(({ key, label, placeholder }) => (
@@ -754,7 +814,10 @@ export default function DashboardSettingsPage() {
           </FormField>
         </div>
       </Panel>
+      </>
+      )}
 
+      {section === "brand" && (
       <Panel title={t("admin.settings.panel.seo")} description={t("admin.settings.panel.seoDesc")}>
         <div className="space-y-4">
           <FormField label={t("admin.settings.brandLock")}>
@@ -796,7 +859,10 @@ export default function DashboardSettingsPage() {
           />
         </div>
       </Panel>
+      )}
 
+      {section === "homepage" && (
+      <>
       <Panel title={t("admin.settings.panel.hero")} description={t("admin.settings.panel.heroDesc")}>
         <div className="space-y-4">
           <ImageUploadField
@@ -874,7 +940,10 @@ export default function DashboardSettingsPage() {
           ))}
         </div>
       </Panel>
+      </>
+      )}
 
+      {section === "nav" && (
       <Panel
         title={t("admin.settings.panel.nav")}
         description={t("admin.settings.panel.navDesc")}
@@ -906,7 +975,10 @@ export default function DashboardSettingsPage() {
           />
         </div>
       </Panel>
+      )}
 
+      {section === "marketing" && (
+      <>
       <Panel
         title={t("admin.settings.panel.partners")}
         description={t("admin.settings.panel.partnersDesc")}
@@ -934,6 +1006,17 @@ export default function DashboardSettingsPage() {
         />
       </Panel>
 
+      <Panel title={t("admin.settings.panel.cta")} description={t("admin.settings.panel.ctaDesc")}>
+        <CtaLabelsEditor
+          labels={settings.ctaLabels ?? DEFAULT_CTA_LABELS}
+          onChange={(ctaLabels) => setSettings({ ...settings, ctaLabels })}
+        />
+      </Panel>
+      </>
+      )}
+
+      {section === "pages" && (
+      <>
       <Panel title={t("admin.settings.panel.about")} description={t("admin.settings.panel.aboutDesc")}>
         <AboutPageEditor
           about={settings.aboutPage ?? DEFAULT_ABOUT_PAGE}
@@ -945,13 +1028,6 @@ export default function DashboardSettingsPage() {
         <PrivacyPageEditor
           page={settings.privacyPage ?? DEFAULT_PRIVACY_PAGE}
           onChange={(privacyPage) => setSettings({ ...settings, privacyPage })}
-        />
-      </Panel>
-
-      <Panel title={t("admin.settings.panel.cta")} description={t("admin.settings.panel.ctaDesc")}>
-        <CtaLabelsEditor
-          labels={settings.ctaLabels ?? DEFAULT_CTA_LABELS}
-          onChange={(ctaLabels) => setSettings({ ...settings, ctaLabels })}
         />
       </Panel>
 
@@ -1012,7 +1088,10 @@ export default function DashboardSettingsPage() {
           </div>
         </div>
       </Panel>
+      </>
+      )}
 
+      {section === "geo" && (
       <Panel
         id="geo"
         title={t("admin.settings.panel.geo")}
@@ -1110,6 +1189,7 @@ export default function DashboardSettingsPage() {
           />
         </div>
       </Panel>
+      )}
 
       <StickySaveBar onSave={save} saving={saving} />
     </div>

@@ -15,6 +15,7 @@ import {
   Menu,
   Plus,
   Sparkles,
+  Users,
 } from "lucide-react"
 import { getToken, setToken } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
@@ -30,6 +31,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const nav = [
     { href: "/dashboard", label: t("admin.nav.overview"), icon: LayoutDashboard, exact: true },
     { href: "/dashboard/settings", label: t("admin.nav.siteSettings"), icon: Settings },
+    { href: "/dashboard/users", label: t("admin.nav.users"), icon: Users },
     { href: "/dashboard/geo", label: t("admin.nav.geo"), icon: Sparkles },
     { href: "/dashboard/contact", label: t("admin.nav.contact"), icon: Mail },
     { href: "/dashboard/careers", label: t("admin.nav.careers"), icon: Briefcase },
@@ -40,6 +42,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     ({
       "/dashboard": t("admin.nav.overview"),
       "/dashboard/settings": t("admin.nav.siteSettings"),
+      "/dashboard/users": t("admin.nav.users"),
       "/dashboard/geo": t("admin.nav.geo"),
       "/dashboard/contact": t("admin.nav.contact"),
       "/dashboard/careers": t("admin.nav.careers"),

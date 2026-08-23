@@ -606,6 +606,7 @@ export const translations = {
   "admin.nav.signOut": { ar: "تسجيل الخروج", en: "Sign out" },
   "admin.nav.viewLiveSite": { ar: "عرض الموقع المباشر", en: "View live site" },
   "admin.nav.addContent": { ar: "إضافة محتوى", en: "Add content" },
+  "admin.nav.users": { ar: "المستخدمون", en: "Users" },
 
   "admin.login.badge": { ar: "إدارة المحتوى", en: "Content Management" },
   "admin.login.heading1": { ar: "إدارة موقعك", en: "Manage your website" },

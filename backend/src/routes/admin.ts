@@ -1,10 +1,12 @@
 import { Router } from "express"
 import fs from "fs"
 import path from "path"
+import bcrypt from "bcryptjs"
 import { getOrCreateSettings, serializePublicSettings } from "../models/SiteSettings.js"
 import { ContentItem, serializeContentItem } from "../models/ContentItem.js"
 import { ContactMessage, serializeContactMessage } from "../models/ContactMessage.js"
 import { JobApplication, serializeJobApplication } from "../models/JobApplication.js"
+import { User } from "../models/User.js"
 import { requireAuth, requireAdmin } from "../middleware/auth.js"
 import {
   isContentType,
@@ -332,6 +334,58 @@ router.get("/job-applications/:id/cv", async (req, res) => {
     return res.status(404).json({ error: "CV file not found" })
   }
   res.download(filePath)
+})
+
+function serializeAdminUser(user: { _id: { toString(): string }; email: string; role: string; createdAt?: Date }) {
+  return {
+    id: user._id.toString(),
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt ? user.createdAt.toISOString() : null,
+  }
+}
+
+router.get("/users", async (_req, res) => {
+  const users = await User.find().sort({ createdAt: 1 }).select("email role createdAt")
+  res.json(users.map(serializeAdminUser))
+})
+
+router.post("/users", async (req, res) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.toLowerCase().trim() : ""
+  const password = typeof req.body?.password === "string" ? req.body.password : ""
+
+  if (!email || !email.includes("@")) {
+    return res.status(400).json({ error: "Valid email is required" })
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ error: "Password must be at least 8 characters" })
+  }
+
+  const existing = await User.findOne({ email })
+  if (existing) {
+    return res.status(409).json({ error: "A user with this email already exists" })
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12)
+  const user = await User.create({ email, passwordHash, role: "admin" })
+  res.status(201).json(serializeAdminUser(user))
+})
+
+router.delete("/users/:id", async (req, res) => {
+  const user = await User.findById(req.params.id)
+  if (!user) return res.status(404).json({ error: "Not found" })
+
+  if (req.user?.userId === user._id.toString()) {
+    return res.status(400).json({ error: "You cannot delete your own account" })
+  }
+
+  const total = await User.countDocuments()
+  if (total <= 1) {
+    return res.status(400).json({ error: "Cannot delete the last admin user" })
+  }
+
+  await user.deleteOne()
+  res.json({ ok: true })
 })
 
 export default router
