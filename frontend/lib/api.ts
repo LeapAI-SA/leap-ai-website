@@ -6,6 +6,7 @@ import type { SocialLinks } from "./social-links"
 import type { SiteNavigation } from "./site-nav"
 import type { PartnerLogo, AddonsSection, AboutPageSettings, PrivacyPageSettings, CtaLabels, StoreIntegrationLinks } from "./site-marketing"
 import type { PricingPlan } from "./site-data"
+import type { GeoSettings } from "./geo-defaults"
 
 export type PublicSiteSettings = {
   maintenanceMode: boolean
@@ -46,6 +47,7 @@ export type PublicSiteSettings = {
   aboutPage?: AboutPageSettings
   privacyPage?: PrivacyPageSettings
   ctaLabels?: CtaLabels
+  geo?: GeoSettings
   updatedAt?: string
 }
 

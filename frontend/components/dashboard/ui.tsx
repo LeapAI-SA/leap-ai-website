@@ -67,18 +67,23 @@ export function StatCard({
 }
 
 export function Panel({
+  id,
   title,
   description,
   children,
   className = "",
 }: {
+  id?: string
   title: string
   description?: string
   children: React.ReactNode
   className?: string
 }) {
   return (
-    <section className={`overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm ${className}`}>
+    <section
+      id={id}
+      className={`overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm ${className}`}
+    >
       <div className="border-b border-border/60 bg-muted/30 px-6 py-4">
         <h2 className="text-base font-bold text-navy">{title}</h2>
         {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}

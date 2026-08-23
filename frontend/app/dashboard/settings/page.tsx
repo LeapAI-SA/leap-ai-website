@@ -19,6 +19,12 @@ import {
 
 import { mergeSocialLinks, SOCIAL_PLATFORMS } from "@/lib/social-links"
 import { geoFaqItems } from "@/lib/geo-faq"
+import {
+  DEFAULT_GEO_SETTINGS,
+  mergeGeoSettings,
+  geoCapabilitiesToText,
+  textToGeoCapabilities,
+} from "@/lib/geo-defaults"
 import { notifySettingsUpdated } from "@/lib/cms-refresh"
 import { DEFAULT_NAVIGATION, mergeNavigation, type SiteNavLink, type SiteNavigation } from "@/lib/site-nav"
 import {
@@ -91,6 +97,7 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     privacyPage: mergePrivacyPage(data.privacyPage),
     ctaLabels: mergeCtaLabels(data.ctaLabels),
     faq: data.faq?.length ? data.faq : DEFAULT_FAQ,
+    geo: mergeGeoSettings(data.geo),
   }
 }
 
@@ -1003,6 +1010,104 @@ export default function DashboardSettingsPage() {
               {t("admin.settings.removeLastFaq")}
             </DashButton>
           </div>
+        </div>
+      </Panel>
+
+      <Panel
+        id="geo"
+        title={t("admin.settings.panel.geo")}
+        description={t("admin.settings.panel.geoDesc")}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">{t("admin.settings.geoPreviewHint")}</p>
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoTagline")}
+            value={settings.geo?.llmsTagline ?? DEFAULT_GEO_SETTINGS.llmsTagline}
+            onChange={(llmsTagline) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), llmsTagline } })
+            }
+            rows={2}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoDescription")}
+            value={settings.geo?.llmsDescription ?? DEFAULT_GEO_SETTINGS.llmsDescription}
+            onChange={(llmsDescription) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), llmsDescription } })
+            }
+            rows={3}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoCategoryAnswer")}
+            value={settings.geo?.categoryAnswer ?? DEFAULT_GEO_SETTINGS.categoryAnswer}
+            onChange={(categoryAnswer) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), categoryAnswer } })
+            }
+            rows={2}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoCapabilities")}
+            value={{
+              ar: geoCapabilitiesToText(settings.geo?.capabilities?.ar ?? DEFAULT_GEO_SETTINGS.capabilities.ar),
+              en: geoCapabilitiesToText(settings.geo?.capabilities?.en ?? DEFAULT_GEO_SETTINGS.capabilities.en),
+            }}
+            onChange={(value) =>
+              setSettings({
+                ...settings,
+                geo: {
+                  ...mergeGeoSettings(settings.geo),
+                  capabilities: {
+                    ar: textToGeoCapabilities(value.ar),
+                    en: textToGeoCapabilities(value.en),
+                  },
+                },
+              })
+            }
+            rows={6}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoPositioning")}
+            value={settings.geo?.categoryPositioning ?? DEFAULT_GEO_SETTINGS.categoryPositioning}
+            onChange={(categoryPositioning) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), categoryPositioning } })
+            }
+            rows={4}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoCitation")}
+            value={settings.geo?.citationGuidance ?? DEFAULT_GEO_SETTINGS.citationGuidance}
+            onChange={(citationGuidance) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), citationGuidance } })
+            }
+            rows={2}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoKnowsAbout")}
+            value={{
+              ar: geoCapabilitiesToText(settings.geo?.knowsAbout?.ar ?? DEFAULT_GEO_SETTINGS.knowsAbout.ar),
+              en: geoCapabilitiesToText(settings.geo?.knowsAbout?.en ?? DEFAULT_GEO_SETTINGS.knowsAbout.en),
+            }}
+            onChange={(value) =>
+              setSettings({
+                ...settings,
+                geo: {
+                  ...mergeGeoSettings(settings.geo),
+                  knowsAbout: {
+                    ar: textToGeoCapabilities(value.ar),
+                    en: textToGeoCapabilities(value.en),
+                  },
+                },
+              })
+            }
+            rows={6}
+          />
+          <LocalizedFieldGroup
+            label={t("admin.settings.geoAiPolicy")}
+            value={settings.geo?.aiPolicy ?? DEFAULT_GEO_SETTINGS.aiPolicy}
+            onChange={(aiPolicy) =>
+              setSettings({ ...settings, geo: { ...mergeGeoSettings(settings.geo), aiPolicy } })
+            }
+            rows={3}
+          />
         </div>
       </Panel>
 

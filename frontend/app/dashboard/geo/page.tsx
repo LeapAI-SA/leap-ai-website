@@ -595,33 +595,45 @@ export default function DashboardGeoPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title={t("admin.geo.contentFeedsGeo")} description={t("admin.geo.contentFeedsDesc")}>
-          <div className="space-y-3">
-            {[
-              {
-                href: "/dashboard/settings",
-                title: t("admin.geo.feedFaq"),
-                desc: t("admin.geo.feedFaqDesc"),
-                icon: HelpCircle,
-              },
-              {
-                href: "/dashboard/settings",
-                title: t("admin.geo.feedSeo"),
-                desc: t("admin.geo.feedSeoDesc"),
-                icon: Settings,
-              },
-              {
-                href: "/dashboard/settings",
-                title: t("admin.geo.feedContact"),
-                desc: t("admin.geo.feedContactDesc"),
-                icon: Settings,
-              },
-              {
-                href: "/dashboard/content",
-                title: t("admin.geo.feedContent"),
-                desc: t("admin.geo.feedContentDesc"),
-                icon: FileText,
-              },
-            ].map((row) => (
+          <div className="space-y-4">
+            <DashButton href="/dashboard/settings#geo" className="w-full sm:w-auto">
+              <Settings className="size-4" />
+              {t("admin.geo.editGeoContent")}
+            </DashButton>
+            <p className="text-sm text-muted-foreground">{t("admin.geo.editGeoContentDesc")}</p>
+            <div className="space-y-3">
+              {[
+                {
+                  href: "/dashboard/settings#geo",
+                  title: t("admin.geo.feedGeo"),
+                  desc: t("admin.geo.feedGeoDesc"),
+                  icon: Bot,
+                },
+                {
+                  href: "/dashboard/settings",
+                  title: t("admin.geo.feedFaq"),
+                  desc: t("admin.geo.feedFaqDesc"),
+                  icon: HelpCircle,
+                },
+                {
+                  href: "/dashboard/settings",
+                  title: t("admin.geo.feedSeo"),
+                  desc: t("admin.geo.feedSeoDesc"),
+                  icon: Settings,
+                },
+                {
+                  href: "/dashboard/settings",
+                  title: t("admin.geo.feedContact"),
+                  desc: t("admin.geo.feedContactDesc"),
+                  icon: Settings,
+                },
+                {
+                  href: "/dashboard/content",
+                  title: t("admin.geo.feedContent"),
+                  desc: t("admin.geo.feedContentDesc"),
+                  icon: FileText,
+                },
+              ].map((row) => (
               <Link
                 key={row.title}
                 href={row.href}
@@ -635,7 +647,8 @@ export default function DashboardGeoPage() {
                   <p className="mt-0.5 text-xs text-muted-foreground">{row.desc}</p>
                 </div>
               </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </Panel>
 

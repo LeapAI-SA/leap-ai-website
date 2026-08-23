@@ -51,7 +51,7 @@ export default async function RootLayout({
 
   const organizationSchema = buildEnhancedOrganizationSchema(settings ?? undefined)
   const websiteSchema = buildWebsiteSchema()
-  const softwareSchema = buildSoftwareApplicationSchema()
+  const softwareSchema = buildSoftwareApplicationSchema(settings ?? undefined)
   const corporationSchema = buildCorporationSchema(settings ?? undefined)
 
   const globalGeoSchemas = [organizationSchema, websiteSchema, softwareSchema, corporationSchema]

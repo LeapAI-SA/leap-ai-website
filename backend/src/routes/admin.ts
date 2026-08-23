@@ -16,6 +16,7 @@ import {
   sanitizeCtaLabels,
   sanitizeSocialLinks,
   sanitizeStoreIntegrationLinks,
+  sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
 import { uploadImage } from "../middleware/upload.js"
@@ -155,6 +156,9 @@ router.put("/settings", async (req, res) => {
   }
   if (body.ctaLabels && typeof body.ctaLabels === "object") {
     settings.set("ctaLabels", sanitizeCtaLabels(body.ctaLabels))
+  }
+  if (body.geo && typeof body.geo === "object") {
+    settings.set("geo", sanitizeGeoSettings(body.geo))
   }
 
   await settings.save()

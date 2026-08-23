@@ -277,3 +277,42 @@ export function sanitizeStoreIntegrationLinks(value: unknown): { salla?: string;
   }
   return out
 }
+
+function cleanGeoStringArray(raw: unknown, maxItems = 20, maxLen = 500): string[] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((line) => trimString(line, maxLen))
+    .filter(Boolean)
+    .slice(0, maxItems)
+}
+
+export function sanitizeGeoSettings(value: unknown): {
+  llmsTagline: { ar: string; en: string }
+  llmsDescription: { ar: string; en: string }
+  categoryAnswer: { ar: string; en: string }
+  capabilities: { ar: string[]; en: string[] }
+  categoryPositioning: { ar: string; en: string }
+  citationGuidance: { ar: string; en: string }
+  knowsAbout: { ar: string[]; en: string[] }
+  aiPolicy: { ar: string; en: string }
+} {
+  const v = value as Record<string, unknown> | undefined
+  const capabilities = v?.capabilities as { ar?: unknown; en?: unknown } | undefined
+  const knowsAbout = v?.knowsAbout as { ar?: unknown; en?: unknown } | undefined
+  return {
+    llmsTagline: sanitizeLocalized(v?.llmsTagline, 500),
+    llmsDescription: sanitizeLocalized(v?.llmsDescription, 2000),
+    categoryAnswer: sanitizeLocalized(v?.categoryAnswer, 1000),
+    capabilities: {
+      ar: cleanGeoStringArray(capabilities?.ar),
+      en: cleanGeoStringArray(capabilities?.en),
+    },
+    categoryPositioning: sanitizeLocalized(v?.categoryPositioning, 3000),
+    citationGuidance: sanitizeLocalized(v?.citationGuidance, 2000),
+    knowsAbout: {
+      ar: cleanGeoStringArray(knowsAbout?.ar),
+      en: cleanGeoStringArray(knowsAbout?.en),
+    },
+    aiPolicy: sanitizeLocalized(v?.aiPolicy, 2000),
+  }
+}

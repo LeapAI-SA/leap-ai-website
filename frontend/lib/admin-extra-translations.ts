@@ -366,4 +366,34 @@ export const adminExtraTranslations = {
   "admin.settings.faqAnswer": { ar: "إجابة FAQ #{n}", en: "FAQ #{n} answer" },
   "admin.settings.addFaq": { ar: "إضافة سؤال", en: "Add FAQ item" },
   "admin.settings.removeLastFaq": { ar: "حذف آخر عنصر", en: "Remove last item" },
+  "admin.settings.panel.geo": { ar: "محتوى GEO", en: "GEO content" },
+  "admin.settings.panel.geoDesc": {
+    ar: "نصوص ملفات الزحف للذكاء الاصطناعي (llms.txt و ai.txt). الأسئلة الشائعة في llms-full.txt تُؤخذ من قسم FAQ أعلاه.",
+    en: "AI crawler file copy (llms.txt, ai.txt). FAQ in llms-full.txt comes from the Homepage FAQ section above.",
+  },
+  "admin.settings.geoPreviewHint": {
+    ar: "بعد الحفظ، راجع: /llms.txt · /llms-full.txt · /.well-known/ai.txt",
+    en: "After saving, preview: /llms.txt · /llms-full.txt · /.well-known/ai.txt",
+  },
+  "admin.settings.geoTagline": { ar: "شعار llms.txt", en: "llms.txt tagline" },
+  "admin.settings.geoDescription": { ar: "وصف llms.txt", en: "llms.txt description" },
+  "admin.settings.geoCategoryAnswer": { ar: "إجابة الفئة (llms-small)", en: "Category answer (llms-small)" },
+  "admin.settings.geoCapabilities": { ar: "القدرات الأساسية (سطر لكل عنصر)", en: "Core capabilities (one per line)" },
+  "admin.settings.geoPositioning": {
+    ar: "تموضع الفئة (سطر لكل نقطة)",
+    en: "Category positioning (one bullet per line)",
+  },
+  "admin.settings.geoCitation": { ar: "إرشادات الاقتباس", en: "Citation guidance" },
+  "admin.settings.geoKnowsAbout": { ar: "وسوم knowsAbout (Schema.org)", en: "knowsAbout tags (Schema.org)" },
+  "admin.settings.geoAiPolicy": { ar: "سياسة ai.txt", en: "ai.txt policy" },
+  "admin.geo.editGeoContent": { ar: "تعديل محتوى GEO", en: "Edit GEO content" },
+  "admin.geo.editGeoContentDesc": {
+    ar: "عدّل النصوص التي تظهر في llms.txt و ai.txt و Schema.org",
+    en: "Edit copy used in llms.txt, ai.txt, and Schema.org",
+  },
+  "admin.geo.feedGeo": { ar: "إعدادات الموقع → محتوى GEO", en: "Site Settings → GEO content" },
+  "admin.geo.feedGeoDesc": {
+    ar: "الشعار والقدرات والتموضع وسياسة ai.txt",
+    en: "Tagline, capabilities, positioning, and ai.txt policy",
+  },
 } as const
