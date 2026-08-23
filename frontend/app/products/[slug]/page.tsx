@@ -38,7 +38,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const item = await resolveProduct(slug)
+  const [item, locale] = await Promise.all([resolveProduct(slug), getRequestLocale()])
   if (!item) notFound()
 
   const all = (await getProductsFromCms()) ?? products
@@ -46,7 +46,7 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <JsonLd data={buildContentJsonLd(item, `/products/${slug}`, { en: "Products", ar: "منتجاتنا" }, "product")} />
+      <JsonLd data={buildContentJsonLd(item, `/products/${slug}`, { en: "Products", ar: "منتجاتنا" }, "product", locale)} />
       <DetailPageContent
         item={item}
         related={related}

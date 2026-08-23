@@ -12,7 +12,7 @@ import {
   Toggle,
   ImageUploadField,
 } from "@/components/dashboard/ui"
-import type { Lang } from "@/lib/i18n"
+import { useLanguage } from "@/lib/i18n"
 
 export type ContentFormValues = {
   type: "solution" | "product" | "use-case" | "article" | "case" | "job"
@@ -51,7 +51,6 @@ export function ContentForm({
   saving,
   error,
   onDelete,
-  locale = "en",
 }: {
   title: string
   description?: string
@@ -61,9 +60,44 @@ export function ContentForm({
   saving: boolean
   error: string
   onDelete?: () => void
-  locale?: Lang
 }) {
-  const isAr = locale === "ar"
+  const { t } = useLanguage()
+
+  const groupingTitle =
+    form.type === "case"
+      ? t("admin.contentForm.caseCategory")
+      : form.type === "job"
+        ? t("admin.contentForm.jobDepartment")
+        : t("admin.contentForm.solutionGrouping")
+
+  const groupingDesc =
+    form.type === "case"
+      ? t("admin.contentForm.caseCategoryHint")
+      : form.type === "job"
+        ? t("admin.contentForm.jobDepartmentHint")
+        : t("admin.contentForm.solutionGroupingHint")
+
+  const slugLabel =
+    form.type === "case"
+      ? t("admin.contentForm.categorySlug")
+      : form.type === "job"
+        ? t("admin.contentForm.departmentSlug")
+        : t("admin.contentForm.groupSlug")
+
+  const slugHint =
+    form.type === "case"
+      ? t("admin.contentForm.categorySlugHint")
+      : form.type === "job"
+        ? t("admin.contentForm.departmentSlugHint")
+        : t("admin.contentForm.groupSlugHint")
+
+  const groupTitleLabel =
+    form.type === "case"
+      ? t("admin.contentForm.categoryTitle")
+      : form.type === "job"
+        ? t("admin.contentForm.departmentTitle")
+        : t("admin.contentForm.groupTitle")
+
   return (
     <form onSubmit={onSubmit} className="space-y-8 pb-12">
       <PageHeader
@@ -72,30 +106,30 @@ export function ContentForm({
         actions={
           <DashButton href="/dashboard/content" variant="ghost">
             <ArrowLeft className="size-4" />
-            {isAr ? "رجوع" : "Back"}
+            {t("admin.contentForm.back")}
           </DashButton>
         }
       />
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      <Panel title={isAr ? "معلومات أساسية" : "Basic info"} description={isAr ? "النوع، الرابط، وحالة النشر" : "Type, URL slug, and publish status"}>
+      <Panel title={t("admin.contentForm.basicInfo")} description={t("admin.contentForm.basicInfoDesc")}>
         <div className="grid gap-4 md:grid-cols-2">
-          <FormField label={isAr ? "نوع المحتوى" : "Content type"}>
+          <FormField label={t("admin.contentForm.contentType")}>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value as ContentFormValues["type"] })}
               className="form-input"
             >
-              <option value="solution">{isAr ? "حل" : "Solution"}</option>
-              <option value="product">{isAr ? "منتج" : "Product"}</option>
-              <option value="use-case">{isAr ? "حالة استخدام" : "Use case"}</option>
-              <option value="case">{isAr ? "قصة نجاح" : "Success Story"}</option>
-              <option value="job">{isAr ? "وظيفة شاغرة" : "Job Opening"}</option>
-              <option value="article">{isAr ? "مقال / مورد" : "Article / Resource"}</option>
+              <option value="solution">{t("admin.contentForm.typeSolution")}</option>
+              <option value="product">{t("admin.contentForm.typeProduct")}</option>
+              <option value="use-case">{t("admin.contentForm.typeUseCase")}</option>
+              <option value="case">{t("admin.contentForm.typeCase")}</option>
+              <option value="job">{t("admin.contentForm.typeJob")}</option>
+              <option value="article">{t("admin.contentForm.typeArticle")}</option>
             </select>
           </FormField>
-          <FormField label={isAr ? "الرابط المختصر" : "URL slug"} hint={isAr ? "مثال: whatsapp-business" : "e.g. whatsapp-business"}>
+          <FormField label={t("admin.contentForm.urlSlug")} hint={t("admin.contentForm.urlSlugHint")}>
             <input
               required
               value={form.slug}
@@ -107,7 +141,7 @@ export function ContentForm({
           </FormField>
         </div>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <FormField label={isAr ? "ترتيب الظهور" : "Sort order"} hint={isAr ? "الأرقام الأقل تظهر أولاً" : "Lower numbers appear first"}>
+          <FormField label={t("admin.contentForm.sortOrder")} hint={t("admin.contentForm.sortOrderHint")}>
             <input
               type="number"
               value={form.sortOrder}
@@ -118,42 +152,16 @@ export function ContentForm({
           <Toggle
             checked={form.published}
             onChange={(published) => setForm({ ...form, published })}
-            label={isAr ? "منشور" : "Published"}
-            description={isAr ? "عند التفعيل سيظهر العنصر في الموقع العام" : "When enabled, this item appears on the public website"}
+            label={t("admin.contentForm.published")}
+            description={t("admin.contentForm.publishedDesc")}
           />
         </div>
       </Panel>
 
       {(form.type === "solution" || form.type === "case" || form.type === "job") && (
-        <Panel
-          title={
-            form.type === "case"
-              ? isAr ? "فئة قصة النجاح" : "Success story category"
-              : form.type === "job"
-                ? isAr ? "قسم الوظيفة" : "Job department"
-                : isAr ? "تجميع الحلول" : "Solution grouping"
-          }
-          description={
-            form.type === "case"
-              ? isAr ? "استخدم: cx أو da أو mobile-web" : "Use: cx, da, or mobile-web"
-              : form.type === "job"
-                ? isAr ? "استخدم: engineering أو sales أو operations أو general" : "Use: engineering, sales, operations, or general"
-                : isAr ? "كيف يظهر هذا العنصر في صفحة الحلول" : "How this item appears on the Solutions page"
-          }
-        >
+        <Panel title={groupingTitle} description={groupingDesc}>
           <div className="grid gap-4 md:grid-cols-2">
-            <FormField
-              label={
-                form.type === "case" ? (isAr ? "رمز الفئة" : "Category slug")
-                : form.type === "job" ? (isAr ? "رمز القسم" : "Department slug")
-                : (isAr ? "رابط المجموعة" : "Group slug")
-              }
-              hint={
-                form.type === "case" ? (isAr ? "مثال: cx" : "e.g. cx")
-                : form.type === "job" ? (isAr ? "مثال: engineering" : "e.g. engineering")
-                : (isAr ? "مثال: omnichannel-contact-center" : "e.g. omnichannel-contact-center")
-              }
-            >
+            <FormField label={slugLabel} hint={slugHint}>
               {form.type === "case" ? (
                 <select
                   value={form.groupSlug}
@@ -207,11 +215,7 @@ export function ContentForm({
               )}
             </FormField>
             <LocalizedFieldGroup
-              label={
-                form.type === "case" ? (isAr ? "عنوان الفئة" : "Category title")
-                : form.type === "job" ? (isAr ? "عنوان القسم" : "Department title")
-                : (isAr ? "عنوان المجموعة" : "Group title")
-              }
+              label={groupTitleLabel}
               value={form.groupTitle}
               onChange={(groupTitle) => setForm({ ...form, groupTitle })}
               rows={1}
@@ -221,22 +225,22 @@ export function ContentForm({
       )}
 
       {form.type !== "job" && (
-      <Panel title={isAr ? "صورة الصفحة" : "Page image"} description={isAr ? "تظهر في بطاقات القوائم وصفحة التفاصيل" : "Shown on listing cards and the detail page"}>
-        <ImageUploadField
-          label={isAr ? "الصورة الرئيسية" : "Featured image"}
-          hint={isAr ? "ارفع صورة أو ألصق مساراً مثل /uploads/my-image.png" : "Upload or paste a path like /uploads/my-image.png"}
-          value={form.image}
-          onChange={(image) => setForm({ ...form, image })}
-        />
-      </Panel>
+        <Panel title={t("admin.contentForm.pageImage")} description={t("admin.contentForm.pageImageDesc")}>
+          <ImageUploadField
+            label={t("admin.contentForm.featuredImage")}
+            hint={t("admin.contentForm.featuredImageHint")}
+            value={form.image}
+            onChange={(image) => setForm({ ...form, image })}
+          />
+        </Panel>
       )}
 
-      <Panel title={isAr ? "المحتوى (ثنائي اللغة)" : "Content (bilingual)"} description={isAr ? "نسختا العربية والإنجليزية" : "Arabic and English versions"}>
+      <Panel title={t("admin.contentForm.bilingualContent")} description={t("admin.contentForm.bilingualContentDesc")}>
         <div className="space-y-4">
-          <LocalizedFieldGroup label={isAr ? "العنوان" : "Title"} value={form.title} onChange={(title) => setForm({ ...form, title })} />
-          <LocalizedFieldGroup label={isAr ? "الملخص" : "Excerpt"} value={form.excerpt} onChange={(excerpt) => setForm({ ...form, excerpt })} rows={2} />
+          <LocalizedFieldGroup label={t("admin.contentForm.fieldTitle")} value={form.title} onChange={(title) => setForm({ ...form, title })} />
+          <LocalizedFieldGroup label={t("admin.contentForm.fieldExcerpt")} value={form.excerpt} onChange={(excerpt) => setForm({ ...form, excerpt })} rows={2} />
           <LocalizedFieldGroup
-            label={isAr ? "الوصف" : "Description"}
+            label={t("admin.contentForm.fieldDescription")}
             value={form.description}
             onChange={(description) => setForm({ ...form, description })}
             rows={5}
@@ -245,11 +249,11 @@ export function ContentForm({
       </Panel>
 
       <Panel
-        title={form.type === "job" ? (isAr ? "المتطلبات" : "Requirements") : isAr ? "أبرز المزايا" : "Key features"}
-        description={isAr ? "عنصر واحد في كل سطر" : "One item per line"}
+        title={form.type === "job" ? t("admin.contentForm.requirements") : t("admin.contentForm.keyFeatures")}
+        description={t("admin.contentForm.onePerLine")}
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <FormField label={isAr ? "مزايا بالعربية" : "Arabic features"}>
+          <FormField label={t("admin.contentForm.featuresAr")}>
             <textarea
               rows={8}
               value={form.features.ar.join("\n")}
@@ -258,7 +262,7 @@ export function ContentForm({
               placeholder="Feature one&#10;Feature two"
             />
           </FormField>
-          <FormField label={isAr ? "مزايا بالإنجليزية" : "English features"}>
+          <FormField label={t("admin.contentForm.featuresEn")}>
             <textarea
               rows={8}
               dir="ltr"
@@ -273,15 +277,15 @@ export function ContentForm({
 
       <div className="flex flex-wrap items-center gap-3">
         <DashButton type="submit" disabled={saving} className="min-w-[120px]">
-          {saving ? (isAr ? "جارٍ الحفظ..." : "Saving...") : (isAr ? "حفظ المحتوى" : "Save content")}
+          {saving ? t("admin.contentForm.saving") : t("admin.contentForm.saveContent")}
         </DashButton>
         <DashButton href="/dashboard/content" variant="secondary" type="button">
-          {isAr ? "إلغاء" : "Cancel"}
+          {t("admin.contentForm.cancel")}
         </DashButton>
         {onDelete && (
           <DashButton type="button" variant="danger" onClick={onDelete} className="ms-auto">
             <Trash2 className="size-4" />
-            {isAr ? "حذف" : "Delete"}
+            {t("admin.contentForm.delete")}
           </DashButton>
         )}
       </div>

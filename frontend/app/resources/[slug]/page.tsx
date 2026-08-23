@@ -49,10 +49,11 @@ export default async function ResourceArticlePage({
   }
 
   const related = (await getArticles()).filter((article) => article.slug !== slug).slice(0, 4)
+  const locale = await getRequestLocale()
 
   return (
     <>
-      <JsonLd data={buildNewsArticleJsonLd(item)} />
+      <JsonLd data={buildNewsArticleJsonLd(item, locale)} />
       <ArticlePageContent item={item} related={related} />
     </>
   )

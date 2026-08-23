@@ -2,7 +2,16 @@ import type { Metadata } from "next"
 import type { ArticleItem } from "./articles"
 import { articleCanonicalPath } from "./article-paths"
 import { withLocalePrefix, type SiteLang } from "./locale-path"
-import { absoluteUrl, buildPageMetadata, getSiteUrl, resolveOgImage, siteConfig } from "./seo"
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildCollectionPageJsonLd,
+  buildPageMetadata,
+  getSiteUrl,
+  resolveOgImage,
+  siteConfig,
+} from "./seo"
+import { pickLocalized } from "./api"
 
 export function buildArticleMetadata(item: ArticleItem, locale: SiteLang = "ar"): Metadata {
   return buildPageMetadata({
@@ -20,15 +29,20 @@ export function buildArticleMetadata(item: ArticleItem, locale: SiteLang = "ar")
 export function buildNewsArticleJsonLd(item: ArticleItem, locale: SiteLang = "ar") {
   const url = absoluteUrl(withLocalePrefix(articleCanonicalPath(item), locale))
   const schemaType = item.kind === "news" ? "NewsArticle" : "Article"
+  const headline = pickLocalized(item.title, locale)
+  const altHeadline = locale === "ar" ? item.title.en : item.title.ar
+  const description = pickLocalized(item.excerpt, locale) || pickLocalized(item.description, locale)
+  const articleBody = pickLocalized(item.description, locale)
+
   return {
     "@context": "https://schema.org",
     "@type": schemaType,
-    headline: item.title.en,
-    alternativeHeadline: item.title.ar,
-    description: item.excerpt.en,
+    headline,
+    alternativeHeadline: altHeadline || undefined,
+    description,
     datePublished: item.publishedAt,
     dateModified: item.publishedAt,
-    inLanguage: ["en", "ar"],
+    inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
     image: resolveOgImage(item.image),
     url,
     mainEntityOfPage: url,
@@ -46,32 +60,36 @@ export function buildNewsArticleJsonLd(item: ArticleItem, locale: SiteLang = "ar
         url: resolveOgImage("/leapai-logo.png"),
       },
     },
-    about: [
-      "AI-native CX platform",
-      "Customer experience",
-      "Saudi Arabia",
-      siteConfig.taglineEn,
-    ],
-    articleBody: item.description.en,
+    about: locale === "ar"
+      ? ["منصة تجربة عملاء مبنية على الذكاء الاصطناعي", "تجربة العملاء", "السعودية", siteConfig.taglineAr]
+      : ["AI-native CX platform", "Customer experience", "Saudi Arabia", siteConfig.taglineEn],
+    articleBody,
   }
 }
 
-export function buildResourcesListJsonLd(items: ArticleItem[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "LeapAI Resources",
-    description: siteConfig.descriptionEn,
-    url: absoluteUrl("/resources"),
-    inLanguage: ["ar", "en"],
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: items.map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.title.en,
-        url: absoluteUrl(articleCanonicalPath(item)),
-      })),
+export function buildResourcesListJsonLd(items: ArticleItem[], locale: SiteLang = "ar") {
+  return buildCollectionPageJsonLd({
+    locale,
+    title: { en: "Resources", ar: "الموارد" },
+    description: {
+      en: siteConfig.descriptionEn,
+      ar: siteConfig.descriptionAr,
     },
-  }
+    path: "/resources",
+    items: items.map((item) => ({
+      name: item.title,
+      url: absoluteUrl(articleCanonicalPath(item)),
+    })),
+  })
+}
+
+export function buildArticleBreadcrumbJsonLd(item: ArticleItem, locale: SiteLang = "ar") {
+  return buildBreadcrumbJsonLd(locale, [
+    { label: { en: "Home", ar: "الرئيسية" }, path: "/" },
+    { label: { en: "Resources", ar: "الموارد" }, path: "/resources" },
+    {
+      label: { en: item.title.en || item.title.ar, ar: item.title.ar || item.title.en },
+      path: articleCanonicalPath(item),
+    },
+  ])
 }

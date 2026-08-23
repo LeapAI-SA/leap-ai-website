@@ -1,7 +1,16 @@
 import type { Metadata } from "next"
 import type { NavItem } from "./site-data"
-import { buildPageMetadata, absoluteUrl, siteConfig, resolveOgImage, getSiteUrl } from "./seo"
+import {
+  buildPageMetadata,
+  buildBreadcrumbJsonLd,
+  buildCollectionPageJsonLd,
+  absoluteUrl,
+  siteConfig,
+  resolveOgImage,
+  getSiteUrl,
+} from "./seo"
 import type { SiteLang } from "./locale-path"
+import { pickLocalized } from "./api"
 import { resolveContentImage } from "./page-images"
 import { buildContentGeoSchema } from "./geo"
 
@@ -32,8 +41,12 @@ export function buildContentMetadata(
   })
 }
 
-function buildFeatureFaqSchema(item: NavItem) {
-  const features = item.features.en?.length ? item.features.en : item.features.ar
+function buildFeatureFaqSchema(item: NavItem, locale: SiteLang = "ar") {
+  const features = locale === "en"
+    ? (item.features.en?.length ? item.features.en : item.features.ar)
+    : (item.features.ar?.length ? item.features.ar : item.features.en)
+  const title = pickLocalized(item.title, locale)
+  const excerpt = pickLocalized(item.excerpt, locale)
   if (!features?.length) return null
 
   return {
@@ -41,10 +54,14 @@ function buildFeatureFaqSchema(item: NavItem) {
     "@type": "FAQPage",
     mainEntity: features.map((feature) => ({
       "@type": "Question",
-      name: `Does ${item.title.en} include ${feature}?`,
+      name: locale === "ar"
+        ? `هل يتضمن ${title} ${feature}؟`
+        : `Does ${title} include ${feature}?`,
       acceptedAnswer: {
         "@type": "Answer",
-        text: `Yes. ${item.title.en} by LeapAI includes: ${feature}. ${item.excerpt.en}`,
+        text: locale === "ar"
+          ? `نعم. ${title} من LeapAI يتضمن: ${feature}. ${excerpt}`
+          : `Yes. ${title} by LeapAI includes: ${feature}. ${excerpt}`,
       },
     })),
   }
@@ -55,11 +72,14 @@ export function buildContentJsonLd(
   path: string,
   listLabel: { en: string; ar: string },
   contentType: "solution" | "product" | "use-case" = "solution",
+  locale: SiteLang = "ar",
 ) {
   const url = absoluteUrl(path)
-  const listUrl = absoluteUrl(path.split("/").slice(0, 2).join("/"))
   const { en, ar } = pickDescription(item)
   const image = resolveOgImage(item.image || resolveContentImage(item.slug))
+  const title = pickLocalized(item.title, locale)
+  const altTitle = locale === "ar" ? item.title.en : item.title.ar
+  const description = pickLocalized({ en, ar }, locale)
 
   const schemaType =
     contentType === "product" ? "Product" : contentType === "use-case" ? "WebPage" : "Service"
@@ -67,12 +87,12 @@ export function buildContentJsonLd(
   const mainEntity: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": schemaType,
-    name: item.title.en || item.title.ar,
-    alternateName: item.title.ar,
-    description: en,
+    name: title,
+    alternateName: altTitle || undefined,
+    description,
     url,
     image,
-    inLanguage: ["ar", "en"],
+    inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
     provider: {
       "@type": "Organization",
       name: siteConfig.name,
@@ -89,7 +109,7 @@ export function buildContentJsonLd(
       itemCondition: "https://schema.org/NewCondition",
       priceCurrency: "SAR",
       price: "0",
-      description: "Contact LeapAI for pricing",
+      description: locale === "ar" ? "تواصل مع LeapAI للتسعير" : "Contact LeapAI for pricing",
       seller: {
         "@type": "Organization",
         name: siteConfig.name,
@@ -98,7 +118,7 @@ export function buildContentJsonLd(
     }
   }
 
-  const featureFaq = buildFeatureFaqSchema(item)
+  const featureFaq = buildFeatureFaqSchema(item, locale)
 
   return [
     mainEntity,
@@ -107,58 +127,37 @@ export function buildContentJsonLd(
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      name: item.title.en || item.title.ar,
-      description: ar,
+      name: title,
+      description,
       url,
-      inLanguage: ["ar", "en"],
+      inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
       isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
       primaryImageOfPage: image,
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-        { "@type": "ListItem", position: 2, name: listLabel.en, item: listUrl },
-        { "@type": "ListItem", position: 3, name: item.title.en || item.title.ar, item: url },
-      ],
-    },
+    buildBreadcrumbJsonLd(locale, [
+      { label: { en: "Home", ar: "الرئيسية" }, path: "/" },
+      { label: listLabel, path: path.split("/").slice(0, 2).join("/") || "/" },
+      { label: { en: item.title.en || item.title.ar, ar: item.title.ar || item.title.en }, path },
+    ]),
   ]
 }
 
 export function buildListPageJsonLd(input: {
-  title: string
-  description: string
+  title: { en: string; ar: string }
+  description: { en: string; ar: string }
   path: string
   items: NavItem[]
+  locale?: SiteLang
 }) {
-  const listUrl = absoluteUrl(input.path)
-  return [
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      name: input.title,
-      description: input.description,
-      url: listUrl,
-      inLanguage: ["ar", "en"],
-      isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
-      mainEntity: {
-        "@type": "ItemList",
-        itemListElement: input.items.map((item, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          name: item.title.en || item.title.ar,
-          url: absoluteUrl(`${input.path}/${item.slug}`),
-        })),
-      },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-        { "@type": "ListItem", position: 2, name: input.title, item: listUrl },
-      ],
-    },
-  ]
+  const locale = input.locale ?? "ar"
+  return buildCollectionPageJsonLd({
+    locale,
+    title: input.title,
+    description: input.description,
+    path: input.path,
+    items: input.items.map((item) => ({
+      name: item.title,
+      url: absoluteUrl(`${input.path}/${item.slug}`),
+    })),
+  })
 }

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Phone, Mail, MapPin, Clock } from "lucide-react"
-import { socialIcons, socialLabels } from "@/components/social-icons"
+import { socialIcons, socialLabelKeys } from "@/components/social-icons"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 import { resolveMediaUrl } from "@/lib/media"
@@ -129,7 +129,7 @@ export function SiteFooter() {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={socialLabels[key]}
+                  aria-label={t(socialLabelKeys[key])}
                   className="flex size-9 items-center justify-center rounded-full border border-navy-foreground/20 text-navy-foreground/70 transition-colors hover:border-amber hover:bg-amber hover:text-accent-foreground"
                 >
                   <Icon className="size-4" />

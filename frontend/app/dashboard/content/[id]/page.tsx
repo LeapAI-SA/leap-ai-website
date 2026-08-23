@@ -87,7 +87,6 @@ export default function EditContentPage() {
       saving={saving}
       error={error}
       onDelete={remove}
-      locale={lang}
     />
   )
 }

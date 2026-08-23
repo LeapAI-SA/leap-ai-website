@@ -453,31 +453,92 @@ export function buildSiteNavigationSchema() {
   }
 }
 
+export function schemaLocalizedText(locale: SiteLang, en: string, ar?: string) {
+  return locale === "en" ? en : (ar || en)
+}
+
+export function buildBreadcrumbJsonLd(
+  locale: SiteLang,
+  crumbs: Array<{ label: { en: string; ar: string }; path: string }>,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: schemaLocalizedText(locale, crumb.label.en, crumb.label.ar),
+      item: absoluteUrl(crumb.path),
+    })),
+  }
+}
+
+export function buildCollectionPageJsonLd(input: {
+  locale?: SiteLang
+  title: { en: string; ar: string }
+  description: { en: string; ar: string }
+  path: string
+  items: Array<{ name: { en: string; ar: string }; url?: string }>
+}) {
+  const locale = input.locale ?? "ar"
+  const listUrl = absoluteUrl(input.path)
+  const title = schemaLocalizedText(locale, input.title.en, input.title.ar)
+  const description = schemaLocalizedText(locale, input.description.en, input.description.ar)
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      alternateName: locale === "ar" ? input.title.en : input.title.ar,
+      description,
+      url: listUrl,
+      inLanguage: ["ar", "en"],
+      isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: input.items.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: schemaLocalizedText(locale, item.name.en, item.name.ar),
+          ...(item.url ? { url: item.url } : {}),
+        })),
+      },
+    },
+    buildBreadcrumbJsonLd(locale, [
+      { label: { en: "Home", ar: "الرئيسية" }, path: "/" },
+      { label: input.title, path: input.path },
+    ]),
+  ]
+}
+
 export function buildStaticPageJsonLd(input: {
   title: string
+  titleAr?: string
   description: string
+  descriptionAr?: string
   path: string
   image?: string
+  locale?: SiteLang
 }) {
+  const locale = input.locale ?? "ar"
   const pageUrl = absoluteUrl(input.path)
+  const title = schemaLocalizedText(locale, input.title, input.titleAr)
+  const description = schemaLocalizedText(locale, input.description, input.descriptionAr)
   return [
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      name: input.title,
-      description: input.description,
+      name: title,
+      description,
       url: pageUrl,
-      inLanguage: ["ar", "en"],
+      inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
       isPartOf: { "@type": "WebSite", name: siteConfig.name, url: getSiteUrl() },
       ...(input.image ? { primaryImageOfPage: resolveOgImage(input.image) } : {}),
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-        { "@type": "ListItem", position: 2, name: input.title, item: pageUrl },
-      ],
-    },
+    buildBreadcrumbJsonLd(locale, [
+      { label: { en: "Home", ar: "الرئيسية" }, path: "/" },
+      { label: { en: input.title, ar: input.titleAr ?? input.title }, path: input.path },
+    ]),
   ]
 }

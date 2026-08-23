@@ -52,7 +52,7 @@ export function PartnerForm() {
       })
       setSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message")
+      setError(err instanceof Error ? err.message : t("partner.submitFailed"))
     } finally {
       setSubmitting(false)
     }
@@ -183,7 +183,7 @@ export function PartnerForm() {
           className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Send className="size-4" />
-          {submitting ? "Sending..." : t("partner.submit")}
+          {submitting ? t("partner.submitting") : t("partner.submit")}
         </button>
       </form>
     </motion.div>

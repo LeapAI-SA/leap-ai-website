@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from "react"
 import type { SocialPlatform } from "@/lib/social-links"
+import type { TranslationKey } from "@/lib/translations"
 
 function IconBase({ className, children }: { className?: string; children: ReactNode }) {
   return (
@@ -57,10 +58,10 @@ export const socialIcons: Record<SocialPlatform, ComponentType<{ className?: str
   linkedin: LinkedinIcon,
 }
 
-export const socialLabels: Record<SocialPlatform, string> = {
-  facebook: "Facebook",
-  twitter: "X",
-  instagram: "Instagram",
-  youtube: "YouTube",
-  linkedin: "LinkedIn",
+export const socialLabelKeys: Record<SocialPlatform, TranslationKey> = {
+  facebook: "social.facebook",
+  twitter: "social.x",
+  instagram: "social.instagram",
+  youtube: "social.youtube",
+  linkedin: "social.linkedin",
 }

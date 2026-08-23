@@ -48,16 +48,18 @@ export default async function JobDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const job = await resolveJob(slug)
+  const [job, locale] = await Promise.all([resolveJob(slug), getRequestLocale()])
   if (!job) notFound()
 
   const url = absoluteUrl(`/careers/${slug}`)
+  const title = pickLocalized(job.title, locale)
+  const description = pickLocalized(job.description, locale) || pickLocalized(job.excerpt, locale)
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: job.title.en,
-    description: job.description.en || job.excerpt.en,
+    title,
+    description,
     url,
     hiringOrganization: {
       "@type": "Organization",
@@ -68,11 +70,11 @@ export default async function JobDetailPage({
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        addressLocality: "Riyadh",
+        addressLocality: locale === "ar" ? "الرياض" : "Riyadh",
         addressCountry: "SA",
       },
     },
-    inLanguage: ["ar", "en"],
+    inLanguage: locale === "en" ? ["en"] : ["ar", "en"],
   }
 
   return (

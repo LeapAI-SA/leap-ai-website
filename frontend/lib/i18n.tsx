@@ -88,7 +88,10 @@ export function LanguageProvider({
   )
 
   const tr = useCallback(
-    (<T extends string | string[]>(value: { ar: T; en: T }) => (value ? value[lang] : value)) as LanguageContextValue["tr"],
+    (<T extends string | string[]>(value: { ar: T; en: T }) => {
+      if (!value) return value as T
+      return (value[lang] || value.ar || value.en || ("" as T)) as T
+    }) as LanguageContextValue["tr"],
     [lang],
   )
 

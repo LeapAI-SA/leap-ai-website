@@ -7,7 +7,7 @@ import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
 
 export function GeoFaqSection() {
-  const { lang } = useLanguage()
+  const { t, tr } = useLanguage()
   const { settings } = useSiteSettings()
   const [open, setOpen] = useState<number | null>(0)
   const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
@@ -16,24 +16,18 @@ export function GeoFaqSection() {
     <section id="faq" className="bg-secondary py-20" aria-labelledby="faq-heading">
       <div className="mx-auto max-w-3xl px-6">
         <div className="text-center">
-          <span className="text-sm font-bold uppercase tracking-widest text-amber">
-            {lang === "ar" ? "أسئلة شائعة" : "FAQ"}
-          </span>
+          <span className="text-sm font-bold uppercase tracking-widest text-amber">{t("faq.badge")}</span>
           <h2 id="faq-heading" className="mt-3 text-3xl font-extrabold text-navy md:text-4xl">
-            {lang === "ar" ? "ما الذي تحتاج معرفته عن LeapAI قبل البدء؟" : "What do you need to know about LeapAI before you start?"}
+            {t("faq.heading")}
           </h2>
-          <p className="mt-4 leading-relaxed text-muted-foreground">
-            {lang === "ar"
-              ? "إجابات مباشرة عن منصة LeapAI وحلولها — لمساعدتك على اتخاذ القرار بسرعة."
-              : "Direct answers about LeapAI and its solutions — so you can decide quickly."}
-          </p>
+          <p className="mt-4 leading-relaxed text-muted-foreground">{t("faq.lead")}</p>
         </div>
 
         <div className="mt-12 flex flex-col gap-3">
           {faqItems.map((item, i) => {
             const isOpen = open === i
-            const question = lang === "ar" ? item.question.ar : item.question.en
-            const answer = lang === "ar" ? item.answer.ar : item.answer.en
+            const question = tr(item.question)
+            const answer = tr(item.answer)
 
             return (
               <article

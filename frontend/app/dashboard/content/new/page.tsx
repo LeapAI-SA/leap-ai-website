@@ -40,7 +40,6 @@ export default function NewContentPage() {
       onSubmit={submit}
       saving={saving}
       error={error}
-      locale={lang}
     />
   )
 }

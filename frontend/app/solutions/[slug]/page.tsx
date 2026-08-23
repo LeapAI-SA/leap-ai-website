@@ -38,7 +38,7 @@ export default async function SolutionDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const item = await resolveSolution(slug)
+  const [item, locale] = await Promise.all([resolveSolution(slug), getRequestLocale()])
   if (!item) notFound()
 
   const all = (await getSolutionsFromCms()) ?? solutionsFlat
@@ -46,7 +46,7 @@ export default async function SolutionDetailPage({
 
   return (
     <>
-      <JsonLd data={buildContentJsonLd(item, `/solutions/${slug}`, { en: "Solutions", ar: "حلولنا" }, "solution")} />
+      <JsonLd data={buildContentJsonLd(item, `/solutions/${slug}`, { en: "Solutions", ar: "حلولنا" }, "solution", locale)} />
       <DetailPageContent
         item={item}
         related={related}

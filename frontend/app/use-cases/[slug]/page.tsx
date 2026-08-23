@@ -38,7 +38,7 @@ export default async function UseCaseDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const item = await resolveUseCase(slug)
+  const [item, locale] = await Promise.all([resolveUseCase(slug), getRequestLocale()])
   if (!item) notFound()
 
   const all = (await getUseCasesFromCms()) ?? useCases
@@ -46,7 +46,7 @@ export default async function UseCaseDetailPage({
 
   return (
     <>
-      <JsonLd data={buildContentJsonLd(item, `/use-cases/${slug}`, { en: "Use Cases", ar: "حالات الاستخدام" }, "use-case")} />
+      <JsonLd data={buildContentJsonLd(item, `/use-cases/${slug}`, { en: "Use Cases", ar: "حالات الاستخدام" }, "use-case", locale)} />
       <DetailPageContent
         item={item}
         related={related}
