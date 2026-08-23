@@ -123,6 +123,15 @@ export function SiteHeader() {
               </Link>
             </div>
 
+            {/* Cases */}
+            <Link
+              href={sitePath("/cases", lang)}
+              onMouseEnter={() => setActive(null)}
+              className="text-sm font-semibold text-navy-foreground/85 transition-colors hover:text-amber"
+            >
+              {t("nav.cases")}
+            </Link>
+
             {rightNav.map((item) => (
               <Link
                 key={`${item.href}-${item.label.en}`}
@@ -258,6 +267,16 @@ export function SiteHeader() {
                   items={useCases}
                   basePath="/use-cases"
                 />
+
+                <li>
+                  <Link
+                    href={sitePath("/cases", lang)}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-lg px-3 py-2.5 text-sm font-semibold text-foreground/80 transition-colors hover:bg-secondary hover:text-primary"
+                  >
+                    {t("nav.cases")}
+                  </Link>
+                </li>
 
                 {rightNav.map((item) => (
                   <li key={`${item.href}-${item.label.en}`}>

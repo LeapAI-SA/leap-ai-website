@@ -35,7 +35,7 @@ export const adminExtraTranslations = {
   "admin.home.qaSettings": { ar: "إعدادات الصفحة الرئيسية", en: "Homepage settings" },
   "admin.home.qaSettingsDesc": { ar: "الهيرو، الإحصائيات، التواصل والصيانة", en: "Hero, stats, contact & maintenance" },
   "admin.home.qaContent": { ar: "مكتبة المحتوى", en: "Content library" },
-  "admin.home.qaContentDesc": { ar: "تحرير الحلول والمنتجات وحالات الاستخدام والموارد", en: "Edit solutions, products, use cases & Resources" },
+  "admin.home.qaContentDesc": { ar: "تحرير الحلول والمنتجات وحالات الاستخدام وقصص النجاح والموارد", en: "Edit solutions, products, use cases, success stories & Resources" },
   "admin.home.qaGeo": { ar: "GEO — الظهور في الذكاء الاصطناعي", en: "GEO — AI visibility" },
   "admin.home.qaGeoDesc": { ar: "فحص ملفات الزحف وجاهزية البحث بالذكاء الاصطناعي", en: "Check crawler files and AI search readiness" },
   "admin.home.qaContact": { ar: "صندوق تواصل معنا", en: "Contact Us inbox" },
@@ -56,10 +56,12 @@ export const adminExtraTranslations = {
   "admin.content.filterSolutions": { ar: "الحلول", en: "Solutions" },
   "admin.content.filterProducts": { ar: "المنتجات", en: "Products" },
   "admin.content.filterUseCases": { ar: "حالات الاستخدام", en: "Use Cases" },
+  "admin.content.filterCases": { ar: "قصص النجاح", en: "Success Stories" },
   "admin.content.filterResources": { ar: "الموارد", en: "Resources" },
   "admin.content.typeSolution": { ar: "حل", en: "Solution" },
   "admin.content.typeProduct": { ar: "منتج", en: "Product" },
   "admin.content.typeUseCase": { ar: "حالة استخدام", en: "Use Case" },
+  "admin.content.typeCase": { ar: "قصة نجاح", en: "Success Story" },
   "admin.content.typeArticle": { ar: "مقال", en: "Article" },
   "admin.content.emptySeed": {
     ar: "شغّل بذرة الخادم الخلفي أو أنشئ أول عنصر محتوى.",
@@ -67,8 +69,8 @@ export const adminExtraTranslations = {
   },
   "admin.content.emptyFilter": { ar: "جرّب بحثاً أو فلتراً مختلفاً.", en: "Try a different search or filter." },
   "admin.content.newDesc": {
-    ar: "أضف حلًا أو منتجًا أو حالة استخدام أو مقال موارد جديدًا لموقعك.",
-    en: "Add a new solution, product, use case, or Resources article to your website.",
+    ar: "أضف حلًا أو منتجًا أو حالة استخدام أو قصة نجاح أو مقال موارد جديدًا لموقعك.",
+    en: "Add a new solution, product, use case, success story, or Resources article to your website.",
   },
   "admin.content.editingSlug": { ar: "تحرير /{slug}", en: "Editing /{slug}" },
 

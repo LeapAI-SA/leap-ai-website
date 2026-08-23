@@ -33,6 +33,7 @@ export default async function Page() {
     { href: "/solutions", ar: "حلولنا", en: "Solutions" },
     { href: "/products", ar: "منتجاتنا", en: "Products" },
     { href: "/use-cases", ar: "حالات الاستخدام", en: "Use Cases" },
+    { href: "/cases", ar: "قصص النجاح", en: "Success Stories" },
     { href: "/resources", ar: "الموارد", en: "Resources" },
     { href: "/become-a-partner", ar: "كن شريكنا", en: "Become a Partner" },
     { href: "/contact-us", ar: "اتصل بنا", en: "Contact Us" },

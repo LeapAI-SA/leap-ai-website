@@ -18,6 +18,7 @@ const typeLabelKeys = {
   solution: "admin.content.typeSolution",
   product: "admin.content.typeProduct",
   "use-case": "admin.content.typeUseCase",
+  case: "admin.content.typeCase",
   article: "admin.content.typeArticle",
 } as const
 
@@ -40,6 +41,7 @@ export default function DashboardContentPage() {
       solution: items.filter((i) => i.type === "solution").length,
       product: items.filter((i) => i.type === "product").length,
       "use-case": items.filter((i) => i.type === "use-case").length,
+      case: items.filter((i) => i.type === "case").length,
       article: items.filter((i) => i.type === "article").length,
     }),
     [items],
@@ -78,6 +80,7 @@ export default function DashboardContentPage() {
             { id: "solution", label: t("admin.content.filterSolutions"), count: counts.solution },
             { id: "product", label: t("admin.content.filterProducts"), count: counts.product },
             { id: "use-case", label: t("admin.content.filterUseCases"), count: counts["use-case"] },
+            { id: "case", label: t("admin.content.filterCases"), count: counts.case },
             { id: "article", label: t("admin.content.filterResources"), count: counts.article },
           ]}
         />

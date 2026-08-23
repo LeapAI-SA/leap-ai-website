@@ -51,8 +51,8 @@ router.get("/settings", async (_req, res) => {
 
 router.get("/content", async (req, res) => {
   const type = req.query.type as ContentType | undefined
-  if (!type || !["solution", "product", "use-case", "article"].includes(type)) {
-    return res.status(400).json({ error: "Valid type query is required: solution, product, use-case, article" })
+  if (!type || !["solution", "product", "use-case", "article", "case"].includes(type)) {
+    return res.status(400).json({ error: "Valid type query is required: solution, product, use-case, article, case" })
   }
 
   const cacheKey = cacheContentKey(type)

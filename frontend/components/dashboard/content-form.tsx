@@ -15,7 +15,7 @@ import {
 import type { Lang } from "@/lib/i18n"
 
 export type ContentFormValues = {
-  type: "solution" | "product" | "use-case" | "article"
+  type: "solution" | "product" | "use-case" | "article" | "case"
   slug: string
   groupSlug: string
   groupTitle: { ar: string; en: string }
@@ -90,6 +90,7 @@ export function ContentForm({
               <option value="solution">{isAr ? "حل" : "Solution"}</option>
               <option value="product">{isAr ? "منتج" : "Product"}</option>
               <option value="use-case">{isAr ? "حالة استخدام" : "Use case"}</option>
+              <option value="case">{isAr ? "قصة نجاح" : "Success Story"}</option>
               <option value="article">{isAr ? "مقال / مورد" : "Article / Resource"}</option>
             </select>
           </FormField>
@@ -122,20 +123,76 @@ export function ContentForm({
         </div>
       </Panel>
 
-      {form.type === "solution" && (
-        <Panel title={isAr ? "تجميع الحلول" : "Solution grouping"} description={isAr ? "كيف يظهر هذا العنصر في صفحة الحلول" : "How this item appears on the Solutions page"}>
+      {(form.type === "solution" || form.type === "case") && (
+        <Panel
+          title={
+            form.type === "case"
+              ? isAr
+                ? "فئة قصة النجاح"
+                : "Success story category"
+              : isAr
+                ? "تجميع الحلول"
+                : "Solution grouping"
+          }
+          description={
+            form.type === "case"
+              ? isAr
+                ? "استخدم: cx أو da أو mobile-web"
+                : "Use: cx, da, or mobile-web"
+              : isAr
+                ? "كيف يظهر هذا العنصر في صفحة الحلول"
+                : "How this item appears on the Solutions page"
+          }
+        >
           <div className="grid gap-4 md:grid-cols-2">
-            <FormField label={isAr ? "رابط المجموعة" : "Group slug"} hint={isAr ? "مثال: omnichannel-contact-center" : "e.g. omnichannel-contact-center"}>
-              <input
-                value={form.groupSlug}
-                onChange={(e) => setForm({ ...form, groupSlug: e.target.value })}
-                className="form-input font-mono text-sm"
-                dir="ltr"
-                placeholder="group-slug"
-              />
+            <FormField
+              label={form.type === "case" ? (isAr ? "رمز الفئة" : "Category slug") : isAr ? "رابط المجموعة" : "Group slug"}
+              hint={
+                form.type === "case"
+                  ? isAr
+                    ? "مثال: cx"
+                    : "e.g. cx"
+                  : isAr
+                    ? "مثال: omnichannel-contact-center"
+                    : "e.g. omnichannel-contact-center"
+              }
+            >
+              {form.type === "case" ? (
+                <select
+                  value={form.groupSlug}
+                  onChange={(e) => {
+                    const groupSlug = e.target.value
+                    const titles: Record<string, { ar: string; en: string }> = {
+                      cx: { ar: "تجربة العملاء", en: "CX" },
+                      da: { ar: "تحليل البيانات", en: "DA" },
+                      "mobile-web": { ar: "حلول التطبيقات والمواقع", en: "Mobile and Web Solutions" },
+                    }
+                    setForm({
+                      ...form,
+                      groupSlug,
+                      groupTitle: titles[groupSlug] ?? form.groupTitle,
+                    })
+                  }}
+                  className="form-input font-mono text-sm"
+                  dir="ltr"
+                >
+                  <option value="">—</option>
+                  <option value="cx">cx — CX</option>
+                  <option value="da">da — DA</option>
+                  <option value="mobile-web">mobile-web — Mobile and Web</option>
+                </select>
+              ) : (
+                <input
+                  value={form.groupSlug}
+                  onChange={(e) => setForm({ ...form, groupSlug: e.target.value })}
+                  className="form-input font-mono text-sm"
+                  dir="ltr"
+                  placeholder="group-slug"
+                />
+              )}
             </FormField>
             <LocalizedFieldGroup
-              label={isAr ? "عنوان المجموعة" : "Group title"}
+              label={form.type === "case" ? (isAr ? "عنوان الفئة" : "Category title") : isAr ? "عنوان المجموعة" : "Group title"}
               value={form.groupTitle}
               onChange={(groupTitle) => setForm({ ...form, groupTitle })}
               rows={1}

@@ -15,6 +15,10 @@ type SeedItem = {
   description: Localized
   features: { ar: string[]; en: string[] }
 }
+type CaseSeedItem = SeedItem & {
+  category: string
+  groupTitle: Localized
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -24,23 +28,65 @@ function loadSeedData() {
     solutionsGroups: { slug: string; title: Localized; items: SeedItem[] }[]
     products: SeedItem[]
     useCases: SeedItem[]
+    cases?: CaseSeedItem[]
   }
+}
+
+async function importCases(cases: CaseSeedItem[] | undefined) {
+  if (!cases?.length) {
+    await ContentItem.deleteMany({ type: "case" })
+    return
+  }
+  const existing = await ContentItem.countDocuments({ type: "case" })
+  if (existing > 0) return
+
+  let order = 0
+  for (const item of cases) {
+    await ContentItem.create({
+      type: "case",
+      slug: item.slug,
+      groupSlug: item.category,
+      groupTitle: item.groupTitle,
+      title: item.title,
+      excerpt: item.excerpt,
+      description: item.description,
+      features: item.features ?? { ar: [], en: [] },
+      published: true,
+      sortOrder: order++,
+    })
+  }
+  console.log(`Cases seeded: ${cases.length} items`)
 }
 
 async function importContent() {
   const count = await ContentItem.countDocuments()
-  if (count > 0) return
+  const { solutionsGroups, products, useCases, cases } = loadSeedData()
 
-  const { solutionsGroups, products, useCases } = loadSeedData()
-  let order = 0
+  if (count === 0) {
+    let order = 0
 
-  for (const group of solutionsGroups) {
-    for (const item of group.items) {
+    for (const group of solutionsGroups) {
+      for (const item of group.items) {
+        await ContentItem.create({
+          type: "solution",
+          slug: item.slug,
+          groupSlug: group.slug,
+          groupTitle: group.title,
+          title: item.title,
+          excerpt: item.excerpt,
+          description: item.description,
+          features: item.features,
+          published: true,
+          sortOrder: order++,
+        })
+      }
+    }
+
+    order = 0
+    for (const item of products) {
       await ContentItem.create({
-        type: "solution",
+        type: "product",
         slug: item.slug,
-        groupSlug: group.slug,
-        groupTitle: group.title,
         title: item.title,
         excerpt: item.excerpt,
         description: item.description,
@@ -49,37 +95,25 @@ async function importContent() {
         sortOrder: order++,
       })
     }
+
+    order = 0
+    for (const item of useCases) {
+      await ContentItem.create({
+        type: "use-case",
+        slug: item.slug,
+        title: item.title,
+        excerpt: item.excerpt,
+        description: item.description,
+        features: item.features,
+        published: true,
+        sortOrder: order++,
+      })
+    }
+
+    console.log(`Content seeded: ${await ContentItem.countDocuments()} items`)
   }
 
-  order = 0
-  for (const item of products) {
-    await ContentItem.create({
-      type: "product",
-      slug: item.slug,
-      title: item.title,
-      excerpt: item.excerpt,
-      description: item.description,
-      features: item.features,
-      published: true,
-      sortOrder: order++,
-    })
-  }
-
-  order = 0
-  for (const item of useCases) {
-    await ContentItem.create({
-      type: "use-case",
-      slug: item.slug,
-      title: item.title,
-      excerpt: item.excerpt,
-      description: item.description,
-      features: item.features,
-      published: true,
-      sortOrder: order++,
-    })
-  }
-
-  console.log(`Content seeded: ${await ContentItem.countDocuments()} items`)
+  await importCases(cases)
 }
 
 export async function ensureSeeded() {

@@ -5,6 +5,7 @@ import { getApiUrl, isBuildPhase } from "./api-url"
 import { solutionsGroups, solutionsFlat, products, useCases, findSolution, findProduct, findUseCase } from "./site-data"
 import { ARTICLES, findArticle, type ArticleItem } from "./articles"
 import { resolveContentImage } from "./page-images"
+import { cases as staticCases, isCaseCategory, type CaseStudy } from "./cases-data"
 
 export const staticNavContent = {
   solutionsGroups,
@@ -174,4 +175,26 @@ export async function resolveArticle(slug: string): Promise<ArticleItem | undefi
 
 export async function allArticleSlugs(): Promise<string[]> {
   return allSlugsForType("article", ARTICLES.map((item) => item.slug))
+}
+
+function toCaseStudy(item: ContentItemPublic): CaseStudy | null {
+  const category = item.groupSlug || ""
+  if (!isCaseCategory(category)) return null
+  return {
+    id: item.slug,
+    category,
+    title: item.title,
+    description: item.description.en || item.description.ar ? item.description : item.excerpt,
+    image: item.image || "",
+  }
+}
+
+export async function getCases(): Promise<CaseStudy[]> {
+  if (isBuildPhase()) return staticCases
+  const items = await fetchPublicContent("case")
+  if (!items.length) return []
+  return items
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(toCaseStudy)
+    .filter((item): item is CaseStudy => item !== null)
 }

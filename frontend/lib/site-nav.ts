@@ -29,6 +29,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions" },
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products" },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases" },
+    { label: { ar: "قصص النجاح", en: "Success Stories" }, href: "/cases" },
     { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },

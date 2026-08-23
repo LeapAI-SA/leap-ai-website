@@ -51,7 +51,7 @@ export type PublicSiteSettings = {
 
 export type ContentItemPublic = {
   id: string
-  type: "solution" | "product" | "use-case" | "article"
+  type: "solution" | "product" | "use-case" | "article" | "case"
   slug: string
   groupSlug?: string
   groupTitle?: Localized
