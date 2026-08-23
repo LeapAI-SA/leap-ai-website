@@ -1,6 +1,6 @@
 import type { ContentType } from "../models/ContentItem.js"
 
-const CONTENT_TYPES: ContentType[] = ["solution", "product", "use-case", "article", "case"]
+const CONTENT_TYPES: ContentType[] = ["solution", "product", "use-case", "article", "case", "job"]
 const SLUG_RE = /^[a-z0-9-]+$/
 
 export function isNonEmptyString(value: unknown): value is string {

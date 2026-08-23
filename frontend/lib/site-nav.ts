@@ -20,6 +20,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
   ],
   headerRight: [
     { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
+    { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
@@ -30,6 +31,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products" },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases" },
     { label: { ar: "قصص النجاح", en: "Success Stories" }, href: "/cases" },
+    { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
     { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
@@ -41,6 +43,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
 }
 
 const RESOURCES_LINK: SiteNavLink = { label: { ar: "الموارد", en: "Resources" }, href: "/resources" }
+const CAREERS_LINK: SiteNavLink = { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" }
 
 function ensureResourcesLink(links: SiteNavLink[], beforeHref: string): SiteNavLink[] {
   if (links.some((link) => link.href === "/resources" || link.href.startsWith("/resources/"))) {
@@ -53,13 +56,24 @@ function ensureResourcesLink(links: SiteNavLink[], beforeHref: string): SiteNavL
   return next
 }
 
+function ensureCareersLink(links: SiteNavLink[], beforeHref: string): SiteNavLink[] {
+  if (links.some((link) => link.href === "/careers" || link.href.startsWith("/careers/"))) {
+    return links
+  }
+  const next = [...links]
+  const idx = next.findIndex((link) => link.href === beforeHref)
+  if (idx >= 0) next.splice(idx, 0, CAREERS_LINK)
+  else next.push(CAREERS_LINK)
+  return next
+}
+
 export function mergeNavigation(navigation?: Partial<SiteNavigation> | null): SiteNavigation {
   const headerRight = navigation?.headerRight?.length ? navigation.headerRight : DEFAULT_NAVIGATION.headerRight
   const footerLinks = navigation?.footerLinks?.length ? navigation.footerLinks : DEFAULT_NAVIGATION.footerLinks
   return {
     headerLeft: navigation?.headerLeft?.length ? navigation.headerLeft : DEFAULT_NAVIGATION.headerLeft,
-    headerRight: ensureResourcesLink(headerRight, "/become-a-partner"),
-    footerLinks: ensureResourcesLink(footerLinks, "/become-a-partner"),
+    headerRight: ensureCareersLink(ensureResourcesLink(headerRight, "/become-a-partner"), "/contact-us"),
+    footerLinks: ensureCareersLink(ensureResourcesLink(footerLinks, "/become-a-partner"), "/resources"),
     footerLegal: navigation?.footerLegal?.length ? navigation.footerLegal : DEFAULT_NAVIGATION.footerLegal,
   }
 }

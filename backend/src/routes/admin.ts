@@ -1,7 +1,10 @@
 import { Router } from "express"
+import fs from "fs"
+import path from "path"
 import { getOrCreateSettings, serializePublicSettings } from "../models/SiteSettings.js"
 import { ContentItem, serializeContentItem } from "../models/ContentItem.js"
 import { ContactMessage, serializeContactMessage } from "../models/ContactMessage.js"
+import { JobApplication, serializeJobApplication } from "../models/JobApplication.js"
 import { requireAuth, requireAdmin } from "../middleware/auth.js"
 import {
   isContentType,
@@ -19,7 +22,7 @@ import {
   sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
-import { uploadImage } from "../middleware/upload.js"
+import { uploadImage, CV_UPLOAD_DIR } from "../middleware/upload.js"
 
 const router = Router()
 router.use(requireAuth, requireAdmin)
@@ -287,6 +290,48 @@ router.delete("/contact-messages/:id", async (req, res) => {
   const item = await ContactMessage.findByIdAndDelete(req.params.id)
   if (!item) return res.status(404).json({ error: "Not found" })
   res.json({ ok: true })
+})
+
+router.get("/job-applications", async (_req, res) => {
+  const items = await JobApplication.find().sort({ createdAt: -1 }).limit(200)
+  res.json(items.map(serializeJobApplication))
+})
+
+router.get("/job-applications/:id", async (req, res) => {
+  const item = await JobApplication.findById(req.params.id)
+  if (!item) return res.status(404).json({ error: "Not found" })
+  res.json(serializeJobApplication(item))
+})
+
+router.patch("/job-applications/:id", async (req, res) => {
+  const item = await JobApplication.findById(req.params.id)
+  if (!item) return res.status(404).json({ error: "Not found" })
+  if (typeof req.body?.read === "boolean") item.read = req.body.read
+  await item.save()
+  res.json(serializeJobApplication(item))
+})
+
+router.delete("/job-applications/:id", async (req, res) => {
+  const item = await JobApplication.findById(req.params.id)
+  if (!item) return res.status(404).json({ error: "Not found" })
+  const relative = item.cvFile.replace(/^\/uploads\/cv\//, "")
+  const filePath = path.resolve(CV_UPLOAD_DIR, relative)
+  if (filePath.startsWith(CV_UPLOAD_DIR) && fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath)
+  }
+  await item.deleteOne()
+  res.json({ ok: true })
+})
+
+router.get("/job-applications/:id/cv", async (req, res) => {
+  const item = await JobApplication.findById(req.params.id)
+  if (!item) return res.status(404).json({ error: "Not found" })
+  const relative = item.cvFile.replace(/^\/uploads\/cv\//, "")
+  const filePath = path.resolve(CV_UPLOAD_DIR, relative)
+  if (!filePath.startsWith(CV_UPLOAD_DIR) || !fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "CV file not found" })
+  }
+  res.download(filePath)
 })
 
 export default router

@@ -3,9 +3,11 @@ import rateLimit from "express-rate-limit"
 import { getOrCreateSettings, serializePublicSettings } from "../models/SiteSettings.js"
 import { ContentItem, serializeContentItem, type ContentType } from "../models/ContentItem.js"
 import { ContactMessage } from "../models/ContactMessage.js"
+import { JobApplication } from "../models/JobApplication.js"
 import { isNonEmptyString, isValidEmail, trimString } from "../lib/validate.js"
 import { isBusinessEmail } from "../lib/business-email.js"
-import { sendDemoLeadEmail } from "../lib/mail.js"
+import { sendDemoLeadEmail, sendCareersApplicationEmail } from "../lib/mail.js"
+import { uploadCv } from "../middleware/upload.js"
 import { cacheGet, cacheSet } from "../config/redis.js"
 import { rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
 
@@ -51,8 +53,8 @@ router.get("/settings", async (_req, res) => {
 
 router.get("/content", async (req, res) => {
   const type = req.query.type as ContentType | undefined
-  if (!type || !["solution", "product", "use-case", "article", "case"].includes(type)) {
-    return res.status(400).json({ error: "Valid type query is required: solution, product, use-case, article, case" })
+  if (!type || !["solution", "product", "use-case", "article", "case", "job"].includes(type)) {
+    return res.status(400).json({ error: "Valid type query is required: solution, product, use-case, article, case, job" })
   }
 
   const cacheKey = cacheContentKey(type)
@@ -138,6 +140,81 @@ router.post("/contact", contactLimiter, async (req, res) => {
   const item = await ContactMessage.create({ source, name, email, company, address, phone, message })
   console.log(`Contact message saved (${source}):`, item._id.toString())
   res.status(201).json({ ok: true, id: item._id.toString() })
+})
+
+router.post("/careers/apply", contactLimiter, (req, res) => {
+  uploadCv.single("cv")(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ error: err instanceof Error ? err.message : "Upload failed" })
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "CV file is required (PDF, DOC, or DOCX)" })
+    }
+
+    const body = req.body as Record<string, string>
+    const positionSlug = trimString(body.positionSlug, 120)
+    const name = trimString(body.name, 120)
+    const email = trimString(body.email, 200)
+    const phone = trimString(body.phone, 40)
+    const message = trimString(body.message, 2000)
+    const positionTitleAr = trimString(body.positionTitleAr, 200)
+    const positionTitleEn = trimString(body.positionTitleEn, 200)
+
+    if (!isNonEmptyString(positionSlug) || !isNonEmptyString(name) || !isValidEmail(email) || !isNonEmptyString(phone)) {
+      return res.status(400).json({ error: "Position, name, valid email, and phone are required" })
+    }
+
+    const isGeneral = positionSlug === "general-application"
+    let titleAr = positionTitleAr
+    let titleEn = positionTitleEn
+
+    if (isGeneral) {
+      titleAr = titleAr || "طلب عام"
+      titleEn = titleEn || "General application"
+    } else {
+      const job = await ContentItem.findOne({ type: "job", slug: positionSlug, published: true })
+      if (!job) {
+        return res.status(404).json({ error: "This position is no longer open" })
+      }
+      titleAr = titleAr || job.title?.ar || ""
+      titleEn = titleEn || job.title?.en || ""
+    }
+
+    const cvFile = `/uploads/cv/${req.file.filename}`
+    const item = await JobApplication.create({
+      positionSlug,
+      positionTitle: {
+        ar: titleAr,
+        en: titleEn,
+      },
+      name,
+      email,
+      phone,
+      message,
+      cvFile,
+    })
+
+    try {
+      const mail = await sendCareersApplicationEmail({
+        name,
+        email,
+        phone,
+        message,
+        positionSlug,
+        positionTitle: titleEn || positionSlug,
+      })
+      console.log(`Job application saved: ${item._id.toString()} emailed=${mail.emailed}`)
+      res.status(201).json({ ok: true, id: item._id.toString(), emailed: mail.emailed })
+    } catch (mailErr) {
+      console.error("Job application email failed:", mailErr)
+      res.status(201).json({
+        ok: true,
+        id: item._id.toString(),
+        emailed: false,
+        warning: "Saved but email notification failed. Check SMTP settings.",
+      })
+    }
+  })
 })
 
 export default router

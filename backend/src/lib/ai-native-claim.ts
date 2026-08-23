@@ -34,6 +34,12 @@ export const RESOURCES_NAV = {
   enabled: true,
 }
 
+export const CAREERS_NAV = {
+  label: { ar: "الوظائف", en: "Careers" },
+  href: "/careers",
+  enabled: true,
+}
+
 export function rewriteStaleCxCopyEn(text: string): string {
   if (!text) return text
   const previousAiNative =
@@ -146,6 +152,37 @@ export function ensureResourcesNav(navigation: {
     const idx = nav.footerLinks.findIndex((link) => link.href === "/become-a-partner")
     if (idx >= 0) nav.footerLinks.splice(idx, 0, RESOURCES_NAV)
     else nav.footerLinks.push(RESOURCES_NAV)
+  }
+
+  return nav
+}
+
+export function ensureCareersNav(navigation: {
+  headerLeft?: NavLink[]
+  headerRight?: NavLink[]
+  footerLinks?: NavLink[]
+  footerLegal?: NavLink[]
+} | undefined | null) {
+  const nav = {
+    headerLeft: [...(navigation?.headerLeft ?? [])],
+    headerRight: [...(navigation?.headerRight ?? [])],
+    footerLinks: [...(navigation?.footerLinks ?? [])],
+    footerLegal: [...(navigation?.footerLegal ?? [])],
+  }
+
+  const hasCareers = (links: NavLink[]) =>
+    links.some((link) => link.href === "/careers" || (link.href ?? "").startsWith("/careers/"))
+
+  if (!hasCareers(nav.headerRight)) {
+    const idx = nav.headerRight.findIndex((link) => link.href === "/contact-us")
+    if (idx >= 0) nav.headerRight.splice(idx, 0, CAREERS_NAV)
+    else nav.headerRight.push(CAREERS_NAV)
+  }
+
+  if (!hasCareers(nav.footerLinks)) {
+    const idx = nav.footerLinks.findIndex((link) => link.href === "/resources")
+    if (idx >= 0) nav.footerLinks.splice(idx, 0, CAREERS_NAV)
+    else nav.footerLinks.push(CAREERS_NAV)
   }
 
   return nav

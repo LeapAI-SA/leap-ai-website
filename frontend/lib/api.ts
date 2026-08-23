@@ -53,7 +53,7 @@ export type PublicSiteSettings = {
 
 export type ContentItemPublic = {
   id: string
-  type: "solution" | "product" | "use-case" | "article" | "case"
+  type: "solution" | "product" | "use-case" | "article" | "case" | "job"
   slug: string
   groupSlug?: string
   groupTitle?: Localized
@@ -76,6 +76,19 @@ export type ContactMessage = {
   address: string
   phone: string
   message: string
+  read: boolean
+  createdAt: string
+}
+
+export type JobApplicationPublic = {
+  id: string
+  positionSlug: string
+  positionTitle: Localized
+  name: string
+  email: string
+  phone: string
+  message: string
+  cvFile: string
   read: boolean
   createdAt: string
 }
@@ -226,6 +239,18 @@ export async function submitContactMessage(payload: {
   return res.json() as Promise<{ ok: boolean; id: string }>
 }
 
+export async function submitJobApplication(form: FormData) {
+  const res = await clientFetch(`${browserApiUrl()}/api/public/careers/apply`, {
+    method: "POST",
+    body: form,
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Failed to submit application" }))
+    throw new Error(err.error ?? "Failed to submit application")
+  }
+  return res.json() as Promise<{ ok: boolean; id: string; emailed?: boolean }>
+}
+
 export async function uploadAdminImage(file: File): Promise<string> {
   const token = getToken()
   const form = new FormData()
@@ -241,4 +266,22 @@ export async function uploadAdminImage(file: File): Promise<string> {
   }
   const data = (await res.json()) as { url: string }
   return data.url
+}
+
+export async function downloadJobApplicationCv(id: string, filename = "cv.pdf") {
+  const token = getToken()
+  const res = await clientFetch(`${browserApiUrl()}/api/admin/job-applications/${id}/cv`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Download failed" }))
+    throw new Error(err.error ?? "Download failed")
+  }
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = filename
+  anchor.click()
+  URL.revokeObjectURL(url)
 }

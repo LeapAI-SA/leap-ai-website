@@ -5,6 +5,7 @@ import { getApiUrl, isBuildPhase } from "./api-url"
 import { solutionsGroups, solutionsFlat, products, useCases, findSolution, findProduct, findUseCase } from "./site-data"
 import { ARTICLES, findArticle, type ArticleItem } from "./articles"
 import { resolveContentImage } from "./page-images"
+import { jobs as staticJobs, isJobDepartment, jobDepartmentTitles, type JobOpening } from "./jobs-data"
 import { cases as staticCases, isCaseCategory, type CaseStudy } from "./cases-data"
 
 export const staticNavContent = {
@@ -197,4 +198,43 @@ export async function getCases(): Promise<CaseStudy[]> {
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map(toCaseStudy)
     .filter((item): item is CaseStudy => item !== null)
+}
+
+function toJobOpening(item: ContentItemPublic): JobOpening | null {
+  const department = item.groupSlug || ""
+  if (!isJobDepartment(department)) return null
+  return {
+    id: item.slug,
+    slug: item.slug,
+    department,
+    departmentTitle: item.groupTitle?.ar || item.groupTitle?.en ? item.groupTitle : jobDepartmentTitles[department],
+    title: item.title,
+    excerpt: item.excerpt,
+    description: item.description.en || item.description.ar ? item.description : item.excerpt,
+    requirements: item.features,
+  }
+}
+
+export async function getJobs(): Promise<JobOpening[]> {
+  if (isBuildPhase()) return staticJobs
+  const items = await fetchPublicContent("job")
+  if (!items.length) return []
+  return items
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(toJobOpening)
+    .filter((item): item is JobOpening => item !== null)
+}
+
+export async function resolveJob(slug: string): Promise<JobOpening | undefined> {
+  const cms = await fetchContentBySlug(slug)
+  if (cms?.type === "job") {
+    return toJobOpening(cms) ?? undefined
+  }
+  return undefined
+}
+
+export async function allJobSlugs(): Promise<string[]> {
+  if (isBuildPhase()) return []
+  const items = await fetchPublicContent("job")
+  return items.map((item) => item.slug)
 }

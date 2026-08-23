@@ -5,9 +5,13 @@ import { fileURLToPath } from "url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export const UPLOAD_DIR = path.resolve(__dirname, "../../uploads")
+export const CV_UPLOAD_DIR = path.join(UPLOAD_DIR, "cv")
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true })
+}
+if (!fs.existsSync(CV_UPLOAD_DIR)) {
+  fs.mkdirSync(CV_UPLOAD_DIR, { recursive: true })
 }
 
 const ALLOWED_MIME: Record<string, string> = {
@@ -17,10 +21,25 @@ const ALLOWED_MIME: Record<string, string> = {
   "image/webp": ".webp",
 }
 
+const CV_ALLOWED_MIME: Record<string, string> = {
+  "application/pdf": ".pdf",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+}
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
     const ext = ALLOWED_MIME[file.mimetype] ?? ".jpg"
+    const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}${ext}`
+    cb(null, safe)
+  },
+})
+
+const cvStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, CV_UPLOAD_DIR),
+  filename: (_req, file, cb) => {
+    const ext = CV_ALLOWED_MIME[file.mimetype] ?? ".pdf"
     const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}${ext}`
     cb(null, safe)
   },
@@ -34,6 +53,18 @@ export const uploadImage = multer({
       cb(null, true)
     } else {
       cb(new Error("Only JPEG, PNG, GIF, and WebP images are allowed"))
+    }
+  },
+})
+
+export const uploadCv = multer({
+  storage: cvStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (CV_ALLOWED_MIME[file.mimetype]) {
+      cb(null, true)
+    } else {
+      cb(new Error("Only PDF, DOC, and DOCX files are allowed"))
     }
   },
 })

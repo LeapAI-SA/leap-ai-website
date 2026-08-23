@@ -23,5 +23,5 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY package.json ./
 EXPOSE 4000
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/uploads /app/uploads/cv
 CMD ["sh", "-c", "if [ \"$SEED_ON_START\" = \"true\" ]; then node dist/seed.js; fi && node dist/index.js"]

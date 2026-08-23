@@ -19,6 +19,10 @@ type CaseSeedItem = SeedItem & {
   category: string
   groupTitle: Localized
 }
+type JobSeedItem = SeedItem & {
+  department: string
+  groupTitle: Localized
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -29,6 +33,7 @@ function loadSeedData() {
     products: SeedItem[]
     useCases: SeedItem[]
     cases?: CaseSeedItem[]
+    jobs?: JobSeedItem[]
   }
 }
 
@@ -58,9 +63,35 @@ async function importCases(cases: CaseSeedItem[] | undefined) {
   console.log(`Cases seeded: ${cases.length} items`)
 }
 
+async function importJobs(jobs: JobSeedItem[] | undefined) {
+  if (!jobs?.length) {
+    await ContentItem.deleteMany({ type: "job" })
+    return
+  }
+  const existing = await ContentItem.countDocuments({ type: "job" })
+  if (existing > 0) return
+
+  let order = 0
+  for (const item of jobs) {
+    await ContentItem.create({
+      type: "job",
+      slug: item.slug,
+      groupSlug: item.department,
+      groupTitle: item.groupTitle,
+      title: item.title,
+      excerpt: item.excerpt,
+      description: item.description,
+      features: item.features ?? { ar: [], en: [] },
+      published: true,
+      sortOrder: order++,
+    })
+  }
+  console.log(`Jobs seeded: ${jobs.length} items`)
+}
+
 async function importContent() {
   const count = await ContentItem.countDocuments()
-  const { solutionsGroups, products, useCases, cases } = loadSeedData()
+  const { solutionsGroups, products, useCases, cases, jobs } = loadSeedData()
 
   if (count === 0) {
     let order = 0
@@ -114,6 +145,7 @@ async function importContent() {
   }
 
   await importCases(cases)
+  await importJobs(jobs)
 }
 
 export async function ensureSeeded() {

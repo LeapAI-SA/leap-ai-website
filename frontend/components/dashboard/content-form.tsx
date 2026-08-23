@@ -15,7 +15,7 @@ import {
 import type { Lang } from "@/lib/i18n"
 
 export type ContentFormValues = {
-  type: "solution" | "product" | "use-case" | "article" | "case"
+  type: "solution" | "product" | "use-case" | "article" | "case" | "job"
   slug: string
   groupSlug: string
   groupTitle: { ar: string; en: string }
@@ -91,6 +91,7 @@ export function ContentForm({
               <option value="product">{isAr ? "منتج" : "Product"}</option>
               <option value="use-case">{isAr ? "حالة استخدام" : "Use case"}</option>
               <option value="case">{isAr ? "قصة نجاح" : "Success Story"}</option>
+              <option value="job">{isAr ? "وظيفة شاغرة" : "Job Opening"}</option>
               <option value="article">{isAr ? "مقال / مورد" : "Article / Resource"}</option>
             </select>
           </FormField>
@@ -123,38 +124,34 @@ export function ContentForm({
         </div>
       </Panel>
 
-      {(form.type === "solution" || form.type === "case") && (
+      {(form.type === "solution" || form.type === "case" || form.type === "job") && (
         <Panel
           title={
             form.type === "case"
-              ? isAr
-                ? "فئة قصة النجاح"
-                : "Success story category"
-              : isAr
-                ? "تجميع الحلول"
-                : "Solution grouping"
+              ? isAr ? "فئة قصة النجاح" : "Success story category"
+              : form.type === "job"
+                ? isAr ? "قسم الوظيفة" : "Job department"
+                : isAr ? "تجميع الحلول" : "Solution grouping"
           }
           description={
             form.type === "case"
-              ? isAr
-                ? "استخدم: cx أو da أو mobile-web"
-                : "Use: cx, da, or mobile-web"
-              : isAr
-                ? "كيف يظهر هذا العنصر في صفحة الحلول"
-                : "How this item appears on the Solutions page"
+              ? isAr ? "استخدم: cx أو da أو mobile-web" : "Use: cx, da, or mobile-web"
+              : form.type === "job"
+                ? isAr ? "استخدم: engineering أو sales أو operations أو general" : "Use: engineering, sales, operations, or general"
+                : isAr ? "كيف يظهر هذا العنصر في صفحة الحلول" : "How this item appears on the Solutions page"
           }
         >
           <div className="grid gap-4 md:grid-cols-2">
             <FormField
-              label={form.type === "case" ? (isAr ? "رمز الفئة" : "Category slug") : isAr ? "رابط المجموعة" : "Group slug"}
+              label={
+                form.type === "case" ? (isAr ? "رمز الفئة" : "Category slug")
+                : form.type === "job" ? (isAr ? "رمز القسم" : "Department slug")
+                : (isAr ? "رابط المجموعة" : "Group slug")
+              }
               hint={
-                form.type === "case"
-                  ? isAr
-                    ? "مثال: cx"
-                    : "e.g. cx"
-                  : isAr
-                    ? "مثال: omnichannel-contact-center"
-                    : "e.g. omnichannel-contact-center"
+                form.type === "case" ? (isAr ? "مثال: cx" : "e.g. cx")
+                : form.type === "job" ? (isAr ? "مثال: engineering" : "e.g. engineering")
+                : (isAr ? "مثال: omnichannel-contact-center" : "e.g. omnichannel-contact-center")
               }
             >
               {form.type === "case" ? (
@@ -167,11 +164,7 @@ export function ContentForm({
                       da: { ar: "تحليل البيانات", en: "DA" },
                       "mobile-web": { ar: "حلول التطبيقات والمواقع", en: "Mobile and Web Solutions" },
                     }
-                    setForm({
-                      ...form,
-                      groupSlug,
-                      groupTitle: titles[groupSlug] ?? form.groupTitle,
-                    })
+                    setForm({ ...form, groupSlug, groupTitle: titles[groupSlug] ?? form.groupTitle })
                   }}
                   className="form-input font-mono text-sm"
                   dir="ltr"
@@ -180,6 +173,28 @@ export function ContentForm({
                   <option value="cx">cx — CX</option>
                   <option value="da">da — DA</option>
                   <option value="mobile-web">mobile-web — Mobile and Web</option>
+                </select>
+              ) : form.type === "job" ? (
+                <select
+                  value={form.groupSlug}
+                  onChange={(e) => {
+                    const groupSlug = e.target.value
+                    const titles: Record<string, { ar: string; en: string }> = {
+                      engineering: { ar: "الهندسة والتقنية", en: "Engineering" },
+                      sales: { ar: "المبيعات", en: "Sales" },
+                      operations: { ar: "العمليات", en: "Operations" },
+                      general: { ar: "عام", en: "General" },
+                    }
+                    setForm({ ...form, groupSlug, groupTitle: titles[groupSlug] ?? form.groupTitle })
+                  }}
+                  className="form-input font-mono text-sm"
+                  dir="ltr"
+                >
+                  <option value="">—</option>
+                  <option value="engineering">engineering — Engineering</option>
+                  <option value="sales">sales — Sales</option>
+                  <option value="operations">operations — Operations</option>
+                  <option value="general">general — General</option>
                 </select>
               ) : (
                 <input
@@ -192,7 +207,11 @@ export function ContentForm({
               )}
             </FormField>
             <LocalizedFieldGroup
-              label={form.type === "case" ? (isAr ? "عنوان الفئة" : "Category title") : isAr ? "عنوان المجموعة" : "Group title"}
+              label={
+                form.type === "case" ? (isAr ? "عنوان الفئة" : "Category title")
+                : form.type === "job" ? (isAr ? "عنوان القسم" : "Department title")
+                : (isAr ? "عنوان المجموعة" : "Group title")
+              }
               value={form.groupTitle}
               onChange={(groupTitle) => setForm({ ...form, groupTitle })}
               rows={1}
@@ -201,6 +220,7 @@ export function ContentForm({
         </Panel>
       )}
 
+      {form.type !== "job" && (
       <Panel title={isAr ? "صورة الصفحة" : "Page image"} description={isAr ? "تظهر في بطاقات القوائم وصفحة التفاصيل" : "Shown on listing cards and the detail page"}>
         <ImageUploadField
           label={isAr ? "الصورة الرئيسية" : "Featured image"}
@@ -209,6 +229,7 @@ export function ContentForm({
           onChange={(image) => setForm({ ...form, image })}
         />
       </Panel>
+      )}
 
       <Panel title={isAr ? "المحتوى (ثنائي اللغة)" : "Content (bilingual)"} description={isAr ? "نسختا العربية والإنجليزية" : "Arabic and English versions"}>
         <div className="space-y-4">
@@ -223,7 +244,10 @@ export function ContentForm({
         </div>
       </Panel>
 
-      <Panel title={isAr ? "أبرز المزايا" : "Key features"} description={isAr ? "ميزة واحدة في كل سطر" : "One feature per line"}>
+      <Panel
+        title={form.type === "job" ? (isAr ? "المتطلبات" : "Requirements") : isAr ? "أبرز المزايا" : "Key features"}
+        description={isAr ? "عنصر واحد في كل سطر" : "One item per line"}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <FormField label={isAr ? "مزايا بالعربية" : "Arabic features"}>
             <textarea

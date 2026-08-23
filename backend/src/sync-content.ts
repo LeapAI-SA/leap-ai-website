@@ -26,11 +26,12 @@ function loadSeedData() {
     products: SeedItem[]
     useCases: SeedItem[]
     cases?: (SeedItem & { category: string; groupTitle: Localized })[]
+    jobs?: (SeedItem & { department: string; groupTitle: Localized })[]
   }
 }
 
 export async function syncContentFromSeed() {
-  const { solutionsGroups, products, useCases, cases = [] } = loadSeedData()
+  const { solutionsGroups, products, useCases, cases = [], jobs = [] } = loadSeedData()
   const seedSlugs = new Set<string>()
   let order = 0
 
@@ -127,6 +128,32 @@ export async function syncContentFromSeed() {
     }
   }
 
+  order = 0
+  if (jobs.length === 0) {
+    await ContentItem.deleteMany({ type: "job" })
+  } else {
+    for (const item of jobs) {
+      seedSlugs.add(item.slug)
+      await ContentItem.findOneAndUpdate(
+        { slug: item.slug },
+        {
+          type: "job",
+          slug: item.slug,
+          groupSlug: item.department,
+          groupTitle: item.groupTitle,
+          title: item.title,
+          excerpt: item.excerpt,
+          description: item.description,
+          features: item.features ?? { ar: [], en: [] },
+          image: item.image ?? "",
+          published: true,
+          sortOrder: order++,
+        },
+        { upsert: true, new: true },
+      )
+    }
+  }
+
   const articleSlugs = await upsertArticlesFromSeed()
   for (const slug of articleSlugs) seedSlugs.add(slug)
 
@@ -135,6 +162,7 @@ export async function syncContentFromSeed() {
   await cacheDel("public:content:use-case")
   await cacheDel("public:content:article")
   await cacheDel("public:content:case")
+  await cacheDel("public:content:job")
 
   const total = await ContentItem.countDocuments()
   return { total, seedSlugs: seedSlugs.size }

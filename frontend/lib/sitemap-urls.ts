@@ -30,6 +30,7 @@ export function getSitemapPaths(): string[] {
     "/products",
     "/use-cases",
     "/cases",
+    "/careers",
     "/resources",
     "/contact-us",
     "/become-a-partner",

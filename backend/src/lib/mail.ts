@@ -56,6 +56,57 @@ export async function sendDemoLeadEmail(input: { name: string; email: string; ph
   return { emailed: true as const }
 }
 
+export async function sendCareersApplicationEmail(input: {
+  name: string
+  email: string
+  phone: string
+  positionTitle: string
+  positionSlug: string
+  message?: string
+}) {
+  const to = (process.env.CAREERS_EMAIL ?? "info@leapai.ai").trim()
+  if (!smtpConfigured()) {
+    console.warn(
+      "SMTP is not configured — job application saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally CAREERS_EMAIL).",
+    )
+    return { emailed: false as const, reason: "smtp_not_configured" }
+  }
+
+  const from = process.env.SMTP_FROM?.trim() || process.env.SMTP_USER!.trim()
+  const transporter = createTransport()
+  await transporter.sendMail({
+    from,
+    to,
+    replyTo: input.email,
+    subject: `Job application — ${input.positionTitle} (${input.name})`,
+    text: [
+      "New job application from leapai.ai",
+      "",
+      `Position: ${input.positionTitle} (${input.positionSlug})`,
+      `Name: ${input.name}`,
+      `Email: ${input.email}`,
+      `Phone: ${input.phone}`,
+      input.message ? `Cover letter:\n${input.message}` : "",
+      "",
+      "Download the CV from the dashboard Careers inbox.",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    html: `
+      <p>New job application from <strong>leapai.ai</strong></p>
+      <ul>
+        <li><strong>Position:</strong> ${escapeHtml(input.positionTitle)} (${escapeHtml(input.positionSlug)})</li>
+        <li><strong>Name:</strong> ${escapeHtml(input.name)}</li>
+        <li><strong>Email:</strong> ${escapeHtml(input.email)}</li>
+        <li><strong>Phone:</strong> ${escapeHtml(input.phone)}</li>
+      </ul>
+      ${input.message ? `<p><strong>Cover letter:</strong><br/>${escapeHtml(input.message).replace(/\n/g, "<br/>")}</p>` : ""}
+      <p>Download the CV from the dashboard Careers inbox.</p>
+    `,
+  })
+  return { emailed: true as const }
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")

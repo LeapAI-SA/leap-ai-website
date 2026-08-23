@@ -3,6 +3,7 @@ import { rewriteFeatureList, rewritePricingPlansCopy } from "../lib/whatsapp-tic
 import {
   ensureAiNativeFaq,
   ensureResourcesNav,
+  ensureCareersNav,
   rewriteLocalizedCxCopy,
 } from "../lib/ai-native-claim.js"
 import { cacheDel } from "../config/redis.js"
@@ -171,6 +172,7 @@ const defaultNavigation = () => ({
   ],
   headerRight: [
     { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
+    { label: { ar: "الوظائف", en: "Careers" }, href: "/careers", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
   ],
@@ -180,6 +182,7 @@ const defaultNavigation = () => ({
     { label: { ar: "حلولنا", en: "Solutions" }, href: "/solutions", enabled: true },
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products", enabled: true },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases", enabled: true },
+    { label: { ar: "الوظائف", en: "Careers" }, href: "/careers", enabled: true },
     { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
@@ -462,10 +465,19 @@ export async function getOrCreateSettings() {
   }
 
   if (settings.navigation?.headerRight?.length || settings.navigation?.footerLinks?.length) {
-    const headerMissing = (settings.navigation.headerRight ?? []).every((link) => link.href !== "/resources")
-    const footerMissing = (settings.navigation.footerLinks ?? []).every((link) => link.href !== "/resources")
-    if (headerMissing || footerMissing) {
-      settings.navigation = ensureResourcesNav(settings.navigation) as typeof settings.navigation
+    const headerMissingResources = (settings.navigation.headerRight ?? []).every((link) => link.href !== "/resources")
+    const footerMissingResources = (settings.navigation.footerLinks ?? []).every((link) => link.href !== "/resources")
+    const headerMissingCareers = (settings.navigation.headerRight ?? []).every((link) => link.href !== "/careers")
+    const footerMissingCareers = (settings.navigation.footerLinks ?? []).every((link) => link.href !== "/careers")
+    if (headerMissingResources || footerMissingResources || headerMissingCareers || footerMissingCareers) {
+      let nextNav = settings.navigation
+      if (headerMissingResources || footerMissingResources) {
+        nextNav = ensureResourcesNav(nextNav) as typeof settings.navigation
+      }
+      if (headerMissingCareers || footerMissingCareers) {
+        nextNav = ensureCareersNav(nextNav) as typeof settings.navigation
+      }
+      settings.navigation = nextNav
       settings.markModified("navigation")
       dirty = true
     }

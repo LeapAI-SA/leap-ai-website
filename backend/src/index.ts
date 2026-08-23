@@ -90,7 +90,10 @@ async function start() {
 
   app.use(
     "/uploads",
-    (_req, res, next) => {
+    (req, res, next) => {
+      if (req.path === "/cv" || req.path.startsWith("/cv/")) {
+        return res.status(404).json({ error: "Not found" })
+      }
       res.setHeader("X-Content-Type-Options", "nosniff")
       next()
     },

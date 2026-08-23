@@ -9,6 +9,7 @@ import {
   Settings,
   FileText,
   Mail,
+  Briefcase,
   LogOut,
   ExternalLink,
   Menu,
@@ -31,6 +32,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     { href: "/dashboard/settings", label: t("admin.nav.siteSettings"), icon: Settings },
     { href: "/dashboard/geo", label: t("admin.nav.geo"), icon: Sparkles },
     { href: "/dashboard/contact", label: t("admin.nav.contact"), icon: Mail },
+    { href: "/dashboard/careers", label: t("admin.nav.careers"), icon: Briefcase },
     { href: "/dashboard/content", label: t("admin.nav.content"), icon: FileText },
   ]
 
@@ -40,6 +42,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       "/dashboard/settings": t("admin.nav.siteSettings"),
       "/dashboard/geo": t("admin.nav.geo"),
       "/dashboard/contact": t("admin.nav.contact"),
+      "/dashboard/careers": t("admin.nav.careers"),
       "/dashboard/content": t("admin.nav.contentLibrary"),
       "/dashboard/content/new": t("admin.nav.newContent"),
     }[pathname] ??

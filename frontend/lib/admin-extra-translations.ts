@@ -57,11 +57,13 @@ export const adminExtraTranslations = {
   "admin.content.filterProducts": { ar: "المنتجات", en: "Products" },
   "admin.content.filterUseCases": { ar: "حالات الاستخدام", en: "Use Cases" },
   "admin.content.filterCases": { ar: "قصص النجاح", en: "Success Stories" },
+  "admin.content.filterJobs": { ar: "الوظائف", en: "Jobs" },
   "admin.content.filterResources": { ar: "الموارد", en: "Resources" },
   "admin.content.typeSolution": { ar: "حل", en: "Solution" },
   "admin.content.typeProduct": { ar: "منتج", en: "Product" },
   "admin.content.typeUseCase": { ar: "حالة استخدام", en: "Use Case" },
   "admin.content.typeCase": { ar: "قصة نجاح", en: "Success Story" },
+  "admin.content.typeJob": { ar: "وظيفة شاغرة", en: "Job Opening" },
   "admin.content.typeArticle": { ar: "مقال", en: "Article" },
   "admin.content.emptySeed": {
     ar: "شغّل بذرة الخادم الخلفي أو أنشئ أول عنصر محتوى.",
@@ -92,6 +94,19 @@ export const adminExtraTranslations = {
   "admin.contact.loadFailed": { ar: "فشل تحميل رسائل التواصل", en: "Failed to load contact messages" },
   "admin.contact.updateFailed": { ar: "فشل تحديث الرسالة", en: "Failed to update message" },
   "admin.contact.deleteFailed": { ar: "فشل حذف الرسالة", en: "Failed to delete message" },
+
+  "admin.careers.desc": {
+    ar: "طلبات التوظيف مع السير الذاتية من صفحة /careers. أضف الشواغر من مكتبة المحتوى.",
+    en: "Job applications with CVs from /careers. Add open positions from the Content Library.",
+  },
+  "admin.careers.inboxDesc": { ar: "طلبات من leapai.ai/careers", en: "Applications from leapai.ai/careers" },
+  "admin.careers.loading": { ar: "جارٍ تحميل الطلبات...", en: "Loading applications..." },
+  "admin.careers.empty": { ar: "لا توجد طلبات توظيف بعد.", en: "No job applications yet." },
+  "admin.careers.loadFailed": { ar: "فشل تحميل الطلبات", en: "Failed to load applications" },
+  "admin.careers.updateFailed": { ar: "فشل تحديث الطلب", en: "Failed to update application" },
+  "admin.careers.deleteFailed": { ar: "فشل حذف الطلب", en: "Failed to delete application" },
+  "admin.careers.downloadFailed": { ar: "فشل تحميل السيرة الذاتية", en: "Failed to download CV" },
+  "admin.careers.coverLetter": { ar: "رسالة تعريفية", en: "Cover letter" },
 
   "admin.geo.desc": {
     ar: "أرسل خريطة الموقع إلى Bing والشركاء. نفس تنفيذ npm run seo:submit-indexnow.",
