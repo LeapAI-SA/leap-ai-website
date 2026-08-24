@@ -78,8 +78,11 @@ export const SOLUTION_GROUP_PATH_REDIRECTS = {
 /** Static pages that exist on the new site (served under /en as English HTML). */
 const CANONICAL_STATIC_PAGES = new Set([
   "about-us",
+  "careers",
+  "cases",
   "contact-us",
   "become-a-partner",
+  "maintenance",
   "privacy-policy",
   "solutions",
   "products",
