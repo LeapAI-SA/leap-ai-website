@@ -26,7 +26,7 @@ export async function generateMetadata({
       slug: "",
       kind: "article",
       publishedAt: "2026-08-09",
-      title: { ar: "الموارد", en: "Resources" },
+      title: { ar: "مقال", en: "Article" },
       excerpt: { ar: "", en: "" },
       description: { ar: "", en: "" },
       features: { ar: [], en: [] },

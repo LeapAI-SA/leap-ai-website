@@ -70,7 +70,7 @@ export function buildNewsArticleJsonLd(item: ArticleItem, locale: SiteLang = "ar
 export function buildResourcesListJsonLd(items: ArticleItem[], locale: SiteLang = "ar") {
   return buildCollectionPageJsonLd({
     locale,
-    title: { en: "Resources", ar: "الموارد" },
+    title: { en: "Article", ar: "مقال" },
     description: {
       en: siteConfig.descriptionEn,
       ar: siteConfig.descriptionAr,
@@ -86,7 +86,7 @@ export function buildResourcesListJsonLd(items: ArticleItem[], locale: SiteLang 
 export function buildArticleBreadcrumbJsonLd(item: ArticleItem, locale: SiteLang = "ar") {
   return buildBreadcrumbJsonLd(locale, [
     { label: { en: "Home", ar: "الرئيسية" }, path: "/" },
-    { label: { en: "Resources", ar: "الموارد" }, path: "/resources" },
+    { label: { en: "Article", ar: "مقال" }, path: "/resources" },
     {
       label: { en: item.title.en || item.title.ar, ar: item.title.ar || item.title.en },
       path: articleCanonicalPath(item),

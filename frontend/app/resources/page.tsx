@@ -8,8 +8,8 @@ import { buildResourcesListJsonLd } from "@/lib/seo-article"
 
 export async function generateMetadata(): Promise<Metadata> {
   return metadataWithRequestLocale({
-    title: "Resources",
-    titleAr: "الموارد",
+    title: "Article",
+    titleAr: "مقال",
     description:
       "News and guides on LeapAI — Saudi Arabia's premier AI-native customer experience (CX) platform, PDPL-ready local cloud in Riyadh.",
     descriptionAr:

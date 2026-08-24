@@ -87,6 +87,7 @@ export default function EditContentPage() {
       saving={saving}
       error={error}
       onDelete={remove}
+      autoSlug={false}
     />
   )
 }

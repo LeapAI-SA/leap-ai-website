@@ -171,7 +171,7 @@ const defaultNavigation = () => ({
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us", enabled: true },
   ],
   headerRight: [
-    { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
+    { label: { ar: "مقال", en: "Article" }, href: "/resources", enabled: true },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
@@ -183,7 +183,7 @@ const defaultNavigation = () => ({
     { label: { ar: "منتجاتنا", en: "Products" }, href: "/products", enabled: true },
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases", enabled: true },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers", enabled: true },
-    { label: { ar: "الموارد", en: "Resources" }, href: "/resources", enabled: true },
+    { label: { ar: "مقال", en: "Article" }, href: "/resources", enabled: true },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner", enabled: true },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us", enabled: true },
   ],

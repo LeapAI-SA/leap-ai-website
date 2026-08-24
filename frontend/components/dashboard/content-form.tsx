@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 import { ArrowLeft, Trash2 } from "lucide-react"
 import {
   PageHeader,
@@ -13,6 +14,7 @@ import {
   ImageUploadField,
 } from "@/components/dashboard/ui"
 import { useLanguage } from "@/lib/i18n"
+import { slugifyTitle } from "@/lib/slugify"
 
 export type ContentFormValues = {
   type: "solution" | "product" | "use-case" | "article" | "case" | "job"
@@ -51,6 +53,7 @@ export function ContentForm({
   saving,
   error,
   onDelete,
+  autoSlug = true,
 }: {
   title: string
   description?: string
@@ -60,8 +63,24 @@ export function ContentForm({
   saving: boolean
   error: string
   onDelete?: () => void
+  /** When true, slug follows the title until the admin edits it manually. */
+  autoSlug?: boolean
 }) {
   const { t } = useLanguage()
+  const [slugLocked, setSlugLocked] = useState(!autoSlug)
+
+  function updateTitle(nextTitle: ContentFormValues["title"]) {
+    if (autoSlug && !slugLocked) {
+      setForm({ ...form, title: nextTitle, slug: slugifyTitle(nextTitle) })
+      return
+    }
+    setForm({ ...form, title: nextTitle })
+  }
+
+  function updateSlug(nextSlug: string) {
+    setSlugLocked(true)
+    setForm({ ...form, slug: nextSlug })
+  }
 
   const groupingTitle =
     form.type === "case"
@@ -129,11 +148,18 @@ export function ContentForm({
               <option value="article">{t("admin.contentForm.typeArticle")}</option>
             </select>
           </FormField>
-          <FormField label={t("admin.contentForm.urlSlug")} hint={t("admin.contentForm.urlSlugHint")}>
+          <FormField
+            label={t("admin.contentForm.urlSlug")}
+            hint={
+              autoSlug && !slugLocked
+                ? t("admin.contentForm.urlSlugAutoHint")
+                : t("admin.contentForm.urlSlugHint")
+            }
+          >
             <input
               required
               value={form.slug}
-              onChange={(e) => setForm({ ...form, slug: e.target.value })}
+              onChange={(e) => updateSlug(e.target.value)}
               className="form-input font-mono text-sm"
               dir="ltr"
               placeholder="my-page-slug"
@@ -237,7 +263,7 @@ export function ContentForm({
 
       <Panel title={t("admin.contentForm.bilingualContent")} description={t("admin.contentForm.bilingualContentDesc")}>
         <div className="space-y-4">
-          <LocalizedFieldGroup label={t("admin.contentForm.fieldTitle")} value={form.title} onChange={(title) => setForm({ ...form, title })} />
+          <LocalizedFieldGroup label={t("admin.contentForm.fieldTitle")} value={form.title} onChange={updateTitle} />
           <LocalizedFieldGroup label={t("admin.contentForm.fieldExcerpt")} value={form.excerpt} onChange={(excerpt) => setForm({ ...form, excerpt })} rows={2} />
           <LocalizedFieldGroup
             label={t("admin.contentForm.fieldDescription")}

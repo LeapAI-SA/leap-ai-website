@@ -29,7 +29,7 @@ export const AI_NATIVE_FAQ_ANSWER = {
 }
 
 export const RESOURCES_NAV = {
-  label: { ar: "الموارد", en: "Resources" },
+  label: { ar: "مقال", en: "Article" },
   href: "/resources",
   enabled: true,
 }
@@ -141,6 +141,26 @@ export function ensureResourcesNav(navigation: {
 
   const hasResources = (links: NavLink[]) =>
     links.some((link) => link.href === "/resources" || (link.href ?? "").startsWith("/resources/"))
+
+  const normalizeResourcesLabels = (links: NavLink[]) =>
+    links.map((link) => {
+      if (!(link.href === "/resources" || (link.href ?? "").startsWith("/resources/"))) return link
+      const ar = (link.label?.ar ?? "").trim()
+      const en = (link.label?.en ?? "").trim()
+      const staleAr = !ar || ar === "الموارد"
+      const staleEn = !en || en === "Resources"
+      if (!staleAr && !staleEn) return link
+      return {
+        ...link,
+        label: {
+          ar: staleAr ? RESOURCES_NAV.label.ar : link.label?.ar ?? "",
+          en: staleEn ? RESOURCES_NAV.label.en : link.label?.en ?? "",
+        },
+      }
+    })
+
+  nav.headerRight = normalizeResourcesLabels(nav.headerRight)
+  nav.footerLinks = normalizeResourcesLabels(nav.footerLinks)
 
   if (!hasResources(nav.headerRight)) {
     const idx = nav.headerRight.findIndex((link) => link.href === "/become-a-partner")

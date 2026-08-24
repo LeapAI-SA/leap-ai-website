@@ -434,7 +434,7 @@ export function buildSiteNavigationSchema() {
     { name: "Solutions", nameAr: "حلولنا", path: "/solutions" },
     { name: "Products", nameAr: "منتجاتنا", path: "/products" },
     { name: "Use Cases", nameAr: "حالات الاستخدام", path: "/use-cases" },
-    { name: "Resources", nameAr: "الموارد", path: "/resources" },
+    { name: "Article", nameAr: "مقال", path: "/resources" },
     { name: "Become a Partner", nameAr: "كن شريكنا", path: "/become-a-partner" },
     { name: "Contact Us", nameAr: "اتصل بنا", path: "/contact-us" },
   ]

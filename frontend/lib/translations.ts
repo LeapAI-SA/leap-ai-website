@@ -318,7 +318,7 @@ export const translations = {
     ar: "أرفق سيرتك الذاتية وسنتواصل معك قريباً.",
     en: "Attach your CV and we'll get back to you soon.",
   },
-  "list.resourcesTitle": { ar: "الموارد", en: "Resources" },
+  "list.resourcesTitle": { ar: "مقال", en: "Article" },
   "list.resourcesSub": {
     ar: "أخبار وتحليلات عن تجربة العملاء المبنية أصلاً على الذكاء الاصطناعي في السعودية.",
     en: "News and guides on AI-native customer experience in Saudi Arabia.",
@@ -460,7 +460,7 @@ export const translations = {
     ar: "هدفنا تمكين العلاقة التكافلية بين البشر والذكاء الاصطناعي — وتعزيز نجاح الأعمال مع إثراء الحياة.",
     en: "Our goal is to empower the symbiotic relationship between humans and AI — driving business success while enriching lives.",
   },
-  "nav.blog": { ar: "الموارد", en: "Resources" },
+  "nav.blog": { ar: "مقال", en: "Article" },
   "footer.locationDetail": {
     ar: "المملكة العربية السعودية، الرياض، طريق الملك عبد العزيز الفرعي",
     en: "King Abdulaziz Branch Road, Riyadh, Saudi Arabia",
@@ -690,6 +690,10 @@ export const translations = {
   "admin.contentForm.typeArticle": { ar: "مقال / مورد", en: "Article / Resource" },
   "admin.contentForm.urlSlug": { ar: "الرابط المختصر", en: "URL slug" },
   "admin.contentForm.urlSlugHint": { ar: "مثال: whatsapp-business", en: "e.g. whatsapp-business" },
+  "admin.contentForm.urlSlugAutoHint": {
+    ar: "يُنشأ تلقائياً من العنوان — يمكنك تعديله يدوياً",
+    en: "Auto-filled from the title — edit to lock your own slug",
+  },
   "admin.contentForm.sortOrder": { ar: "ترتيب الظهور", en: "Sort order" },
   "admin.contentForm.sortOrderHint": { ar: "الأرقام الأقل تظهر أولاً", en: "Lower numbers appear first" },
   "admin.contentForm.published": { ar: "منشور", en: "Published" },

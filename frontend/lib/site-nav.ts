@@ -19,7 +19,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "معلومات عنا", en: "About Us" }, href: "/about-us" },
   ],
   headerRight: [
-    { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
+    { label: { ar: "مقال", en: "Article" }, href: "/resources" },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
@@ -32,7 +32,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "حالات الاستخدام", en: "Use Cases" }, href: "/use-cases" },
     { label: { ar: "قصص النجاح", en: "Success Stories" }, href: "/cases" },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
-    { label: { ar: "الموارد", en: "Resources" }, href: "/resources" },
+    { label: { ar: "مقال", en: "Article" }, href: "/resources" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
@@ -42,14 +42,38 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
   ],
 }
 
-const RESOURCES_LINK: SiteNavLink = { label: { ar: "الموارد", en: "Resources" }, href: "/resources" }
+const RESOURCES_LINK: SiteNavLink = { label: { ar: "مقال", en: "Article" }, href: "/resources" }
 const CAREERS_LINK: SiteNavLink = { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" }
 
+function isResourcesHref(href: string) {
+  return href === "/resources" || href.startsWith("/resources/")
+}
+
+/** Keep CMS-saved /resources links, but refresh stale Resources/الموارد labels. */
+function normalizeResourcesLabels(links: SiteNavLink[]): SiteNavLink[] {
+  return links.map((link) => {
+    if (!isResourcesHref(link.href)) return link
+    const ar = link.label.ar.trim()
+    const en = link.label.en.trim()
+    const staleAr = !ar || ar === "الموارد"
+    const staleEn = !en || en === "Resources"
+    if (!staleAr && !staleEn) return link
+    return {
+      ...link,
+      label: {
+        ar: staleAr ? RESOURCES_LINK.label.ar : link.label.ar,
+        en: staleEn ? RESOURCES_LINK.label.en : link.label.en,
+      },
+    }
+  })
+}
+
 function ensureResourcesLink(links: SiteNavLink[], beforeHref: string): SiteNavLink[] {
-  if (links.some((link) => link.href === "/resources" || link.href.startsWith("/resources/"))) {
-    return links
+  const normalized = normalizeResourcesLabels(links)
+  if (normalized.some((link) => isResourcesHref(link.href))) {
+    return normalized
   }
-  const next = [...links]
+  const next = [...normalized]
   const idx = next.findIndex((link) => link.href === beforeHref)
   if (idx >= 0) next.splice(idx, 0, RESOURCES_LINK)
   else next.push(RESOURCES_LINK)
