@@ -79,16 +79,25 @@ export const adminExtraTranslations = {
   "admin.content.editingSlug": { ar: "تحرير /{slug}", en: "Editing /{slug}" },
 
   "admin.contact.desc": {
-    ar: "اعرض رسائل تواصل معنا والشركاء وحجز التجربة. يتم أيضاً إرسال طلبات التجربة إلى sales@leapai.ai عند إعداد SMTP.",
-    en: "View Contact Us, partner, and Book a demo submissions. Demo leads are also emailed to sales@leapai.ai when SMTP is configured.",
+    ar: "اعرض رسائل تواصل معنا والشركاء وحجز التجربة وعملاء الحملات (/lp). تُرسل أيضاً بالبريد عند إعداد SMTP.",
+    en: "View Contact Us, partner, Book a demo, and campaign landing (/lp) leads. Also emailed when SMTP is configured.",
   },
   "admin.contact.editInfo": { ar: "تعديل معلومات التواصل", en: "Edit contact info" },
-  "admin.contact.inboxDesc": { ar: "رسائل من leapai.ai/contact-us", en: "Messages from leapai.ai/contact-us" },
+  "admin.contact.inboxDesc": {
+    ar: "رسائل من تواصل معنا والشركاء والتجربة وصفحات الحملات",
+    en: "Messages from Contact Us, partners, demos, and campaign landings",
+  },
   "admin.contact.loading": { ar: "جارٍ تحميل رسائل التواصل...", en: "Loading contact messages..." },
   "admin.contact.empty": {
     ar: "لا توجد رسائل تواصل بعد. ستظهر هنا رسائل صفحة تواصل معنا من الموقع.",
     en: "No contact messages yet. Submissions from the public Contact Us page will appear here.",
   },
+  "admin.contact.emptyCampaign": {
+    ar: "لا توجد عملاء محتملين من صفحات الحملات بعد. أرسل نموذجاً من /lp لنوع توليد العملاء.",
+    en: "No campaign leads yet. Submit the form on a Lead generation /lp landing.",
+  },
+  "admin.contact.filterAll": { ar: "الكل", en: "All" },
+  "admin.contact.campaign": { ar: "الحملة", en: "Campaign" },
   "admin.contact.inboxUnread": { ar: "الوارد ({n} غير مقروء)", en: "Inbox ({n} unread)" },
   "admin.contact.sourcePartner": { ar: "نموذج الشركاء", en: "Partner form" },
   "admin.contact.sourceDemo": { ar: "احجز تجربة", en: "Book a demo" },

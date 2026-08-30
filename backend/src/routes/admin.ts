@@ -210,6 +210,10 @@ router.post("/content", async (req, res) => {
     description: body.description,
     features: body.features,
     image,
+    contactPhone: typeof body.contactPhone === "string" ? body.contactPhone : "",
+    officialWebsite: typeof body.officialWebsite === "string" ? body.officialWebsite : "",
+    officialEmail: typeof body.officialEmail === "string" ? body.officialEmail : "",
+    profileDescription: body.profileDescription,
     published: body.published !== false,
     sortOrder: typeof body.sortOrder === "number" ? body.sortOrder : 0,
   })
@@ -234,6 +238,10 @@ router.put("/content/:id", async (req, res) => {
     "description",
     "features",
     "image",
+    "contactPhone",
+    "officialWebsite",
+    "officialEmail",
+    "profileDescription",
     "published",
     "sortOrder",
   ] as const

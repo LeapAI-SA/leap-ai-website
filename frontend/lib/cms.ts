@@ -248,6 +248,10 @@ export type CampaignLanding = {
   features: { ar: string[]; en: string[] }
   image: string
   whatsappPrefill: Localized
+  contactPhone: string
+  officialWebsite: string
+  officialEmail: string
+  profileDescription: Localized
 }
 
 export async function resolveCampaign(slug: string): Promise<CampaignLanding | undefined> {
@@ -263,6 +267,10 @@ export async function resolveCampaign(slug: string): Promise<CampaignLanding | u
     features: cms.features,
     image: cms.image || "",
     whatsappPrefill: cms.groupTitle ?? { ar: "", en: "" },
+    contactPhone: cms.contactPhone ?? "",
+    officialWebsite: cms.officialWebsite ?? "",
+    officialEmail: cms.officialEmail ?? "",
+    profileDescription: cms.profileDescription ?? { ar: "", en: "" },
   }
 }
 

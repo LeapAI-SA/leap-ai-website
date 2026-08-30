@@ -20,13 +20,26 @@ function toWaDigits(phone: string) {
   return digits || "966535533627"
 }
 
+function websiteHref(url: string) {
+  const trimmed = url.trim()
+  if (!trimmed) return PRODUCTION_SITE_URL
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  return `https://${trimmed}`
+}
+
+function websiteLabel(url: string) {
+  return websiteHref(url).replace(/^https:\/\//i, "").replace(/\/$/, "")
+}
+
 export function CampaignLandingContent({ campaign }: { campaign: CampaignLanding }) {
   const { t, tr, lang } = useLanguage()
   const { settings } = useSiteSettings()
-  const phone = settings?.contact?.phone ?? "+966 53 553 3627"
-  const officialEmail = settings?.contact?.email ?? "info@leapai.ai"
+  const phone = campaign.contactPhone.trim() || settings?.contact?.phone || "+966 53 553 3627"
+  const officialEmail = campaign.officialEmail.trim() || settings?.contact?.email || "info@leapai.ai"
+  const website = campaign.officialWebsite.trim() || PRODUCTION_SITE_URL
   const displayName = tr(campaign.title).trim() || "LeapAI"
   const profileDescription =
+    tr(campaign.profileDescription).trim() ||
     tr(campaign.excerpt).trim() ||
     (lang === "ar" ? settings?.geo?.llmsTagline?.ar : settings?.geo?.llmsTagline?.en)?.trim() ||
     t("campaign.profileDefaultDescription")
@@ -190,13 +203,13 @@ export function CampaignLandingContent({ campaign }: { campaign: CampaignLanding
                   </dt>
                   <dd className="mt-1 text-sm font-semibold">
                     <a
-                      href={PRODUCTION_SITE_URL}
+                      href={websiteHref(website)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary underline-offset-2 hover:underline"
                       dir="ltr"
                     >
-                      {PRODUCTION_SITE_URL.replace(/^https:\/\//, "")}
+                      {websiteLabel(website)}
                     </a>
                   </dd>
                 </div>

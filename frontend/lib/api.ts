@@ -62,6 +62,10 @@ export type ContentItemPublic = {
   description: Localized
   features: { ar: string[]; en: string[] }
   image?: string
+  contactPhone?: string
+  officialWebsite?: string
+  officialEmail?: string
+  profileDescription?: Localized
   published: boolean
   sortOrder: number
   updatedAt?: string
@@ -76,6 +80,7 @@ export type ContactMessage = {
   address: string
   phone: string
   message: string
+  campaignSlug?: string
   read: boolean
   createdAt: string
 }

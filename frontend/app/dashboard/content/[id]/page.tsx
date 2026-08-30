@@ -33,6 +33,10 @@ export default function EditContentPage() {
           description: item.description,
           features: item.features,
           image: item.image ?? "",
+          contactPhone: item.contactPhone ?? "",
+          officialWebsite: item.officialWebsite ?? "",
+          officialEmail: item.officialEmail ?? "",
+          profileDescription: item.profileDescription ?? { ar: "", en: "" },
           published: item.published,
           sortOrder: item.sortOrder,
         })

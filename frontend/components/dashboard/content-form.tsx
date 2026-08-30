@@ -26,6 +26,10 @@ export type ContentFormValues = {
   description: { ar: string; en: string }
   features: { ar: string[]; en: string[] }
   image: string
+  contactPhone: string
+  officialWebsite: string
+  officialEmail: string
+  profileDescription: { ar: string; en: string }
   published: boolean
   sortOrder: number
 }
@@ -40,6 +44,10 @@ export const emptyContentForm: ContentFormValues = {
   description: { ar: "", en: "" },
   features: { ar: [""], en: [""] },
   image: "",
+  contactPhone: "",
+  officialWebsite: "",
+  officialEmail: "",
+  profileDescription: { ar: "", en: "" },
   published: true,
   sortOrder: 0,
 }
@@ -295,6 +303,49 @@ export function ContentForm({
               />
             )}
           </div>
+          {form.type === "campaign" && form.groupSlug === "whatsapp" ? (
+            <div className="mt-4 space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <FormField label={t("admin.contentForm.whatsappPhone")} hint={t("admin.contentForm.whatsappPhoneHint")}>
+                  <input
+                    value={form.contactPhone}
+                    onChange={(e) => setForm({ ...form, contactPhone: e.target.value })}
+                    className="form-input"
+                    dir="ltr"
+                    placeholder="+966 53 553 3627"
+                    autoComplete="tel"
+                  />
+                </FormField>
+                <FormField label={t("admin.contentForm.officialWebsite")}>
+                  <input
+                    value={form.officialWebsite}
+                    onChange={(e) => setForm({ ...form, officialWebsite: e.target.value })}
+                    className="form-input"
+                    dir="ltr"
+                    placeholder="https://leapai.ai"
+                    autoComplete="url"
+                  />
+                </FormField>
+                <FormField label={t("admin.contentForm.officialEmail")}>
+                  <input
+                    type="email"
+                    value={form.officialEmail}
+                    onChange={(e) => setForm({ ...form, officialEmail: e.target.value })}
+                    className="form-input"
+                    dir="ltr"
+                    placeholder="info@leapai.ai"
+                    autoComplete="email"
+                  />
+                </FormField>
+              </div>
+              <LocalizedFieldGroup
+                label={t("admin.contentForm.profileDescription")}
+                value={form.profileDescription}
+                onChange={(profileDescription) => setForm({ ...form, profileDescription })}
+                rows={3}
+              />
+            </div>
+          ) : null}
         </Panel>
       )}
 

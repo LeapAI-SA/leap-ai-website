@@ -9,6 +9,7 @@ const contactMessageSchema = new Schema(
     address: { type: String, default: "", trim: true, maxlength: 300 },
     phone: { type: String, default: "", trim: true, maxlength: 40 },
     message: { type: String, default: "", trim: true, maxlength: 500 },
+    campaignSlug: { type: String, default: "", trim: true, maxlength: 120 },
     read: { type: Boolean, default: false },
   },
   { timestamps: true },
@@ -35,6 +36,7 @@ export function serializeContactMessage(item: InstanceType<typeof ContactMessage
     address: item.address,
     phone: item.phone,
     message: item.message,
+    campaignSlug: item.campaignSlug ?? "",
     read: item.read,
     createdAt: item.createdAt,
   }

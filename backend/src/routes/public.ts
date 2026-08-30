@@ -192,6 +192,7 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
     address: "",
     phone,
     message,
+    campaignSlug,
   })
 
   try {

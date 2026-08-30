@@ -1,18 +1,28 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import { Mail, Phone, Trash2, CheckCircle2, Circle, RefreshCw, Eye, X } from "lucide-react"
 import { adminLocale, mapAdminError } from "@/lib/admin-i18n"
 import { adminFetch, type ContactMessage } from "@/lib/api"
 import { adminTf } from "@/lib/admin-tf"
-import { PageHeader, Panel, LoadingBlock, Alert, DashButton } from "@/components/dashboard/ui"
+import { PageHeader, Panel, LoadingBlock, Alert, DashButton, FilterTabs } from "@/components/dashboard/ui"
 import { useLanguage } from "@/lib/i18n"
+
+type SourceFilter = "all" | ContactMessage["source"]
 
 function sourceLabel(source: ContactMessage["source"], t: ReturnType<typeof useLanguage>["t"]) {
   if (source === "partner") return t("admin.contact.sourcePartner")
   if (source === "demo") return t("admin.contact.sourceDemo")
   if (source === "campaign") return t("admin.contact.sourceCampaign")
   return t("admin.contact.sourceContact")
+}
+
+function resolveCampaignSlug(item: ContactMessage): string {
+  const stored = item.campaignSlug?.trim()
+  if (stored) return stored
+  const match = item.message?.match(/\/lp\/([a-z0-9-]+)/i)
+  return match?.[1] ?? ""
 }
 
 function formatDate(value: string, lang: "ar" | "en") {
@@ -33,6 +43,7 @@ export default function DashboardContactPage() {
   const [error, setError] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>("all")
 
   async function load(silent = false) {
     if (!silent) setLoading(true)
@@ -62,11 +73,25 @@ export default function DashboardContactPage() {
     return () => window.removeEventListener("keydown", onKey)
   }, [selectedId])
 
-  const unreadCount = useMemo(() => messages.filter((m) => !m.read).length, [messages])
+  const counts = useMemo(() => {
+    const base = { all: messages.length, contact: 0, partner: 0, demo: 0, campaign: 0 }
+    for (const m of messages) {
+      if (m.source in base) base[m.source] += 1
+    }
+    return base
+  }, [messages])
+
+  const filtered = useMemo(
+    () => (sourceFilter === "all" ? messages : messages.filter((m) => m.source === sourceFilter)),
+    [messages, sourceFilter],
+  )
+
+  const unreadCount = useMemo(() => filtered.filter((m) => !m.read).length, [filtered])
   const selectedMessage = useMemo(
     () => messages.find((item) => item.id === selectedId) ?? null,
     [messages, selectedId],
   )
+  const selectedCampaignSlug = selectedMessage ? resolveCampaignSlug(selectedMessage) : ""
 
   function closeView() {
     setSelectedId(null)
@@ -100,6 +125,7 @@ export default function DashboardContactPage() {
     try {
       await adminFetch(`/api/admin/contact-messages/${id}`, { method: "DELETE" })
       setMessages((prev) => prev.filter((m) => m.id !== id))
+      if (selectedId === id) setSelectedId(null)
     } catch (err) {
       setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.contact.deleteFailed")))
     } finally {
@@ -127,6 +153,18 @@ export default function DashboardContactPage() {
 
       {error && <Alert variant="error">{error}</Alert>}
 
+      <FilterTabs
+        value={sourceFilter}
+        onChange={(id) => setSourceFilter(id as SourceFilter)}
+        options={[
+          { id: "all", label: t("admin.contact.filterAll"), count: counts.all },
+          { id: "campaign", label: t("admin.contact.sourceCampaign"), count: counts.campaign },
+          { id: "contact", label: t("admin.contact.sourceContact"), count: counts.contact },
+          { id: "partner", label: t("admin.contact.sourcePartner"), count: counts.partner },
+          { id: "demo", label: t("admin.contact.sourceDemo"), count: counts.demo },
+        ]}
+      />
+
       <Panel
         title={
           unreadCount
@@ -137,8 +175,10 @@ export default function DashboardContactPage() {
       >
         {loading ? (
           <LoadingBlock label={t("admin.contact.loading")} />
-        ) : messages.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">{t("admin.contact.empty")}</p>
+        ) : filtered.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            {sourceFilter === "campaign" ? t("admin.contact.emptyCampaign") : t("admin.contact.empty")}
+          </p>
         ) : (
           <div className="space-y-4">
             <div className="overflow-x-auto rounded-2xl border border-border">
@@ -150,81 +190,97 @@ export default function DashboardContactPage() {
                     <th className="px-3 py-2 text-start font-semibold">{t("admin.common.email")}</th>
                     <th className="px-3 py-2 text-start font-semibold">{t("admin.common.phone")}</th>
                     <th className="px-3 py-2 text-start font-semibold">{t("admin.common.source")}</th>
+                    <th className="px-3 py-2 text-start font-semibold">{t("admin.contact.campaign")}</th>
                     <th className="px-3 py-2 text-start font-semibold">{t("admin.common.date")}</th>
                     <th className="px-3 py-2 text-start font-semibold">{t("admin.common.actions")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {messages.map((item) => (
-                    <tr key={item.id} className={!item.read ? "bg-primary/5" : "bg-card"}>
-                      <td className="whitespace-nowrap px-3 py-2">
-                        {!item.read ? (
-                          <span className="rounded-full bg-amber px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-foreground">
-                            {t("admin.contact.new")}
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                            {t("admin.contact.read")}
-                          </span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2 font-semibold text-navy">{item.name}</td>
-                      <td className="px-3 py-2">
-                        <a href={`mailto:${item.email}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
-                          <Mail className="size-4" />
-                          {item.email}
-                        </a>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2" dir="ltr">
-                        {item.phone ? (
-                          <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
-                            <Phone className="size-4" />
-                            {item.phone}
+                  {filtered.map((item) => {
+                    const campaignSlug = resolveCampaignSlug(item)
+                    return (
+                      <tr key={item.id} className={!item.read ? "bg-primary/5" : "bg-card"}>
+                        <td className="whitespace-nowrap px-3 py-2">
+                          {!item.read ? (
+                            <span className="rounded-full bg-amber px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-foreground">
+                              {t("admin.contact.new")}
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                              {t("admin.contact.read")}
+                            </span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2 font-semibold text-navy">{item.name}</td>
+                        <td className="px-3 py-2">
+                          <a href={`mailto:${item.email}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                            <Mail className="size-4" />
+                            {item.email}
                           </a>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {sourceLabel(item.source, t)}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt, lang)}</td>
-                      <td className="px-3 py-2">
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openView(item)}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
-                          >
-                            <Eye className="size-3.5" />
-                            {t("admin.contact.view")}
-                          </button>
-                          <button
-                            type="button"
-                            disabled={busyId === item.id}
-                            onClick={() => toggleRead(item)}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
-                          >
-                            {item.read ? <Circle className="size-3.5" /> : <CheckCircle2 className="size-3.5 text-primary" />}
-                            {item.read ? t("admin.contact.unreadBtn") : t("admin.contact.read")}
-                          </button>
-                          <button
-                            type="button"
-                            disabled={busyId === item.id}
-                            onClick={() => remove(item.id)}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 px-2.5 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10"
-                          >
-                            <Trash2 className="size-3.5" />
-                            {t("admin.common.delete")}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2" dir="ltr">
+                          {item.phone ? (
+                            <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                              <Phone className="size-4" />
+                              {item.phone}
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
+                          {sourceLabel(item.source, t)}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2" dir="ltr">
+                          {campaignSlug ? (
+                            <Link
+                              href={`/lp/${campaignSlug}`}
+                              target="_blank"
+                              className="font-mono text-xs font-semibold text-primary hover:underline"
+                            >
+                              /lp/{campaignSlug}
+                            </Link>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{formatDate(item.createdAt, lang)}</td>
+                        <td className="px-3 py-2">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => openView(item)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
+                            >
+                              <Eye className="size-3.5" />
+                              {t("admin.contact.view")}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={busyId === item.id}
+                              onClick={() => toggleRead(item)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-muted"
+                            >
+                              {item.read ? <Circle className="size-3.5" /> : <CheckCircle2 className="size-3.5 text-primary" />}
+                              {item.read ? t("admin.contact.unreadBtn") : t("admin.contact.read")}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={busyId === item.id}
+                              onClick={() => remove(item.id)}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/30 px-2.5 py-1.5 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10"
+                            >
+                              <Trash2 className="size-3.5" />
+                              {t("admin.common.delete")}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
-
           </div>
         )}
       </Panel>
@@ -282,6 +338,20 @@ export default function DashboardContactPage() {
                   )}
                 </dd>
               </div>
+              {selectedCampaignSlug ? (
+                <div>
+                  <dt className="font-semibold text-muted-foreground">{t("admin.contact.campaign")}</dt>
+                  <dd dir="ltr">
+                    <Link
+                      href={`/lp/${selectedCampaignSlug}`}
+                      target="_blank"
+                      className="font-mono text-sm font-semibold text-primary hover:underline"
+                    >
+                      /lp/{selectedCampaignSlug}
+                    </Link>
+                  </dd>
+                </div>
+              ) : null}
               {selectedMessage.company ? (
                 <div>
                   <dt className="font-semibold text-muted-foreground">{t("admin.common.company")}</dt>
