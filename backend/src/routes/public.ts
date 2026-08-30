@@ -165,12 +165,7 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
   const phoneDigits = phone.replace(/\D/g, "")
 
   if (!isNonEmptyString(campaignSlug) || !isNonEmptyString(name) || !isValidEmail(email) || phoneDigits.length < 8) {
-    return res.status(400).json({ error: "Campaign, full name, valid business email, and phone are required" })
-  }
-  if (!isBusinessEmail(email)) {
-    return res.status(400).json({
-      error: "Please use a business email. Gmail, Hotmail, Outlook, and similar providers are not accepted.",
-    })
+    return res.status(400).json({ error: "Campaign, full name, valid email, and phone are required" })
   }
 
   const campaign = await ContentItem.findOne({ type: "campaign", slug: campaignSlug, published: true })
@@ -179,6 +174,15 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
   }
   if (campaign.groupSlug !== "lead") {
     return res.status(400).json({ error: "This campaign does not accept form leads" })
+  }
+
+  const duplicate = await ContactMessage.findOne({
+    source: "campaign",
+    campaignSlug,
+    $or: [{ email }, { phoneDigits }],
+  })
+  if (duplicate) {
+    return res.status(409).json({ error: "duplicate_lead" })
   }
 
   const titleEn = campaign.title?.en || campaignSlug
@@ -191,6 +195,7 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
     company: "",
     address: "",
     phone,
+    phoneDigits,
     message,
     campaignSlug,
   })

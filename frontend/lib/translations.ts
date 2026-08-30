@@ -108,7 +108,26 @@ export const translations = {
   "demo.error": { ar: "تعذر إرسال الطلب. حاول مرة أخرى.", en: "Could not send the request. Please try again." },
 
   "campaign.benefits": { ar: "لماذا LeapAI؟", en: "Why LeapAI?" },
-  "campaign.submit": { ar: "أرسل طلبك", en: "Submit your request" },
+  "campaign.eyebrow": { ar: "عجّل نمو عملك", en: "Accelerate your pipeline" },
+  "campaign.navBenefits": { ar: "المزايا", en: "Benefits" },
+  "campaign.navContact": { ar: "تواصل", en: "Contact" },
+  "campaign.getStarted": { ar: "ابدأ الآن", en: "Get started" },
+  "campaign.formNote": {
+    ar: "سيتواصل معك فريقنا خلال ٢٤ ساعة.",
+    en: "Our team will reach out within 24 hours.",
+  },
+  "campaign.email": { ar: "البريد الإلكتروني", en: "Email address" },
+  "campaign.emailPlaceholder": { ar: "you@example.com", en: "you@example.com" },
+  "campaign.duplicateLead": {
+    ar: "تم إرسال طلب سابقاً بنفس البريد أو رقم الهاتف لهذه الحملة.",
+    en: "A request with this email or phone number was already submitted for this campaign.",
+  },
+  "campaign.trustedBy": { ar: "موثوق من رواد الصناعة", en: "Trusted by industry leaders" },
+  "campaign.socialProof": {
+    ar: "موثوق من فرق في المملكة",
+    en: "Trusted by teams across Saudi Arabia",
+  },
+  "campaign.submit": { ar: "اطلب عرضاً", en: "Request demo" },
   "campaign.submitting": { ar: "جارٍ الإرسال…", en: "Sending…" },
   "campaign.success": { ar: "تم استلام طلبك", en: "Request received" },
   "campaign.successText": {
