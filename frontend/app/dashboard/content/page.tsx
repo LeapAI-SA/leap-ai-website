@@ -21,6 +21,7 @@ const typeLabelKeys = {
   case: "admin.content.typeCase",
   job: "admin.content.typeJob",
   article: "admin.content.typeArticle",
+  campaign: "admin.content.typeCampaign",
 } as const
 
 export default function DashboardContentPage() {
@@ -45,6 +46,7 @@ export default function DashboardContentPage() {
       case: items.filter((i) => i.type === "case").length,
       job: items.filter((i) => i.type === "job").length,
       article: items.filter((i) => i.type === "article").length,
+      campaign: items.filter((i) => i.type === "campaign").length,
     }),
     [items],
   )
@@ -85,6 +87,7 @@ export default function DashboardContentPage() {
             { id: "case", label: t("admin.content.filterCases"), count: counts.case },
             { id: "job", label: t("admin.content.filterJobs"), count: counts.job },
             { id: "article", label: t("admin.content.filterResources"), count: counts.article },
+            { id: "campaign", label: t("admin.content.filterCampaigns"), count: counts.campaign },
           ]}
         />
         <div className="relative max-w-sm flex-1">

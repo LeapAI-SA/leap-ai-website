@@ -53,7 +53,7 @@ export type PublicSiteSettings = {
 
 export type ContentItemPublic = {
   id: string
-  type: "solution" | "product" | "use-case" | "article" | "case" | "job"
+  type: "solution" | "product" | "use-case" | "article" | "case" | "job" | "campaign"
   slug: string
   groupSlug?: string
   groupTitle?: Localized
@@ -69,7 +69,7 @@ export type ContentItemPublic = {
 
 export type ContactMessage = {
   id: string
-  source: "contact" | "partner" | "demo"
+  source: "contact" | "partner" | "demo" | "campaign"
   name: string
   email: string
   company: string
@@ -214,6 +214,24 @@ export async function submitDemoRequest(payload: { name: string; email: string; 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: "Failed to send demo request" }))
     throw new Error(err.error ?? "Failed to send demo request")
+  }
+  return res.json() as Promise<{ ok: boolean; id: string; emailed?: boolean }>
+}
+
+export async function submitCampaignLead(payload: {
+  campaignSlug: string
+  name: string
+  email: string
+  phone: string
+}) {
+  const res = await clientFetch(`${browserApiUrl()}/api/public/campaign-lead`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "Failed to send campaign lead" }))
+    throw new Error(err.error ?? "Failed to send campaign lead")
   }
   return res.json() as Promise<{ ok: boolean; id: string; emailed?: boolean }>
 }

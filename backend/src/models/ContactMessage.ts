@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose"
 
 const contactMessageSchema = new Schema(
   {
-    source: { type: String, enum: ["contact", "partner", "demo"], default: "contact" },
+    source: { type: String, enum: ["contact", "partner", "demo", "campaign"], default: "contact" },
     name: { type: String, required: true, trim: true, maxlength: 120 },
     email: { type: String, required: true, trim: true, maxlength: 200 },
     company: { type: String, default: "", trim: true, maxlength: 200 },
@@ -21,7 +21,14 @@ export const ContactMessage = mongoose.model("ContactMessage", contactMessageSch
 export function serializeContactMessage(item: InstanceType<typeof ContactMessage>) {
   return {
     id: item._id.toString(),
-    source: item.source === "partner" ? "partner" : item.source === "demo" ? "demo" : "contact",
+    source:
+      item.source === "partner"
+        ? "partner"
+        : item.source === "demo"
+          ? "demo"
+          : item.source === "campaign"
+            ? "campaign"
+            : "contact",
     name: item.name,
     email: item.email,
     company: item.company,

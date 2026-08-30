@@ -17,7 +17,7 @@ import { useLanguage } from "@/lib/i18n"
 import { slugifyTitle } from "@/lib/slugify"
 
 export type ContentFormValues = {
-  type: "solution" | "product" | "use-case" | "article" | "case" | "job"
+  type: "solution" | "product" | "use-case" | "article" | "case" | "job" | "campaign"
   slug: string
   groupSlug: string
   groupTitle: { ar: string; en: string }
@@ -87,35 +87,45 @@ export function ContentForm({
       ? t("admin.contentForm.caseCategory")
       : form.type === "job"
         ? t("admin.contentForm.jobDepartment")
-        : t("admin.contentForm.solutionGrouping")
+        : form.type === "campaign"
+          ? t("admin.contentForm.campaignVariant")
+          : t("admin.contentForm.solutionGrouping")
 
   const groupingDesc =
     form.type === "case"
       ? t("admin.contentForm.caseCategoryHint")
       : form.type === "job"
         ? t("admin.contentForm.jobDepartmentHint")
-        : t("admin.contentForm.solutionGroupingHint")
+        : form.type === "campaign"
+          ? t("admin.contentForm.campaignVariantHint")
+          : t("admin.contentForm.solutionGroupingHint")
 
   const slugLabel =
     form.type === "case"
       ? t("admin.contentForm.categorySlug")
       : form.type === "job"
         ? t("admin.contentForm.departmentSlug")
-        : t("admin.contentForm.groupSlug")
+        : form.type === "campaign"
+          ? t("admin.contentForm.campaignVariant")
+          : t("admin.contentForm.groupSlug")
 
   const slugHint =
     form.type === "case"
       ? t("admin.contentForm.categorySlugHint")
       : form.type === "job"
         ? t("admin.contentForm.departmentSlugHint")
-        : t("admin.contentForm.groupSlugHint")
+        : form.type === "campaign"
+          ? t("admin.contentForm.campaignVariantHint")
+          : t("admin.contentForm.groupSlugHint")
 
   const groupTitleLabel =
     form.type === "case"
       ? t("admin.contentForm.categoryTitle")
       : form.type === "job"
         ? t("admin.contentForm.departmentTitle")
-        : t("admin.contentForm.groupTitle")
+        : form.type === "campaign"
+          ? t("admin.contentForm.whatsappPrefill")
+          : t("admin.contentForm.groupTitle")
 
   return (
     <form onSubmit={onSubmit} className="space-y-8 pb-12">
@@ -123,10 +133,17 @@ export function ContentForm({
         title={title}
         description={description}
         actions={
-          <DashButton href="/dashboard/content" variant="ghost">
-            <ArrowLeft className="size-4" />
-            {t("admin.contentForm.back")}
-          </DashButton>
+          <div className="flex flex-wrap gap-2">
+            {form.type === "campaign" && form.slug ? (
+              <DashButton href={`/lp/${form.slug}`} variant="secondary">
+                {t("admin.contentForm.openLanding")}
+              </DashButton>
+            ) : null}
+            <DashButton href="/dashboard/content" variant="ghost">
+              <ArrowLeft className="size-4" />
+              {t("admin.contentForm.back")}
+            </DashButton>
+          </div>
         }
       />
 
@@ -137,7 +154,14 @@ export function ContentForm({
           <FormField label={t("admin.contentForm.contentType")}>
             <select
               value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value as ContentFormValues["type"] })}
+              onChange={(e) => {
+                const type = e.target.value as ContentFormValues["type"]
+                setForm({
+                  ...form,
+                  type,
+                  groupSlug: type === "campaign" ? form.groupSlug || "lead" : form.groupSlug,
+                })
+              }}
               className="form-input"
             >
               <option value="solution">{t("admin.contentForm.typeSolution")}</option>
@@ -146,6 +170,7 @@ export function ContentForm({
               <option value="case">{t("admin.contentForm.typeCase")}</option>
               <option value="job">{t("admin.contentForm.typeJob")}</option>
               <option value="article">{t("admin.contentForm.typeArticle")}</option>
+              <option value="campaign">{t("admin.contentForm.typeCampaign")}</option>
             </select>
           </FormField>
           <FormField
@@ -184,7 +209,7 @@ export function ContentForm({
         </div>
       </Panel>
 
-      {(form.type === "solution" || form.type === "case" || form.type === "job") && (
+      {(form.type === "solution" || form.type === "case" || form.type === "job" || form.type === "campaign") && (
         <Panel title={groupingTitle} description={groupingDesc}>
           <div className="grid gap-4 md:grid-cols-2">
             <FormField label={slugLabel} hint={slugHint}>
@@ -230,6 +255,16 @@ export function ContentForm({
                   <option value="operations">operations — Operations</option>
                   <option value="general">general — General</option>
                 </select>
+              ) : form.type === "campaign" ? (
+                <select
+                  value={form.groupSlug || "lead"}
+                  onChange={(e) => setForm({ ...form, groupSlug: e.target.value })}
+                  className="form-input font-mono text-sm"
+                  dir="ltr"
+                >
+                  <option value="lead">{t("admin.contentForm.campaignLead")}</option>
+                  <option value="whatsapp">{t("admin.contentForm.campaignWhatsapp")}</option>
+                </select>
               ) : (
                 <input
                   value={form.groupSlug}
@@ -240,12 +275,25 @@ export function ContentForm({
                 />
               )}
             </FormField>
-            <LocalizedFieldGroup
-              label={groupTitleLabel}
-              value={form.groupTitle}
-              onChange={(groupTitle) => setForm({ ...form, groupTitle })}
-              rows={1}
-            />
+            {form.type === "campaign" ? (
+              form.groupSlug === "whatsapp" ? (
+                <LocalizedFieldGroup
+                  label={groupTitleLabel}
+                  value={form.groupTitle}
+                  onChange={(groupTitle) => setForm({ ...form, groupTitle })}
+                  rows={2}
+                />
+              ) : (
+                <p className="self-center text-sm text-muted-foreground">{t("admin.contentForm.campaignLeadHint")}</p>
+              )
+            ) : (
+              <LocalizedFieldGroup
+                label={groupTitleLabel}
+                value={form.groupTitle}
+                onChange={(groupTitle) => setForm({ ...form, groupTitle })}
+                rows={1}
+              />
+            )}
           </div>
         </Panel>
       )}

@@ -6,7 +6,7 @@ import { ContactMessage } from "../models/ContactMessage.js"
 import { JobApplication } from "../models/JobApplication.js"
 import { isNonEmptyString, isValidEmail, trimString } from "../lib/validate.js"
 import { isBusinessEmail } from "../lib/business-email.js"
-import { sendDemoLeadEmail, sendCareersApplicationEmail } from "../lib/mail.js"
+import { sendDemoLeadEmail, sendCareersApplicationEmail, sendContactInquiryEmail } from "../lib/mail.js"
 import { uploadCv } from "../middleware/upload.js"
 import { cacheGet, cacheSet } from "../config/redis.js"
 import { rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
@@ -53,8 +53,10 @@ router.get("/settings", async (_req, res) => {
 
 router.get("/content", async (req, res) => {
   const type = req.query.type as ContentType | undefined
-  if (!type || !["solution", "product", "use-case", "article", "case", "job"].includes(type)) {
-    return res.status(400).json({ error: "Valid type query is required: solution, product, use-case, article, case, job" })
+  if (!type || !["solution", "product", "use-case", "article", "case", "job", "campaign"].includes(type)) {
+    return res.status(400).json({
+      error: "Valid type query is required: solution, product, use-case, article, case, job, campaign",
+    })
   }
 
   const cacheKey = cacheContentKey(type)
@@ -138,8 +140,79 @@ router.post("/contact", contactLimiter, async (req, res) => {
   }
 
   const item = await ContactMessage.create({ source, name, email, company, address, phone, message })
-  console.log(`Contact message saved (${source}):`, item._id.toString())
-  res.status(201).json({ ok: true, id: item._id.toString() })
+
+  try {
+    const mail = await sendContactInquiryEmail({ source, name, email, phone, company, address, message })
+    console.log(`Contact message saved (${source}): ${item._id.toString()} emailed=${mail.emailed}`)
+    res.status(201).json({ ok: true, id: item._id.toString(), emailed: mail.emailed })
+  } catch (err) {
+    console.error("Contact inquiry email failed:", err)
+    res.status(201).json({
+      ok: true,
+      id: item._id.toString(),
+      emailed: false,
+      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
+    })
+  }
+})
+
+router.post("/campaign-lead", contactLimiter, async (req, res) => {
+  const body = req.body as Record<string, unknown>
+  const campaignSlug = trimString(body.campaignSlug, 120)
+  const name = trimString(body.name, 120)
+  const email = trimString(body.email, 200).toLowerCase()
+  const phone = trimString(body.phone, 40)
+  const phoneDigits = phone.replace(/\D/g, "")
+
+  if (!isNonEmptyString(campaignSlug) || !isNonEmptyString(name) || !isValidEmail(email) || phoneDigits.length < 8) {
+    return res.status(400).json({ error: "Campaign, full name, valid business email, and phone are required" })
+  }
+  if (!isBusinessEmail(email)) {
+    return res.status(400).json({
+      error: "Please use a business email. Gmail, Hotmail, Outlook, and similar providers are not accepted.",
+    })
+  }
+
+  const campaign = await ContentItem.findOne({ type: "campaign", slug: campaignSlug, published: true })
+  if (!campaign) {
+    return res.status(404).json({ error: "Campaign not found" })
+  }
+  if (campaign.groupSlug !== "lead") {
+    return res.status(400).json({ error: "This campaign does not accept form leads" })
+  }
+
+  const titleEn = campaign.title?.en || campaignSlug
+  const message = `Campaign lead: ${titleEn} (/lp/${campaignSlug})`
+
+  const item = await ContactMessage.create({
+    source: "campaign",
+    name,
+    email,
+    company: "",
+    address: "",
+    phone,
+    message,
+  })
+
+  try {
+    const mail = await sendContactInquiryEmail({
+      source: "campaign",
+      name,
+      email,
+      phone,
+      message,
+    })
+    console.log(`Campaign lead saved: ${item._id.toString()} slug=${campaignSlug} emailed=${mail.emailed}`)
+    res.status(201).json({ ok: true, id: item._id.toString(), emailed: mail.emailed })
+  } catch (err) {
+    console.error("Campaign lead email failed:", err)
+    res.status(201).json({
+      ok: true,
+      id: item._id.toString(),
+      emailed: false,
+      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
+    })
+  }
 })
 
 router.post("/careers/apply", contactLimiter, (req, res) => {

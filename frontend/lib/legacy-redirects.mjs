@@ -104,7 +104,9 @@ export function isLikelyCanonicalPath(path) {
     p.startsWith("/products/") ||
     p.startsWith("/use-cases/") ||
     p.startsWith("/resources/") ||
-    p.startsWith("/news/")
+    p.startsWith("/news/") ||
+    p.startsWith("/careers/") ||
+    p.startsWith("/lp/")
   ) {
     return true
   }

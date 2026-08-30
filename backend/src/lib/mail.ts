@@ -56,6 +56,63 @@ export async function sendDemoLeadEmail(input: { name: string; email: string; ph
   return { emailed: true as const }
 }
 
+export async function sendContactInquiryEmail(input: {
+  source: "contact" | "partner" | "campaign"
+  name: string
+  email: string
+  phone: string
+  company?: string
+  address?: string
+  message: string
+}) {
+  const to = (process.env.CONTACT_EMAIL ?? "info@leapai.ai").trim()
+  if (!smtpConfigured()) {
+    console.warn(
+      "SMTP is not configured — contact message saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally CONTACT_EMAIL).",
+    )
+    return { emailed: false as const, reason: "smtp_not_configured" }
+  }
+
+  const from = process.env.SMTP_FROM?.trim() || process.env.SMTP_USER!.trim()
+  const sourceLabel =
+    input.source === "partner" ? "Partner inquiry" : input.source === "campaign" ? "Campaign lead" : "Contact Us"
+  const transporter = createTransport()
+  await transporter.sendMail({
+    from,
+    to,
+    replyTo: input.email,
+    subject: `${sourceLabel} — ${input.name}`,
+    text: [
+      `New ${sourceLabel.toLowerCase()} from leapai.ai`,
+      "",
+      `Name: ${input.name}`,
+      `Email: ${input.email}`,
+      `Phone: ${input.phone}`,
+      input.company ? `Company: ${input.company}` : "",
+      input.address ? `Address: ${input.address}` : "",
+      "",
+      `Message:\n${input.message}`,
+      "",
+      "Reply directly to this message to reach the sender.",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    html: `
+      <p>New ${escapeHtml(sourceLabel.toLowerCase())} from <strong>leapai.ai</strong></p>
+      <ul>
+        <li><strong>Name:</strong> ${escapeHtml(input.name)}</li>
+        <li><strong>Email:</strong> ${escapeHtml(input.email)}</li>
+        <li><strong>Phone:</strong> ${escapeHtml(input.phone)}</li>
+        ${input.company ? `<li><strong>Company:</strong> ${escapeHtml(input.company)}</li>` : ""}
+        ${input.address ? `<li><strong>Address:</strong> ${escapeHtml(input.address)}</li>` : ""}
+      </ul>
+      <p><strong>Message:</strong><br/>${escapeHtml(input.message).replace(/\n/g, "<br/>")}</p>
+      <p>Reply directly to this message to reach the sender.</p>
+    `,
+  })
+  return { emailed: true as const }
+}
+
 export async function sendCareersApplicationEmail(input: {
   name: string
   email: string

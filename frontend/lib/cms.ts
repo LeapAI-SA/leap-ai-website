@@ -238,3 +238,36 @@ export async function allJobSlugs(): Promise<string[]> {
   const items = await fetchPublicContent("job")
   return items.map((item) => item.slug)
 }
+
+export type CampaignLanding = {
+  slug: string
+  variant: "lead" | "whatsapp"
+  title: Localized
+  excerpt: Localized
+  description: Localized
+  features: { ar: string[]; en: string[] }
+  image: string
+  whatsappPrefill: Localized
+}
+
+export async function resolveCampaign(slug: string): Promise<CampaignLanding | undefined> {
+  const cms = await fetchContentBySlug(slug)
+  if (!cms || cms.type !== "campaign" || !cms.published) return undefined
+  const variant = cms.groupSlug === "whatsapp" ? "whatsapp" : "lead"
+  return {
+    slug: cms.slug,
+    variant,
+    title: cms.title,
+    excerpt: cms.excerpt,
+    description: cms.description,
+    features: cms.features,
+    image: cms.image || "",
+    whatsappPrefill: cms.groupTitle ?? { ar: "", en: "" },
+  }
+}
+
+export async function allCampaignSlugs(): Promise<string[]> {
+  if (isBuildPhase()) return []
+  const items = await fetchPublicContent("campaign")
+  return items.map((item) => item.slug)
+}

@@ -12,7 +12,7 @@ import {
   PRODUCTION_SITE_URL,
 } from "@/lib/site-url"
 
-const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt"]
+const BYPASS_PREFIXES = ["/_next", "/dashboard", "/api", "/uploads", "/backend", "/llms", "/ai-txt", "/lp"]
 const BYPASS_EXACT = [
   "/favicon.ico",
   "/icon.svg",

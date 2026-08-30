@@ -107,6 +107,34 @@ export const translations = {
   },
   "demo.error": { ar: "تعذر إرسال الطلب. حاول مرة أخرى.", en: "Could not send the request. Please try again." },
 
+  "campaign.benefits": { ar: "لماذا LeapAI؟", en: "Why LeapAI?" },
+  "campaign.submit": { ar: "أرسل طلبك", en: "Submit your request" },
+  "campaign.submitting": { ar: "جارٍ الإرسال…", en: "Sending…" },
+  "campaign.success": { ar: "تم استلام طلبك", en: "Request received" },
+  "campaign.successText": {
+    ar: "شكراً لك. سيتواصل معك فريقنا قريباً.",
+    en: "Thank you. Our team will contact you shortly.",
+  },
+  "campaign.whatsappCta": { ar: "تواصل عبر واتساب", en: "Chat on WhatsApp" },
+  "campaign.whatsappHint": {
+    ar: "اضغط للانتقال مباشرة إلى محادثة واتساب مع فريق LeapAI.",
+    en: "Tap to open WhatsApp and message the LeapAI team.",
+  },
+  "campaign.backHome": { ar: "العودة للرئيسية", en: "Back to home" },
+  "campaign.defaultPrefill": {
+    ar: "مرحباً، أود معرفة المزيد عن LeapAI.",
+    en: "Hi, I would like to learn more about LeapAI.",
+  },
+  "campaign.profileDisplayName": { ar: "اسم العرض في واتساب", en: "WhatsApp Display Name" },
+  "campaign.profilePhone": { ar: "رقم واتساب", en: "WhatsApp Phone Number" },
+  "campaign.profileWebsite": { ar: "الموقع الرسمي", en: "Official Website" },
+  "campaign.profileEmail": { ar: "البريد الإلكتروني الرسمي", en: "Official Email Address" },
+  "campaign.profileDescription": { ar: "وصف الملف", en: "Profile Description" },
+  "campaign.profileDefaultDescription": {
+    ar: "المنصة السعودية الرائدة لتجربة العملاء المبنية أصلاً على الذكاء الاصطناعي — سحابة محلية في الرياض متوافقة مع PDPL.",
+    en: "Saudi Arabia's premier AI-native CX platform — PDPL-ready local cloud in Riyadh.",
+  },
+
   /* --------------------------- Services intro --------------------------- */
   "services.label": { ar: "LEAP AI", en: "LEAP AI" },
   "services.heading": {
@@ -688,6 +716,20 @@ export const translations = {
   "admin.contentForm.typeCase": { ar: "قصة نجاح", en: "Success Story" },
   "admin.contentForm.typeJob": { ar: "وظيفة شاغرة", en: "Job Opening" },
   "admin.contentForm.typeArticle": { ar: "مقال / مورد", en: "Article / Resource" },
+  "admin.contentForm.typeCampaign": { ar: "صفحة حملة", en: "Campaign landing" },
+  "admin.contentForm.campaignVariant": { ar: "نوع الحملة", en: "Campaign type" },
+  "admin.contentForm.campaignVariantHint": {
+    ar: "توليد عملاء محتملين (نموذج) أو نقرة إلى واتساب",
+    en: "Lead generation (form) or Click-to-WhatsApp",
+  },
+  "admin.contentForm.campaignLead": { ar: "توليد عملاء (نموذج)", en: "Lead generation (form)" },
+  "admin.contentForm.campaignWhatsapp": { ar: "نقرة إلى واتساب", en: "Click-to-WhatsApp" },
+  "admin.contentForm.campaignLeadHint": {
+    ar: "سيظهر نموذج الاسم والبريد ورقم الهاتف على /lp/الرابط",
+    en: "The landing page will show a name, business email, and phone form at /lp/your-slug",
+  },
+  "admin.contentForm.whatsappPrefill": { ar: "نص واتساب الجاهز", en: "WhatsApp prefilled message" },
+  "admin.contentForm.openLanding": { ar: "فتح صفحة الحملة", en: "Open landing page" },
   "admin.contentForm.urlSlug": { ar: "الرابط المختصر", en: "URL slug" },
   "admin.contentForm.urlSlugHint": { ar: "مثال: whatsapp-business", en: "e.g. whatsapp-business" },
   "admin.contentForm.urlSlugAutoHint": {

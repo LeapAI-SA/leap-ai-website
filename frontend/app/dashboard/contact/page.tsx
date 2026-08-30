@@ -11,6 +11,7 @@ import { useLanguage } from "@/lib/i18n"
 function sourceLabel(source: ContactMessage["source"], t: ReturnType<typeof useLanguage>["t"]) {
   if (source === "partner") return t("admin.contact.sourcePartner")
   if (source === "demo") return t("admin.contact.sourceDemo")
+  if (source === "campaign") return t("admin.contact.sourceCampaign")
   return t("admin.contact.sourceContact")
 }
 
