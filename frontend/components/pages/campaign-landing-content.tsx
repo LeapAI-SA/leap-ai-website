@@ -497,8 +497,8 @@ function WhatsAppPanel({
           <dt className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
             {t("campaign.profilePhone")}
           </dt>
-          <dd className="mt-1 text-sm font-semibold text-navy" dir="ltr">
-            {phone}
+          <dd className="mt-1 text-sm font-semibold text-navy">
+            <bdi dir="ltr">{phone}</bdi>
           </dd>
         </div>
         <div>
@@ -511,9 +511,8 @@ function WhatsAppPanel({
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary underline-offset-2 hover:underline"
-              dir="ltr"
             >
-              {websiteLabel(website)}
+              <bdi dir="ltr">{websiteLabel(website)}</bdi>
             </a>
           </dd>
         </div>
@@ -522,8 +521,8 @@ function WhatsAppPanel({
             {t("campaign.profileEmail")}
           </dt>
           <dd className="mt-1 text-sm font-semibold">
-            <a href={`mailto:${officialEmail}`} className="text-primary underline-offset-2 hover:underline" dir="ltr">
-              {officialEmail}
+            <a href={`mailto:${officialEmail}`} className="text-primary underline-offset-2 hover:underline">
+              <bdi dir="ltr">{officialEmail}</bdi>
             </a>
           </dd>
         </div>
