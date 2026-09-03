@@ -2,8 +2,8 @@
  * POST /api/indexnow — submit sitemap URLs to IndexNow (Bing / Yandex / Seznam / Naver).
  *
  * Auth (either):
- * - Admin JWT: Authorization: Bearer <dashboard token> (verified via backend /api/auth/me)
- * - Deploy secret: Authorization: Bearer $INDEXNOW_SUBMIT_SECRET or ?secret=
+ * - Admin session cookie (same-origin dashboard) verified via backend /api/auth/me
+ * - Deploy secret: Authorization: Bearer $INDEXNOW_SUBMIT_SECRET or header X-IndexNow-Secret
  */
 import { NextResponse } from "next/server"
 import { getApiUrl } from "@/lib/api-url"
@@ -18,10 +18,22 @@ import { getGscPriorityUrls, getRedirectOnlyUrls, getSitemapUrls } from "@/lib/s
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
-async function isAdminToken(token: string) {
+function looksLikeJwt(token: string) {
+  return token.split(".").length === 3
+}
+
+async function isAdminRequest(request: Request) {
+  const cookie = request.headers.get("cookie")?.trim() ?? ""
+  const header = request.headers.get("authorization")
+  const bearer = header?.startsWith("Bearer ") ? header.slice(7).trim() : ""
+  const headers: Record<string, string> = { Accept: "application/json" }
+  if (cookie) headers.Cookie = cookie
+  if (bearer && looksLikeJwt(bearer)) headers.Authorization = `Bearer ${bearer}`
+  if (!headers.Cookie && !headers.Authorization) return false
+
   try {
     const res = await fetch(`${getApiUrl()}/api/auth/me`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      headers,
       cache: "no-store",
     })
     if (!res.ok) return false
@@ -35,19 +47,14 @@ async function isAdminToken(token: string) {
 async function authorized(request: Request) {
   const header = request.headers.get("authorization")
   const bearer = header?.startsWith("Bearer ") ? header.slice(7).trim() : ""
-  const url = new URL(request.url)
-  const querySecret = url.searchParams.get("secret")?.trim() ?? ""
+  const deployHeader = request.headers.get("x-indexnow-secret")?.trim() ?? ""
   const deploySecret = process.env.INDEXNOW_SUBMIT_SECRET?.trim()
 
-  if (deploySecret && (bearer === deploySecret || querySecret === deploySecret)) {
+  if (deploySecret && (bearer === deploySecret || deployHeader === deploySecret)) {
     return true
   }
 
-  if (bearer && (await isAdminToken(bearer))) {
-    return true
-  }
-
-  return false
+  return isAdminRequest(request)
 }
 
 function httpStatusForIndexNow(result: {
@@ -59,7 +66,6 @@ function httpStatusForIndexNow(result: {
   const engines = result.engines ?? []
   if (engines.length > 0 && engines.every((e) => e.status === 0)) return 503
   if (result.status === 0) return 503
-  // Provider rejections (422, 403, etc.) — not a reverse-proxy failure
   return 422
 }
 

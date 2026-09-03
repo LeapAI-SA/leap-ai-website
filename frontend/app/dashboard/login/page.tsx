@@ -1,35 +1,36 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "motion/react"
 import { Lock, Mail, ArrowRight, Globe, Database, Zap } from "lucide-react"
-import { mapAdminError } from "@/lib/admin-i18n"
-import { loginAdmin, setToken } from "@/lib/api"
+import { loginAdmin } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
 
-export default function DashboardLoginPage() {
+function DashboardLoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const sessionExpired = searchParams.get("sessionExpired") === "1"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const { t, lang } = useLanguage()
+  const { t } = useLanguage()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError("")
     try {
-      const { token } = await loginAdmin(email, password)
-      setToken(token)
+      await loginAdmin(email, password)
       router.push("/dashboard")
     } catch (err) {
-      setError(mapAdminError(lang, err instanceof Error ? err.message : "", t("admin.login.failed")))
+      const message = err instanceof Error ? err.message : ""
+      setError(message || t("admin.login.failed"))
     } finally {
       setLoading(false)
     }
@@ -114,25 +115,36 @@ export default function DashboardLoginPage() {
             <h2 className="text-2xl font-extrabold text-navy">{t("admin.login.welcome")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{t("admin.login.subtitle")}</p>
 
+            {sessionExpired && (
+              <p className="mt-4 rounded-xl border border-amber/30 bg-amber/10 px-4 py-3 text-sm text-navy">
+                {t("admin.login.sessionExpired")}
+              </p>
+            )}
+
             {error && (
               <p className="mt-4 rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
                 {error}
               </p>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4" autoComplete="off">
               <label className="block">
                 <span className="text-sm font-semibold text-navy">{t("admin.login.email")}</span>
                 <div className="relative mt-2">
                   <Mail className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="email"
+                    name="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-input ps-10"
                     dir="ltr"
-                    placeholder="admin@leapai.ai"
+                    placeholder=""
+                    autoComplete="username"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
                   />
                 </div>
               </label>
@@ -143,12 +155,14 @@ export default function DashboardLoginPage() {
                   <Lock className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="password"
+                    name="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="form-input ps-10"
                     dir="ltr"
-                    placeholder="••••••••"
+                    placeholder=""
+                    autoComplete="current-password"
                   />
                 </div>
               </label>
@@ -172,5 +186,20 @@ export default function DashboardLoginPage() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function DashboardLoginPage() {
+  const { t } = useLanguage()
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          {t("admin.auth.checkingAccess")}
+        </div>
+      }
+    >
+      <DashboardLoginForm />
+    </Suspense>
   )
 }

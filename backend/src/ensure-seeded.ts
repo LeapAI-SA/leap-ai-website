@@ -154,7 +154,7 @@ export async function ensureSeeded() {
 
   const existing = await User.findOne({ email })
   if (!existing) {
-    const passwordHash = await bcrypt.hash(password, 10)
+    const passwordHash = await bcrypt.hash(password, 12)
     await User.create({ email, passwordHash, role: "admin" })
     console.log(`Admin user created: ${email}`)
   }

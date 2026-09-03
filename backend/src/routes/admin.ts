@@ -24,7 +24,7 @@ import {
   sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
-import { uploadImage, CV_UPLOAD_DIR } from "../middleware/upload.js"
+import { uploadImage, CV_UPLOAD_DIR, matchesImageMagic, removeUploadedFile } from "../middleware/upload.js"
 
 const router = Router()
 router.use(requireAuth, requireAdmin)
@@ -48,6 +48,10 @@ router.post("/upload", (req, res) => {
     }
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" })
+    }
+    if (!matchesImageMagic(req.file.path, req.file.mimetype)) {
+      removeUploadedFile(req.file.path)
+      return res.status(400).json({ error: "File content does not match an allowed image type" })
     }
     res.json({ url: `/uploads/${req.file.filename}` })
   })

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import rateLimit from "express-rate-limit"
 import { User } from "../models/User.js"
 import { requireAuth } from "../middleware/auth.js"
+import { clearAuthCookie, setAuthCookie } from "../lib/auth-cookie.js"
 
 const router = Router()
 
@@ -42,10 +43,15 @@ router.post("/login", loginLimiter, async (req, res) => {
     { expiresIn: "7d", algorithm: "HS256" },
   )
 
+  setAuthCookie(res, token)
   res.json({
-    token,
     user: { email: user.email, role: user.role },
   })
+})
+
+router.post("/logout", (_req, res) => {
+  clearAuthCookie(res)
+  res.json({ ok: true })
 })
 
 router.get("/me", requireAuth, async (req, res) => {

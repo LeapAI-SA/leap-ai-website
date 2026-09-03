@@ -672,6 +672,10 @@ export const translations = {
   "admin.login.signingIn": { ar: "جارٍ تسجيل الدخول...", en: "Signing in..." },
   "admin.login.signIn": { ar: "دخول إلى اللوحة", en: "Sign in to dashboard" },
   "admin.login.failed": { ar: "فشل تسجيل الدخول", en: "Login failed" },
+  "admin.login.sessionExpired": {
+    ar: "انتهت الجلسة. أدخل البريد الإلكتروني وكلمة المرور لتسجيل الدخول مرة أخرى.",
+    en: "Session expired. Enter your email and password to sign in again.",
+  },
   "admin.login.portal": { ar: "بوابة إدارة LeapAI", en: "LeapAI — Admin Portal" },
   "admin.auth.checkingAccess": { ar: "جارٍ التحقق من الصلاحية...", en: "Checking access..." },
 

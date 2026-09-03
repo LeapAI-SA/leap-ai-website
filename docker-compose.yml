@@ -3,11 +3,12 @@ services:
     image: mongo:7
     container_name: leap-mongodb
     restart: unless-stopped
+    # Bind to localhost only — do not publish Mongo on all interfaces in production.
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: leap
-      MONGO_INITDB_ROOT_PASSWORD: leapsecret
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-leapsecret}
       MONGO_INITDB_DATABASE: leapai
     volumes:
       - mongo_data:/data/db
@@ -41,16 +42,16 @@ services:
       - "4000:4000"
     environment:
       PORT: 4000
-      MONGODB_URI: mongodb://leap:leapsecret@mongodb:27017/leapai?authSource=admin
+      MONGODB_URI: mongodb://leap:${MONGO_ROOT_PASSWORD:-leapsecret}@mongodb:27017/leapai?authSource=admin
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai.ai,https://leapai-webhook.bab.solutions}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      ENFORCE_PROD_SECRETS: ${ENFORCE_PROD_SECRETS:-false}
       SEED_ON_START: ${SEED_ON_START:-true}
-      DEMO_LEADS_EMAIL: ${DEMO_LEADS_EMAIL:-sales@leapai.ai}
-      CONTACT_EMAIL: ${CONTACT_EMAIL:-info@leapai.ai}
-      SMTP_HOST: ${SMTP_HOST:-smtp.office365.com}
+      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-noreply@leapai.ai}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
       SMTP_USER: ${SMTP_USER:-noreply@leapai.ai}

@@ -7,7 +7,7 @@ import { JobApplication } from "../models/JobApplication.js"
 import { isNonEmptyString, isValidEmail, trimString } from "../lib/validate.js"
 import { isBusinessEmail } from "../lib/business-email.js"
 import { sendDemoLeadEmail, sendCareersApplicationEmail, sendContactInquiryEmail } from "../lib/mail.js"
-import { uploadCv } from "../middleware/upload.js"
+import { uploadCv, matchesCvMagic, removeUploadedFile } from "../middleware/upload.js"
 import { cacheGet, cacheSet } from "../config/redis.js"
 import { rewritePricingPlansCopy } from "../lib/whatsapp-tick.js"
 
@@ -120,7 +120,7 @@ router.post("/demo", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to sales@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
     })
   }
 })
@@ -151,7 +151,7 @@ router.post("/contact", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
     })
   }
 })
@@ -216,7 +216,7 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
     })
   }
 })
@@ -228,6 +228,10 @@ router.post("/careers/apply", contactLimiter, (req, res) => {
     }
     if (!req.file) {
       return res.status(400).json({ error: "CV file is required (PDF, DOC, or DOCX)" })
+    }
+    if (!matchesCvMagic(req.file.path, req.file.mimetype)) {
+      removeUploadedFile(req.file.path)
+      return res.status(400).json({ error: "CV file content does not match PDF, DOC, or DOCX" })
     }
 
     const body = req.body as Record<string, string>

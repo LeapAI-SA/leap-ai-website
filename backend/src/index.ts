@@ -9,10 +9,21 @@ import authRoutes from "./routes/auth.js"
 import publicRoutes from "./routes/public.js"
 import adminRoutes from "./routes/admin.js"
 import { UPLOAD_DIR } from "./middleware/upload.js"
+import { getMailStatus } from "./lib/mail.js"
 
 const PORT = Number(process.env.PORT ?? 4000)
 const isProd = process.env.NODE_ENV === "production"
-const strictSecrets = process.env.ENFORCE_PROD_SECRETS === "true"
+const strictSecrets =
+  process.env.ENFORCE_PROD_SECRETS === "true" || (isProd && process.env.ENFORCE_PROD_SECRETS !== "false")
+
+const INSECURE_JWT = [
+  "dev-jwt-secret-change-in-production",
+  "CHANGE_ME",
+  "CHANGE_ME-long-random-secret",
+  "CHANGE_ME-long-random-secret-at-least-32-chars",
+  "",
+]
+const INSECURE_ADMIN_PASSWORDS = ["admin123", "password", "CHANGE_ME", "CHANGE_ME_STRONG_PASSWORD", ""]
 
 function rejectInsecureDefault(name: string, value: string, insecure: string[]) {
   if (strictSecrets && insecure.includes(value)) {
@@ -25,6 +36,9 @@ const MONGODB_URI =
   (isProd ? undefined : "mongodb://leap:leapsecret@localhost:27017/leapai?authSource=admin")
 if (!MONGODB_URI) throw new Error("MONGODB_URI is required")
 const mongoUri = MONGODB_URI
+if (strictSecrets && /leapsecret/i.test(mongoUri)) {
+  throw new Error("MONGODB_URI must not use the default leapsecret password (ENFORCE_PROD_SECRETS is enabled)")
+}
 
 const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379"
 const corsOriginRaw = process.env.CORS_ORIGIN ?? (isProd ? undefined : "http://localhost:3000")
@@ -36,7 +50,13 @@ function parseCorsOrigins(raw: string): string[] {
 }
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "dev-jwt-secret-change-in-production"
-rejectInsecureDefault("JWT_SECRET", JWT_SECRET, ["dev-jwt-secret-change-in-production"])
+rejectInsecureDefault("JWT_SECRET", JWT_SECRET, INSECURE_JWT)
+if (strictSecrets && JWT_SECRET.length < 32) {
+  throw new Error("JWT_SECRET must be at least 32 characters when ENFORCE_PROD_SECRETS is enabled")
+}
+
+const adminPassword = process.env.ADMIN_PASSWORD ?? "admin123"
+rejectInsecureDefault("ADMIN_PASSWORD", adminPassword, INSECURE_ADMIN_PASSWORDS)
 
 async function start() {
   process.env.JWT_SECRET = JWT_SECRET
@@ -79,7 +99,7 @@ async function start() {
 
   const adminLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 500,
+    max: 120,
     standardHeaders: true,
     legacyHeaders: false,
   })
@@ -128,6 +148,12 @@ async function start() {
   })
 
   app.listen(PORT, () => {
+    const mail = getMailStatus()
+    if (mail.configured) {
+      console.log(`SMTP configured → notifications to ${mail.notificationTo}`)
+    } else {
+      console.warn("SMTP not configured — forms save to DB only")
+    }
     console.log(`Backend running on http://localhost:${PORT}`)
   })
 }

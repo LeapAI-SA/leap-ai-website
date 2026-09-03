@@ -1,9 +1,20 @@
 import nodemailer from "nodemailer"
 
-const DEMO_TO = (process.env.DEMO_LEADS_EMAIL ?? "sales@leapai.ai").trim()
+function notificationTo() {
+  return (
+    process.env.NOTIFICATION_EMAIL ??
+    process.env.CONTACT_EMAIL ??
+    process.env.SMTP_USER ??
+    "noreply@leapai.ai"
+  ).trim()
+}
 
-function smtpConfigured() {
+export function smtpConfigured() {
   return Boolean(process.env.SMTP_HOST?.trim() && process.env.SMTP_USER?.trim() && process.env.SMTP_PASS)
+}
+
+export function getMailStatus() {
+  return { configured: smtpConfigured(), notificationTo: notificationTo() }
 }
 
 function createTransport() {
@@ -22,7 +33,7 @@ function createTransport() {
 export async function sendDemoLeadEmail(input: { name: string; email: string; phone: string }) {
   if (!smtpConfigured()) {
     console.warn(
-      "SMTP is not configured — demo lead saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally DEMO_LEADS_EMAIL).",
+      "SMTP is not configured — demo lead saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally NOTIFICATION_EMAIL).",
     )
     return { emailed: false as const, reason: "smtp_not_configured" }
   }
@@ -31,7 +42,7 @@ export async function sendDemoLeadEmail(input: { name: string; email: string; ph
   const transporter = createTransport()
   await transporter.sendMail({
     from,
-    to: DEMO_TO,
+    to: notificationTo(),
     replyTo: input.email,
     subject: `Book a demo — ${input.name}`,
     text: [
@@ -65,10 +76,9 @@ export async function sendContactInquiryEmail(input: {
   address?: string
   message: string
 }) {
-  const to = (process.env.CONTACT_EMAIL ?? "info@leapai.ai").trim()
   if (!smtpConfigured()) {
     console.warn(
-      "SMTP is not configured — contact message saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally CONTACT_EMAIL).",
+      "SMTP is not configured — contact message saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally NOTIFICATION_EMAIL).",
     )
     return { emailed: false as const, reason: "smtp_not_configured" }
   }
@@ -79,7 +89,7 @@ export async function sendContactInquiryEmail(input: {
   const transporter = createTransport()
   await transporter.sendMail({
     from,
-    to,
+    to: notificationTo(),
     replyTo: input.email,
     subject: `${sourceLabel} — ${input.name}`,
     text: [
@@ -121,10 +131,9 @@ export async function sendCareersApplicationEmail(input: {
   positionSlug: string
   message?: string
 }) {
-  const to = (process.env.CAREERS_EMAIL ?? "info@leapai.ai").trim()
   if (!smtpConfigured()) {
     console.warn(
-      "SMTP is not configured — job application saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally CAREERS_EMAIL).",
+      "SMTP is not configured — job application saved but not emailed. Set SMTP_HOST, SMTP_USER, SMTP_PASS (and optionally NOTIFICATION_EMAIL).",
     )
     return { emailed: false as const, reason: "smtp_not_configured" }
   }
@@ -133,7 +142,7 @@ export async function sendCareersApplicationEmail(input: {
   const transporter = createTransport()
   await transporter.sendMail({
     from,
-    to,
+    to: notificationTo(),
     replyTo: input.email,
     subject: `Job application — ${input.positionTitle} (${input.name})`,
     text: [

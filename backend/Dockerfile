@@ -14,8 +14,8 @@ RUN cp -r src/data dist/data
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV DEMO_LEADS_EMAIL=sales@leapai.ai
-ENV SMTP_HOST=smtp.office365.com
+ENV NOTIFICATION_EMAIL=noreply@leapai.ai
+ENV SMTP_HOST=smtp.gmail.com
 ENV SMTP_PORT=587
 ENV SMTP_SECURE=false
 ENV SMTP_FROM="LeapAI Website <noreply@leapai.ai>"

@@ -17,7 +17,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react"
-import { getToken, setToken } from "@/lib/api"
+import { hasAuthSession, logoutAdmin } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
 import { resolveMediaUrl } from "@/lib/media"
 import { DashButton } from "./ui"
@@ -53,8 +53,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       ? t("admin.nav.editContent")
       : t("admin.common.dashboard")))
 
-  function logout() {
-    setToken(null)
+  async function logout() {
+    await logoutAdmin()
     router.push("/dashboard/login")
   }
 
@@ -199,7 +199,7 @@ export function useDashboardAuth() {
   const router = useRouter()
 
   function requireAuth() {
-    if (!getToken()) {
+    if (!hasAuthSession()) {
       router.replace("/dashboard/login")
       return false
     }

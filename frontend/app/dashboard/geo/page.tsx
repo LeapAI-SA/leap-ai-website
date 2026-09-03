@@ -16,7 +16,7 @@ import {
   Send,
 } from "lucide-react"
 import { GEO_ENDPOINT_CHECKS, geoBrowserUrl, geoDisplayUrl, geoPublicSiteUrl } from "@/lib/geo-endpoints"
-import { getToken } from "@/lib/api"
+import { hasAuthSession } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
 import { adminTf } from "@/lib/admin-tf"
 import { getBasePath } from "@/lib/site-url"
@@ -141,16 +141,22 @@ export default function DashboardGeoPage() {
   }, [])
 
   const loadIndexNowStatus = useCallback(async () => {
-    const token = getToken()
-    if (!token) return
+    if (!hasAuthSession()) return
     setIndexNowLoading(true)
     try {
       const res = await fetch(indexNowApiUrl(), {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        headers: { Accept: "application/json" },
+        credentials: "include",
         cache: "no-store",
       })
       const data = (await res.json().catch(() => ({}))) as IndexNowStatus & { error?: string }
-      if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
+      if (!res.ok) {
+        if (res.status === 401 && typeof window !== "undefined") {
+          window.location.replace("/dashboard/login?sessionExpired=1")
+          return
+        }
+        throw new Error(data.error ?? `HTTP ${res.status}`)
+      }
       setIndexNow(data)
     } catch (err) {
       setIndexNow(null)
@@ -164,8 +170,7 @@ export default function DashboardGeoPage() {
   }, [])
 
   const submitIndexNow = useCallback(async () => {
-    const token = getToken()
-    if (!token) {
+    if (!hasAuthSession()) {
       setIndexNowMessage({ variant: "error", text: t("admin.geo.signInAgain") })
       return
     }
@@ -175,15 +180,16 @@ export default function DashboardGeoPage() {
       const res = await fetch(indexNowApiUrl(), {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
           Accept: "application/json",
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: "{}",
       })
       const data = (await res.json().catch(() => ({}))) as IndexNowSubmitResult
-      if (res.status === 401) {
-        throw new Error(data.error || "Unauthorized — sign in again.")
+      if (res.status === 401 && typeof window !== "undefined") {
+        window.location.replace("/dashboard/login?sessionExpired=1")
+        return
       }
 
       setIndexNow((prev) =>

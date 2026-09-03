@@ -107,10 +107,14 @@ function apiUnreachableMessage() {
 }
 
 const FETCH_TIMEOUT_MS = 3000
+const AUTH_SESSION_KEY = "leap-admin-session"
 
 async function clientFetch(input: string, init?: RequestInit) {
   try {
-    return await fetch(input, init)
+    return await fetch(input, {
+      ...init,
+      credentials: "include",
+    })
   } catch {
     throw new Error(apiUnreachableMessage())
   }
@@ -169,28 +173,71 @@ export async function fetchPublicContent(type: ContentItemPublic["type"]): Promi
   }
 }
 
+/** UI-only session flag (JWT lives in httpOnly cookie). */
+export function hasAuthSession(): boolean {
+  if (typeof window === "undefined") return false
+  return sessionStorage.getItem(AUTH_SESSION_KEY) === "1"
+}
+
+export function setAuthSession(active: boolean) {
+  if (typeof window === "undefined") return
+  if (active) sessionStorage.setItem(AUTH_SESSION_KEY, "1")
+  else sessionStorage.removeItem(AUTH_SESSION_KEY)
+}
+
+/** @deprecated Prefer hasAuthSession(); kept for call-site compatibility. */
 export function getToken(): string | null {
-  if (typeof window === "undefined") return null
-  return localStorage.getItem("leap-admin-token")
+  return hasAuthSession() ? "cookie" : null
 }
 
 export function setToken(token: string | null) {
-  if (typeof window === "undefined") return
-  if (token) localStorage.setItem("leap-admin-token", token)
-  else localStorage.removeItem("leap-admin-token")
+  setAuthSession(Boolean(token))
+  if (!token && typeof window !== "undefined") {
+    void clientFetch(`${browserApiUrl()}/api/auth/logout`, { method: "POST" }).catch(() => undefined)
+  }
+}
+
+export async function fetchAuthMe(): Promise<{ user: { email: string; role: string; userId?: string } } | null> {
+  try {
+    const res = await clientFetch(`${browserApiUrl()}/api/auth/me`, {
+      headers: { Accept: "application/json" },
+    })
+    if (res.status === 401) {
+      setAuthSession(false)
+      return null
+    }
+    if (!res.ok) return null
+    const data = (await res.json()) as { user: { email: string; role: string; userId?: string } }
+    setAuthSession(true)
+    return data
+  } catch {
+    return null
+  }
+}
+
+export async function logoutAdmin() {
+  setAuthSession(false)
+  try {
+    await clientFetch(`${browserApiUrl()}/api/auth/logout`, { method: "POST" })
+  } catch {
+    /* ignore */
+  }
 }
 
 export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getToken()
   const res = await clientFetch(`${browserApiUrl()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(init?.headers ?? {}),
     },
   })
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      setAuthSession(false)
+      window.location.replace("/dashboard/login?sessionExpired=1")
+      throw new Error("Unauthorized")
+    }
     const err = await res.json().catch(() => ({ error: res.statusText }))
     throw new Error(err.error ?? "Request failed")
   }
@@ -207,7 +254,14 @@ export async function loginAdmin(email: string, password: string) {
     const err = await res.json().catch(() => ({ error: "Login failed" }))
     throw new Error(err.error ?? "Login failed")
   }
-  return res.json() as Promise<{ token: string; user: { email: string; role: string } }>
+  const data = (await res.json()) as { user: { email: string; role: string } }
+  setAuthSession(true)
+  try {
+    localStorage.removeItem("leap-admin-token")
+  } catch {
+    /* ignore */
+  }
+  return data
 }
 
 export async function submitDemoRequest(payload: { name: string; email: string; phone: string }) {
@@ -275,15 +329,18 @@ export async function submitJobApplication(form: FormData) {
 }
 
 export async function uploadAdminImage(file: File): Promise<string> {
-  const token = getToken()
   const form = new FormData()
   form.append("file", file)
   const res = await clientFetch(`${browserApiUrl()}/api/admin/upload`, {
     method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: form,
   })
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      setAuthSession(false)
+      window.location.replace("/dashboard/login?sessionExpired=1")
+      throw new Error("Unauthorized")
+    }
     const err = await res.json().catch(() => ({ error: "Upload failed" }))
     throw new Error(err.error ?? "Upload failed")
   }
@@ -292,11 +349,13 @@ export async function uploadAdminImage(file: File): Promise<string> {
 }
 
 export async function downloadJobApplicationCv(id: string, filename = "cv.pdf") {
-  const token = getToken()
-  const res = await clientFetch(`${browserApiUrl()}/api/admin/job-applications/${id}/cv`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
+  const res = await clientFetch(`${browserApiUrl()}/api/admin/job-applications/${id}/cv`)
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== "undefined") {
+      setAuthSession(false)
+      window.location.replace("/dashboard/login?sessionExpired=1")
+      throw new Error("Unauthorized")
+    }
     const err = await res.json().catch(() => ({ error: "Download failed" }))
     throw new Error(err.error ?? "Download failed")
   }

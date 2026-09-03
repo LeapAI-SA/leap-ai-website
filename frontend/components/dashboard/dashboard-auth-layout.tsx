@@ -1,31 +1,64 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState, Suspense } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { getToken } from "@/lib/api"
+import { fetchAuthMe, logoutAdmin, setAuthSession } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
 
-export function DashboardAuthLayout({ children }: { children: React.ReactNode }) {
+function DashboardAuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isLogin = pathname === "/dashboard/login"
-  const [checked, setChecked] = useState(isLogin)
+  const sessionExpired = searchParams.get("sessionExpired") === "1"
+  const [checked, setChecked] = useState(false)
   const { t } = useLanguage()
 
   useEffect(() => {
-    if (isLogin) {
+    let cancelled = false
+
+    async function run() {
+      if (isLogin) {
+        if (sessionExpired) {
+          await logoutAdmin()
+          if (!cancelled) setChecked(true)
+          return
+        }
+        const me = await fetchAuthMe()
+        if (cancelled) return
+        if (me) {
+          router.replace("/dashboard")
+          return
+        }
+        setChecked(true)
+        return
+      }
+
+      const me = await fetchAuthMe()
+      if (cancelled) return
+      if (!me) {
+        setAuthSession(false)
+        router.replace("/dashboard/login?sessionExpired=1")
+        return
+      }
       setChecked(true)
-      return
     }
-    if (!getToken()) {
-      router.replace("/dashboard/login")
-      return
+
+    void run()
+    return () => {
+      cancelled = true
     }
-    setChecked(true)
-  }, [isLogin, router])
+  }, [isLogin, router, sessionExpired])
 
   if (isLogin) {
+    if (!checked) {
+      return (
+        <div className="dash-theme flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          {t("admin.auth.checkingAccess")}
+        </div>
+      )
+    }
     return <div className="dash-theme">{children}</div>
   }
 
@@ -41,5 +74,20 @@ export function DashboardAuthLayout({ children }: { children: React.ReactNode })
     <div className="dash-theme">
       <DashboardShell>{children}</DashboardShell>
     </div>
+  )
+}
+
+export function DashboardAuthLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useLanguage()
+  return (
+    <Suspense
+      fallback={
+        <div className="dash-theme flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+          {t("admin.auth.checkingAccess")}
+        </div>
+      }
+    >
+      <DashboardAuthGate>{children}</DashboardAuthGate>
+    </Suspense>
   )
 }

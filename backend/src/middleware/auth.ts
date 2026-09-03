@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
+import { extractAuthToken } from "../lib/auth-cookie.js"
 
 export type AuthUser = {
   userId: string
@@ -18,12 +19,11 @@ declare global {
 const JWT_OPTIONS: jwt.VerifyOptions = { algorithms: ["HS256"] }
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const header = req.headers.authorization
-  if (!header?.startsWith("Bearer ")) {
+  const token = extractAuthToken(req)
+  if (!token) {
     return res.status(401).json({ error: "Unauthorized" })
   }
 
-  const token = header.slice(7)
   const secret = process.env.JWT_SECRET
   if (!secret) {
     return res.status(500).json({ error: "Server misconfigured" })

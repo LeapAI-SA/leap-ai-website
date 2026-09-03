@@ -20,10 +20,12 @@ LeapAI monorepo for:
 - Backend API: `http://localhost:4000`
 - Same-origin proxy: `http://localhost:3000/backend/...`
 
-## Admin Credentials (default)
+## Admin Credentials (local development only)
 
 - Email: `admin@leapai.ai`
 - Password: `admin123`
+
+Do **not** use these values in production. Set a strong `JWT_SECRET` (32+ chars), `ADMIN_PASSWORD`, and `MONGO_ROOT_PASSWORD`, and set `ENFORCE_PROD_SECRETS=true`.
 
 > **Simple admin guide (no programming):** see [docs/HOW-TO-USE-ADMIN.md](docs/HOW-TO-USE-ADMIN.md)
 
@@ -61,6 +63,7 @@ JWT_SECRET=dev-jwt-secret-change-in-production
 CORS_ORIGIN=http://localhost:3000
 ADMIN_EMAIL=admin@leapai.ai
 ADMIN_PASSWORD=admin123
+ENFORCE_PROD_SECRETS=false
 ```
 
 `frontend/.env` (same-origin proxy, root hosting):
