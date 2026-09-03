@@ -55,6 +55,17 @@ if (strictSecrets && JWT_SECRET.length < 32) {
   throw new Error("JWT_SECRET must be at least 32 characters when ENFORCE_PROD_SECRETS is enabled")
 }
 
+const mfaCodeSecret = process.env.MFA_CODE_SECRET?.trim() || JWT_SECRET
+rejectInsecureDefault("MFA_CODE_SECRET", mfaCodeSecret, [
+  "dev-mfa-secret-change-in-production",
+  "CHANGE_ME-independent-mfa-secret-32-chars",
+  "",
+])
+if (strictSecrets && mfaCodeSecret.length < 32) {
+  throw new Error("MFA_CODE_SECRET must be at least 32 characters when ENFORCE_PROD_SECRETS is enabled")
+}
+process.env.MFA_CODE_SECRET = mfaCodeSecret
+
 const adminPassword = process.env.ADMIN_PASSWORD ?? "admin123"
 rejectInsecureDefault("ADMIN_PASSWORD", adminPassword, INSECURE_ADMIN_PASSWORDS)
 

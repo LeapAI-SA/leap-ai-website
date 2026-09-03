@@ -5,7 +5,7 @@ function notificationTo() {
     process.env.NOTIFICATION_EMAIL ??
     process.env.CONTACT_EMAIL ??
     process.env.SMTP_USER ??
-    "noreply@leapai.ai"
+    "info@leapai.ai"
   ).trim()
 }
 
@@ -27,6 +27,34 @@ function createTransport() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+  })
+}
+
+export async function sendAdminMfaCodeEmail(input: { email: string; code: string; expiresInMinutes: number }) {
+  if (!smtpConfigured()) {
+    throw new Error("SMTP is not configured")
+  }
+
+  const from = process.env.SMTP_FROM?.trim() || process.env.SMTP_USER!.trim()
+  const transporter = createTransport()
+  await transporter.sendMail({
+    from,
+    to: input.email,
+    subject: "LeapAI Admin — verification code",
+    text: [
+      "Your LeapAI Admin verification code is:",
+      "",
+      input.code,
+      "",
+      `This code expires in ${input.expiresInMinutes} minutes.`,
+      "If you did not try to sign in, change your password immediately.",
+    ].join("\n"),
+    html: `
+      <p>Your <strong>LeapAI Admin</strong> verification code is:</p>
+      <p style="font-size:28px;font-weight:700;letter-spacing:8px">${escapeHtml(input.code)}</p>
+      <p>This code expires in ${input.expiresInMinutes} minutes.</p>
+      <p>If you did not try to sign in, change your password immediately.</p>
+    `,
   })
 }
 

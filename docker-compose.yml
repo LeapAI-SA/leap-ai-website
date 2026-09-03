@@ -45,18 +45,19 @@ services:
       MONGODB_URI: mongodb://leap:${MONGO_ROOT_PASSWORD:-leapsecret}@mongodb:27017/leapai?authSource=admin
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
+      MFA_CODE_SECRET: ${MFA_CODE_SECRET:-dev-mfa-secret-change-in-production}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai.ai,https://leapai-webhook.bab.solutions}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
       ENFORCE_PROD_SECRETS: ${ENFORCE_PROD_SECRETS:-false}
       SEED_ON_START: ${SEED_ON_START:-true}
-      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-noreply@leapai.ai}
+      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-info@leapai.ai}
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
-      SMTP_USER: ${SMTP_USER:-noreply@leapai.ai}
+      SMTP_USER: ${SMTP_USER:-info@leapai.ai}
       SMTP_PASS: ${SMTP_PASS:-}
-      SMTP_FROM: ${SMTP_FROM:-LeapAI Website <noreply@leapai.ai>}
+      SMTP_FROM: ${SMTP_FROM:-LeapAI Website <info@leapai.ai>}
     volumes:
       - uploads_data:/app/uploads
     depends_on:

@@ -11,6 +11,8 @@ function DashboardAuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const isLogin = pathname === "/dashboard/login"
+  const isMfaVerify = pathname === "/dashboard/login/verify"
+  const isAuthPage = isLogin || isMfaVerify
   const sessionExpired = searchParams.get("sessionExpired") === "1"
   const [checked, setChecked] = useState(false)
   const { t } = useLanguage()
@@ -19,7 +21,7 @@ function DashboardAuthGate({ children }: { children: React.ReactNode }) {
     let cancelled = false
 
     async function run() {
-      if (isLogin) {
+      if (isAuthPage) {
         if (sessionExpired) {
           await logoutAdmin()
           if (!cancelled) setChecked(true)
@@ -49,9 +51,9 @@ function DashboardAuthGate({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [isLogin, router, sessionExpired])
+  }, [isAuthPage, router, sessionExpired])
 
-  if (isLogin) {
+  if (isAuthPage) {
     if (!checked) {
       return (
         <div className="dash-theme flex min-h-screen items-center justify-center text-sm text-muted-foreground">

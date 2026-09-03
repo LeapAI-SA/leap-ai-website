@@ -254,14 +254,81 @@ export async function loginAdmin(email: string, password: string) {
     const err = await res.json().catch(() => ({ error: "Login failed" }))
     throw new Error(err.error ?? "Login failed")
   }
-  const data = (await res.json()) as { user: { email: string; role: string } }
-  setAuthSession(true)
+  const data = (await res.json()) as {
+    mfaRequired: true
+    maskedEmail: string
+    expiresIn: number
+    resendAfter: number
+  }
+  setAuthSession(false)
   try {
     localStorage.removeItem("leap-admin-token")
   } catch {
     /* ignore */
   }
   return data
+}
+
+export async function fetchAdminMfaStatus() {
+  const res = await clientFetch(`${browserApiUrl()}/api/auth/mfa/status`, {
+    headers: { Accept: "application/json" },
+  })
+  if (!res.ok) return null
+  return res.json() as Promise<{
+    active: true
+    maskedEmail: string
+    expiresIn: number
+    resendAfter: number
+    attemptsRemaining: number
+  }>
+}
+
+export async function verifyAdminMfa(code: string) {
+  const res = await clientFetch(`${browserApiUrl()}/api/auth/mfa/verify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  })
+  if (!res.ok) {
+    const data = (await res.json().catch(() => ({}))) as { error?: string; attemptsRemaining?: number }
+    const error = new Error(data.error ?? "Verification failed")
+    Object.assign(error, { attemptsRemaining: data.attemptsRemaining })
+    throw error
+  }
+  const data = (await res.json()) as { user: { email: string; role: string } }
+  setAuthSession(true)
+  return data
+}
+
+export async function resendAdminMfa() {
+  const res = await clientFetch(`${browserApiUrl()}/api/auth/mfa/resend`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  })
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean
+    maskedEmail?: string
+    expiresIn?: number
+    resendAfter?: number
+    retryAfter?: number
+    error?: string
+  }
+  if (!res.ok) {
+    const error = new Error(data.error ?? "Could not resend verification code")
+    Object.assign(error, { retryAfter: data.retryAfter })
+    throw error
+  }
+  return data as {
+    ok: true
+    maskedEmail: string
+    expiresIn: number
+    resendAfter: number
+  }
+}
+
+export async function cancelAdminMfa() {
+  await clientFetch(`${browserApiUrl()}/api/auth/mfa/cancel`, { method: "POST" }).catch(() => undefined)
 }
 
 export async function submitDemoRequest(payload: { name: string; email: string; phone: string }) {

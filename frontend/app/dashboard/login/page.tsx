@@ -21,13 +21,14 @@ function DashboardLoginForm() {
   const [loading, setLoading] = useState(false)
   const { t } = useLanguage()
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleCredentials(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError("")
     try {
       await loginAdmin(email, password)
-      router.push("/dashboard")
+      setPassword("")
+      router.push("/dashboard/login/verify")
     } catch (err) {
       const message = err instanceof Error ? err.message : ""
       setError(message || t("admin.login.failed"))
@@ -127,7 +128,7 @@ function DashboardLoginForm() {
               </p>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4" autoComplete="off">
+            <form onSubmit={handleCredentials} className="mt-6 space-y-4" autoComplete="off">
               <label className="block">
                 <span className="text-sm font-semibold text-navy">{t("admin.login.email")}</span>
                 <div className="relative mt-2">

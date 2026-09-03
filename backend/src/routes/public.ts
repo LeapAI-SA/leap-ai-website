@@ -120,7 +120,7 @@ router.post("/demo", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
     })
   }
 })
@@ -151,7 +151,7 @@ router.post("/contact", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
     })
   }
 })
@@ -216,7 +216,7 @@ router.post("/campaign-lead", contactLimiter, async (req, res) => {
       ok: true,
       id: item._id.toString(),
       emailed: false,
-      warning: "Saved but email to noreply@leapai.ai failed. Check SMTP settings.",
+      warning: "Saved but email to info@leapai.ai failed. Check SMTP settings.",
     })
   }
 })

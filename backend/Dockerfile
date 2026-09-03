@@ -14,11 +14,11 @@ RUN cp -r src/data dist/data
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV NOTIFICATION_EMAIL=noreply@leapai.ai
+ENV NOTIFICATION_EMAIL=info@leapai.ai
 ENV SMTP_HOST=smtp.gmail.com
 ENV SMTP_PORT=587
 ENV SMTP_SECURE=false
-ENV SMTP_FROM="LeapAI Website <noreply@leapai.ai>"
+ENV SMTP_FROM="LeapAI Website <info@leapai.ai>"
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY package.json ./

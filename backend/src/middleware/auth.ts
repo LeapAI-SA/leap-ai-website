@@ -6,6 +6,7 @@ export type AuthUser = {
   userId: string
   email: string
   role: string
+  mfaVerified: true
 }
 
 declare global {
@@ -30,7 +31,16 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    req.user = jwt.verify(token, secret, JWT_OPTIONS) as AuthUser
+    const decoded = jwt.verify(token, secret, JWT_OPTIONS) as Partial<AuthUser>
+    if (
+      decoded.mfaVerified !== true ||
+      typeof decoded.userId !== "string" ||
+      typeof decoded.email !== "string" ||
+      typeof decoded.role !== "string"
+    ) {
+      return res.status(401).json({ error: "MFA verification required" })
+    }
+    req.user = decoded as AuthUser
     next()
   } catch {
     return res.status(401).json({ error: "Invalid token" })
