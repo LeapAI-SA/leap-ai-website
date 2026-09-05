@@ -75,6 +75,7 @@ services:
         NEXT_PUBLIC_BASE_PATH: ${NEXT_PUBLIC_BASE_PATH:-}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://leapai.ai}
         NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-GTM-NC7WPDNV}
+        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-G-7NWB9C7RNB}
         API_URL: http://backend:4000
     container_name: leap-frontend
     restart: unless-stopped
@@ -87,6 +88,7 @@ services:
       INTERNAL_API_URL: http://backend:4000
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://leapai.ai}
       NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-GTM-NC7WPDNV}
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-G-7NWB9C7RNB}
     healthcheck:
       test:
         [

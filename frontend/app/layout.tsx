@@ -6,6 +6,7 @@ import {
   GoogleTagManagerHead,
   GoogleTagManagerNoscript,
 } from '@/components/analytics/google-tag-manager'
+import { getGaMeasurementId, GoogleAnalytics } from '@/components/analytics/google-analytics'
 import { JsonLd } from '@/components/seo/json-ld'
 import { getNavContent, staticNavContent } from '@/lib/cms'
 import { fetchPublicSettings } from '@/lib/api'
@@ -56,6 +57,7 @@ export default async function RootLayout({
 
   const globalGeoSchemas = [organizationSchema, websiteSchema, softwareSchema, corporationSchema]
   const gtmId = getGtmId()
+  const gaMeasurementId = getGaMeasurementId()
 
   return (
     <html
@@ -66,6 +68,7 @@ export default async function RootLayout({
     >
       <head>
         <GoogleTagManagerHead id={gtmId} />
+        <GoogleAnalytics id={gaMeasurementId} />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <GoogleTagManagerNoscript id={gtmId} />
