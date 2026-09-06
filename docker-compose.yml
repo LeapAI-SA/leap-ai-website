@@ -47,8 +47,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
       MFA_CODE_SECRET: ${MFA_CODE_SECRET:-dev-mfa-secret-change-in-production}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai.ai,https://leapai-webhook.bab.solutions}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@leapai.ai}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-a.osman@bab.com.sa}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin@bab@#@#"}
       ENFORCE_PROD_SECRETS: ${ENFORCE_PROD_SECRETS:-false}
       SEED_ON_START: ${SEED_ON_START:-true}
       NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-info@leapai.ai}
