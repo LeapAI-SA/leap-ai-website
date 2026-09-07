@@ -1,0 +1,29 @@
+{
+  "type": "campaign",
+  "slug": "leap-space-demo",
+  "groupSlug": "lead",
+  "published": true,
+  "sortOrder": 2,
+  "groupTitle": { "ar": "", "en": "" },
+  "title": {
+    "ar": "احجز عرض Leap Space",
+    "en": "Book a Leap Space Demo"
+  },
+  "excerpt": {
+    "ar": "منصة مركز اتصال متعدد القنوات — صوت، واتساب، ودردشة — في لوحة واحدة.",
+    "en": "Omni-channel contact center — voice, WhatsApp, and chat — in one dashboard."
+  },
+  "description": {
+    "ar": "املأ النموذج وسيتواصل معك فريق LeapAI خلال 24 ساعة.",
+    "en": "Fill in the form and the LeapAI team will contact you within 24 hours."
+  },
+  "features": {
+    "ar": ["مركز اتصال متعدد القنوات", "بوت ذكي باللهجات العربية", "تكامل سلة وزد", "استضافة محلية PDPL"],
+    "en": ["Omni-channel contact center", "AI bot with Arabic dialects", "Salla and Zid integrations", "PDPL-ready local hosting"]
+  },
+  "image": "/pages/realtime-dashboard.png",
+  "contactPhone": "",
+  "officialWebsite": "",
+  "officialEmail": "",
+  "profileDescription": { "ar": "", "en": "" }
+}

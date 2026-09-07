@@ -1,0 +1,35 @@
+{
+  "type": "campaign",
+  "slug": "whatsapp-business-sa",
+  "groupSlug": "whatsapp",
+  "published": true,
+  "sortOrder": 1,
+  "groupTitle": {
+    "ar": "مرحباً، أريد معرفة المزيد عن واتساب للأعمال من LeapAI",
+    "en": "Hi, I would like to learn more about LeapAI WhatsApp Business."
+  },
+  "title": {
+    "ar": "واتساب للأعمال مع LeapAI",
+    "en": "WhatsApp Business with LeapAI"
+  },
+  "excerpt": {
+    "ar": "تواصل مع عملائك على أكثر قناة استخداماً في المملكة — مع علامة توثيق رسمية وردود ذكية.",
+    "en": "Reach customers on the most-used channel in Saudi Arabia — verified profile and smart replies."
+  },
+  "description": {
+    "ar": "منصة LeapAI تتيح إرسال الإشعارات والحملات والرد على العملاء عبر واتساب أعمال API الرسمي.",
+    "en": "LeapAI sends notifications, campaigns, and agent replies through the official WhatsApp Business API."
+  },
+  "features": {
+    "ar": ["حساب واتساب أعمال موثّق", "ردود تلقائية وبوت ذكي", "حملات واتساب معتمدة", "تكامل مع Leap Space"],
+    "en": ["Verified WhatsApp Business account", "Smart auto-replies and AI bot", "Approved WhatsApp campaigns", "Integrated with Leap Space"]
+  },
+  "image": "/pages/whatsapp-business.png",
+  "contactPhone": "+966 53 553 3627",
+  "officialWebsite": "https://leapai.ai",
+  "officialEmail": "info@leapai.ai",
+  "profileDescription": {
+    "ar": "LeapAI — المنصة السعودية الرائدة لتجربة العملاء المبنية على الذكاء الاصطناعي. استضافة محلية في الرياض.",
+    "en": "LeapAI — Saudi premier AI-native CX platform. PDPL-ready local cloud hosting in Riyadh."
+  }
+}
