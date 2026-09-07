@@ -7,6 +7,7 @@ import { ContentItem, serializeContentItem } from "../models/ContentItem.js"
 import { ContactMessage, serializeContactMessage } from "../models/ContactMessage.js"
 import { JobApplication, serializeJobApplication } from "../models/JobApplication.js"
 import { User } from "../models/User.js"
+import { LoginActivity } from "../models/LoginActivity.js"
 import { requireAuth, requireAdmin } from "../middleware/auth.js"
 import {
   isContentType,
@@ -360,6 +361,25 @@ function serializeAdminUser(user: { _id: { toString(): string }; email: string; 
 router.get("/users", async (_req, res) => {
   const users = await User.find().sort({ createdAt: 1 }).select("email role createdAt")
   res.json(users.map(serializeAdminUser))
+})
+
+router.get("/activity", async (req, res) => {
+  const requestedLimit = Number(req.query.limit ?? 100)
+  const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.floor(requestedLimit), 1), 500) : 100
+  const activity = await LoginActivity.find()
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean()
+  res.json(
+    activity.map((item) => ({
+      id: item._id.toString(),
+      email: item.email,
+      ip: item.ip,
+      location: item.location,
+      device: item.device,
+      time: item.createdAt,
+    })),
+  )
 })
 
 router.post("/users", async (req, res) => {

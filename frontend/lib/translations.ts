@@ -654,6 +654,7 @@ export const translations = {
   "admin.nav.viewLiveSite": { ar: "عرض الموقع المباشر", en: "View live site" },
   "admin.nav.addContent": { ar: "إضافة محتوى", en: "Add content" },
   "admin.nav.users": { ar: "المستخدمون", en: "Users" },
+  "admin.nav.activity": { ar: "نشاط المستخدمين", en: "User activity" },
 
   "admin.login.badge": { ar: "إدارة المحتوى", en: "Content Management" },
   "admin.login.heading1": { ar: "إدارة موقعك", en: "Manage your website" },

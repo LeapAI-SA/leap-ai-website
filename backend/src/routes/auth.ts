@@ -1,10 +1,11 @@
-import { Router } from "express"
+import { Request, Router } from "express"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import rateLimit from "express-rate-limit"
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from "node:crypto"
 import { User } from "../models/User.js"
 import { MfaChallenge } from "../models/MfaChallenge.js"
+import { LoginActivity } from "../models/LoginActivity.js"
 import { requireAuth } from "../middleware/auth.js"
 import {
   clearAuthCookie,
@@ -59,6 +60,44 @@ function codeMatches(expectedHash: string, challengeId: string, code: string) {
   const actual = Buffer.from(hashMfaCode(challengeId, code), "hex")
   const expected = Buffer.from(expectedHash, "hex")
   return actual.length === expected.length && timingSafeEqual(actual, expected)
+}
+
+function getClientIp(req: Request) {
+  return (req.ip || "Unknown").replace(/^::ffff:/, "")
+}
+
+function getDevice(userAgent: string | undefined) {
+  if (!userAgent) return "Unknown"
+  if (/bot|crawler|spider/i.test(userAgent)) return "Bot / crawler"
+  const browser = /Edg\//i.test(userAgent)
+    ? "Edge"
+    : /Chrome\//i.test(userAgent)
+      ? "Chrome"
+      : /Firefox\//i.test(userAgent)
+        ? "Firefox"
+        : /Safari\//i.test(userAgent)
+          ? "Safari"
+          : /OPR\//i.test(userAgent)
+            ? "Opera"
+            : "Browser"
+  const platform = /iPhone|iPad/i.test(userAgent)
+    ? "iOS"
+    : /Android/i.test(userAgent)
+      ? "Android"
+      : /Windows/i.test(userAgent)
+        ? "Windows"
+        : /Mac OS/i.test(userAgent)
+          ? "macOS"
+          : /Linux/i.test(userAgent)
+            ? "Linux"
+            : "Device"
+  return `${browser} / ${platform}`
+}
+
+function getLocation(req: Request) {
+  const country = req.get("x-country") || req.get("cloudfront-viewer-country")
+  const region = req.get("x-region") || req.get("x-country-region")
+  return [region, country].filter(Boolean).join(", ") || "Unknown"
 }
 
 function maskEmail(email: string) {
@@ -211,6 +250,13 @@ router.post("/mfa/verify", mfaVerifyLimiter, async (req, res) => {
   }
   user.lastMfaAt = new Date()
   await user.save()
+  await LoginActivity.create({
+    userId: user._id,
+    email: user.email,
+    ip: getClientIp(req),
+    location: getLocation(req),
+    device: getDevice(req.get("user-agent")),
+  })
   await MfaChallenge.deleteMany({ userId: user._id })
   clearMfaChallengeCookie(res)
   issueAdminSession(res, user)
