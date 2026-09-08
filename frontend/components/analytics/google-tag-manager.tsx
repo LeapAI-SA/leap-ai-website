@@ -1,6 +1,6 @@
 import Script from "next/script"
 
-const DEFAULT_GTM_ID = "GTM-NC7WPDNV"
+const DEFAULT_GTM_ID = "GTM-KTRBN5S2"
 
 /** Resolved GTM container id. Empty string disables GTM (local opt-out). */
 export function getGtmId() {
