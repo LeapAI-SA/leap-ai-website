@@ -1,6 +1,6 @@
 import Script from "next/script"
 
-const DEFAULT_GA_MEASUREMENT_ID = "G-7NWB9C7RNB"
+const DEFAULT_GA_MEASUREMENT_ID = "G-BCLTJXVS8F"
 
 /** Resolved GA4 measurement id. Empty string disables gtag (local opt-out). */
 export function getGaMeasurementId() {
