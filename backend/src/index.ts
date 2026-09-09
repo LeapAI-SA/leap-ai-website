@@ -130,8 +130,11 @@ async function start() {
     },
     express.static(UPLOAD_DIR, {
       setHeaders(res, filePath) {
-        if (/\.(jpe?g|jfif|pjpeg|png|apng|gif|webp|avif|bmp|ico|tiff?|heic|heif)$/i.test(filePath)) {
+        if (/\.(jpe?g|jfif|pjpeg|png|apng|gif|webp|avif|bmp|ico|tiff?|heic|heif|svg|jxl|jp2)$/i.test(filePath)) {
           res.setHeader("Content-Disposition", "inline")
+        }
+        if (/\.svg$/i.test(filePath)) {
+          res.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
         }
       },
     }),

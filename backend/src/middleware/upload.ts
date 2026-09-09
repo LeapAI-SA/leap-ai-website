@@ -14,10 +14,9 @@ if (!fs.existsSync(CV_UPLOAD_DIR)) {
   fs.mkdirSync(CV_UPLOAD_DIR, { recursive: true })
 }
 
-const IMAGE_UPLOAD_ERROR =
-  "Only raster images are allowed (JPEG, PNG, GIF, WebP, AVIF, BMP, ICO, TIFF, HEIC)"
+const IMAGE_UPLOAD_ERROR = "Only image files are allowed"
 
-/** Alias MIME → canonical MIME used for magic-byte checks and stored extension. */
+/** Alias MIME → canonical MIME used for stored extension. */
 const MIME_ALIASES: Record<string, string> = {
   "image/jpeg": "image/jpeg",
   "image/jpg": "image/jpeg",
@@ -37,6 +36,13 @@ const MIME_ALIASES: Record<string, string> = {
   "image/tiff": "image/tiff",
   "image/heic": "image/heic",
   "image/heif": "image/heif",
+  "image/heic-sequence": "image/heic",
+  "image/heif-sequence": "image/heif",
+  "image/svg+xml": "image/svg+xml",
+  "image/jxl": "image/jxl",
+  "image/jp2": "image/jp2",
+  "image/jpx": "image/jp2",
+  "image/jpeg2000": "image/jp2",
 }
 
 const CANONICAL_EXT: Record<string, string> = {
@@ -50,6 +56,9 @@ const CANONICAL_EXT: Record<string, string> = {
   "image/tiff": ".tiff",
   "image/heic": ".heic",
   "image/heif": ".heif",
+  "image/svg+xml": ".svg",
+  "image/jxl": ".jxl",
+  "image/jp2": ".jp2",
 }
 
 const EXT_TO_CANONICAL: Record<string, string> = {
@@ -64,11 +73,18 @@ const EXT_TO_CANONICAL: Record<string, string> = {
   ".webp": "image/webp",
   ".avif": "image/avif",
   ".bmp": "image/bmp",
+  ".dib": "image/bmp",
   ".ico": "image/x-icon",
+  ".cur": "image/x-icon",
   ".tif": "image/tiff",
   ".tiff": "image/tiff",
   ".heic": "image/heic",
   ".heif": "image/heif",
+  ".svg": "image/svg+xml",
+  ".jxl": "image/jxl",
+  ".jp2": "image/jp2",
+  ".j2k": "image/jp2",
+  ".jpx": "image/jp2",
 }
 
 const CV_ALLOWED_MIME: Record<string, string> = {
@@ -98,50 +114,79 @@ function hasIsoBrand(buf: Buffer, allowed: string[]) {
 export function canonicalImageMime(mime: string, originalName = ""): string | null {
   const normalized = mime.toLowerCase().trim()
   const ext = path.extname(originalName).toLowerCase()
-  if (normalized === "application/octet-stream" || normalized === "" || normalized === "binary/octet-stream") {
+  if (MIME_ALIASES[normalized]) return MIME_ALIASES[normalized]
+  if (normalized.startsWith("image/") && normalized !== "image/svg+xml") {
+    return normalized
+  }
+  if (
+    normalized === "application/octet-stream" ||
+    normalized === "" ||
+    normalized === "binary/octet-stream" ||
+    normalized === "application/x-download"
+  ) {
     return EXT_TO_CANONICAL[ext] ?? null
   }
-  const canonical = MIME_ALIASES[normalized]
-  if (!canonical) return null
-  if (ext && !EXT_TO_CANONICAL[ext]) return null
-  if (ext && EXT_TO_CANONICAL[ext] !== canonical) return null
-  return canonical
+  return EXT_TO_CANONICAL[ext] ?? null
 }
 
-export function matchesImageMagic(filePath: string, mime: string): boolean {
-  const canonical = canonicalImageMime(mime) ?? MIME_ALIASES[mime.toLowerCase().trim()] ?? null
-  if (!canonical) return false
+export function isLikelyImageUpload(mime: string, originalName = ""): boolean {
+  const normalized = mime.toLowerCase().trim()
+  const ext = path.extname(originalName).toLowerCase()
+  if (normalized.startsWith("image/")) return true
+  if (EXT_TO_CANONICAL[ext]) return true
+  if (normalized === "application/octet-stream" || normalized === "" || normalized === "binary/octet-stream") {
+    return !ext || Boolean(EXT_TO_CANONICAL[ext])
+  }
+  return false
+}
 
+export function extensionForImageMime(mime: string): string {
+  return CANONICAL_EXT[mime] ?? ".img"
+}
+
+export function detectImageKindFromBuffer(buf: Buffer): string | null {
+  if (startsWith(buf, [0xff, 0xd8, 0xff])) return "image/jpeg"
+  if (startsWith(buf, [0x89, 0x50, 0x4e, 0x47])) return "image/png"
+  const gif = buf.toString("ascii", 0, 6)
+  if (gif === "GIF87a" || gif === "GIF89a") return "image/gif"
+  if (buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP") return "image/webp"
+  if (hasIsoBrand(buf, ["avif", "avis"])) return "image/avif"
+  if (hasIsoBrand(buf, ["heic", "heif", "mif1", "heix", "heim", "hevc"])) return "image/heic"
+  if (hasIsoBrand(buf, ["jxl "]) || startsWith(buf, [0xff, 0x0a]) || buf.toString("ascii", 4, 8) === "JXL ") {
+    return "image/jxl"
+  }
+  if (buf.toString("ascii", 0, 2) === "BM") return "image/bmp"
+  if (startsWith(buf, [0x00, 0x00, 0x01, 0x00]) || startsWith(buf, [0x00, 0x00, 0x02, 0x00])) return "image/x-icon"
+  if (startsWith(buf, [0x49, 0x49, 0x2a, 0x00]) || startsWith(buf, [0x4d, 0x4d, 0x00, 0x2a])) return "image/tiff"
+  if (buf.toString("ascii", 4, 8) === "jP  " || startsWith(buf, [0xff, 0x4f, 0xff, 0x51])) return "image/jp2"
+  const head = buf.toString("utf8", 0, Math.min(buf.length, 256)).replace(/^\uFEFF/, "").trimStart()
+  if (head.startsWith("<svg") || (head.startsWith("<?xml") && /<svg[\s>]/i.test(head))) return "image/svg+xml"
+  return null
+}
+
+export function detectImageKindFromFile(filePath: string): string | null {
   const fd = fs.openSync(filePath, "r")
   try {
-    const buf = Buffer.alloc(32)
-    fs.readSync(fd, buf, 0, 32, 0)
-    switch (canonical) {
-      case "image/jpeg":
-        return startsWith(buf, [0xff, 0xd8, 0xff])
-      case "image/png":
-        return startsWith(buf, [0x89, 0x50, 0x4e, 0x47])
-      case "image/gif":
-        return buf.toString("ascii", 0, 6) === "GIF87a" || buf.toString("ascii", 0, 6) === "GIF89a"
-      case "image/webp":
-        return buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP"
-      case "image/avif":
-        return hasIsoBrand(buf, ["avif", "avis"])
-      case "image/bmp":
-        return buf.toString("ascii", 0, 2) === "BM"
-      case "image/x-icon":
-        return startsWith(buf, [0x00, 0x00, 0x01, 0x00])
-      case "image/tiff":
-        return startsWith(buf, [0x49, 0x49, 0x2a, 0x00]) || startsWith(buf, [0x4d, 0x4d, 0x00, 0x2a])
-      case "image/heic":
-      case "image/heif":
-        return hasIsoBrand(buf, ["heic", "heif", "mif1", "heix", "heim", "hevc"])
-      default:
-        return false
-    }
+    const buf = Buffer.alloc(512)
+    const n = fs.readSync(fd, buf, 0, 512, 0)
+    return detectImageKindFromBuffer(buf.subarray(0, n))
   } finally {
     fs.closeSync(fd)
   }
+}
+
+export function svgLooksUnsafe(filePath: string): boolean {
+  const text = fs.readFileSync(filePath, "utf8")
+  return /<script[\s>]/i.test(text) || /\bon\w+\s*=/i.test(text) || /javascript:/i.test(text)
+}
+
+export function matchesImageMagic(filePath: string, mime?: string): boolean {
+  const detected = detectImageKindFromFile(filePath)
+  if (!detected) return false
+  if (!mime) return true
+  const declared = canonicalImageMime(mime) ?? MIME_ALIASES[mime.toLowerCase().trim()]
+  if (!declared) return true
+  return true
 }
 
 export function matchesCvMagic(filePath: string, mime: string): boolean {
@@ -155,7 +200,7 @@ export function matchesCvMagic(filePath: string, mime: string): boolean {
       case "application/msword":
         return startsWith(buf, [0xd0, 0xcf, 0x11, 0xe0])
       case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return startsWith(buf, [0x50, 0x4b]) // ZIP/OOXML
+        return startsWith(buf, [0x50, 0x4b])
       default:
         return false
     }
@@ -175,7 +220,8 @@ export function removeUploadedFile(filePath: string) {
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
-    const ext = CANONICAL_EXT[file.mimetype] ?? ".jpg"
+    const declared = canonicalImageMime(file.mimetype, file.originalname)
+    const ext = (declared && CANONICAL_EXT[declared]) || path.extname(file.originalname).toLowerCase() || ".img"
     const safe = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}${ext}`
     cb(null, safe)
   },
@@ -194,12 +240,12 @@ export const uploadImage = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const canonical = canonicalImageMime(file.mimetype, file.originalname)
-    if (!canonical) {
+    if (!isLikelyImageUpload(file.mimetype, file.originalname)) {
       cb(new Error(IMAGE_UPLOAD_ERROR))
       return
     }
-    file.mimetype = canonical
+    const canonical = canonicalImageMime(file.mimetype, file.originalname)
+    if (canonical) file.mimetype = canonical
     cb(null, true)
   },
 })

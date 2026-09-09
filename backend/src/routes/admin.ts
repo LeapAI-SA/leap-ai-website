@@ -25,7 +25,7 @@ import {
   sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
-import { uploadImage, CV_UPLOAD_DIR, matchesImageMagic, removeUploadedFile } from "../middleware/upload.js"
+import { uploadImage, CV_UPLOAD_DIR, detectImageKindFromFile, extensionForImageMime, removeUploadedFile, svgLooksUnsafe } from "../middleware/upload.js"
 
 const router = Router()
 router.use(requireAuth, requireAdmin)
@@ -50,10 +50,24 @@ router.post("/upload", (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" })
     }
-    if (!matchesImageMagic(req.file.path, req.file.mimetype)) {
+    const kind = detectImageKindFromFile(req.file.path)
+    if (!kind) {
       removeUploadedFile(req.file.path)
       return res.status(400).json({ error: "File content does not match an allowed image type" })
     }
+    if (kind === "image/svg+xml" && svgLooksUnsafe(req.file.path)) {
+      removeUploadedFile(req.file.path)
+      return res.status(400).json({ error: "SVG images with scripts are not allowed" })
+    }
+    const ext = extensionForImageMime(kind)
+    if (!req.file.filename.toLowerCase().endsWith(ext)) {
+      const nextName = `${path.basename(req.file.filename, path.extname(req.file.filename))}${ext}`
+      const nextPath = path.join(path.dirname(req.file.path), nextName)
+      fs.renameSync(req.file.path, nextPath)
+      req.file.path = nextPath
+      req.file.filename = nextName
+    }
+    req.file.mimetype = kind
     res.json({ url: `/uploads/${req.file.filename}` })
   })
 })
