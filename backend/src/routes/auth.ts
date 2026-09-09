@@ -8,6 +8,7 @@ import { MfaChallenge } from "../models/MfaChallenge.js"
 import { LoginActivity } from "../models/LoginActivity.js"
 import { requireAuth } from "../middleware/auth.js"
 import {
+  AUTH_SESSION_MAX_AGE_SEC,
   clearAuthCookie,
   clearMfaChallengeCookie,
   extractMfaChallengeId,
@@ -116,7 +117,7 @@ function issueAdminSession(
   const token = jwt.sign(
     { userId: user._id.toString(), email: user.email, role: user.role, mfaVerified: true },
     secret,
-    { expiresIn: "7d", algorithm: "HS256" },
+    { expiresIn: AUTH_SESSION_MAX_AGE_SEC, algorithm: "HS256" },
   )
   setAuthCookie(res, token)
 }

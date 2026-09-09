@@ -2,7 +2,7 @@ import type { Request, Response } from "express"
 
 export const AUTH_COOKIE = "leap_admin_token"
 export const MFA_CHALLENGE_COOKIE = "leap_mfa_challenge"
-const MAX_AGE_SEC = 7 * 24 * 60 * 60
+export const AUTH_SESSION_MAX_AGE_SEC = 8 * 60 * 60
 const MFA_MAX_AGE_SEC = 25 * 60
 
 function cookieParts(name: string, value: string, maxAge: number) {
@@ -41,7 +41,7 @@ export function extractAuthToken(req: Request): string | null {
 }
 
 export function setAuthCookie(res: Response, token: string) {
-  res.append("Set-Cookie", cookieParts(AUTH_COOKIE, token, MAX_AGE_SEC))
+  res.append("Set-Cookie", cookieParts(AUTH_COOKIE, token, AUTH_SESSION_MAX_AGE_SEC))
 }
 
 export function clearAuthCookie(res: Response) {

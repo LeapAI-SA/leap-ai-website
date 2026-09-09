@@ -130,7 +130,7 @@ async function start() {
     },
     express.static(UPLOAD_DIR, {
       setHeaders(res, filePath) {
-        if (/\.(jpe?g|png|gif|webp)$/i.test(filePath)) {
+        if (/\.(jpe?g|jfif|pjpeg|png|apng|gif|webp|avif|bmp|ico|tiff?|heic|heif)$/i.test(filePath)) {
           res.setHeader("Content-Disposition", "inline")
         }
       },
