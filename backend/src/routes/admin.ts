@@ -45,6 +45,10 @@ function enforceBrandLock(text: unknown, brand: string): string {
 router.post("/upload", (req, res) => {
   uploadImage.single("file")(req, res, (err) => {
     if (err) {
+      const code = typeof err === "object" && err && "code" in err ? String(err.code) : ""
+      if (code === "LIMIT_FILE_SIZE") {
+        return res.status(413).json({ error: "File too large. Use an image under 25 MB." })
+      }
       return res.status(400).json({ error: err instanceof Error ? err.message : "Upload failed" })
     }
     if (!req.file) {

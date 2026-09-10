@@ -15,6 +15,8 @@ if (!fs.existsSync(CV_UPLOAD_DIR)) {
 }
 
 const IMAGE_UPLOAD_ERROR = "Only image files are allowed"
+export const IMAGE_MAX_BYTES = 25 * 1024 * 1024
+const CV_MAX_BYTES = 5 * 1024 * 1024
 
 /** Alias MIME → canonical MIME used for stored extension. */
 const MIME_ALIASES: Record<string, string> = {
@@ -238,7 +240,7 @@ const cvStorage = multer.diskStorage({
 
 export const uploadImage = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: IMAGE_MAX_BYTES },
   fileFilter: (_req, file, cb) => {
     if (!isLikelyImageUpload(file.mimetype, file.originalname)) {
       cb(new Error(IMAGE_UPLOAD_ERROR))
@@ -252,7 +254,7 @@ export const uploadImage = multer({
 
 export const uploadCv = multer({
   storage: cvStorage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: CV_MAX_BYTES },
   fileFilter: (_req, file, cb) => {
     const expected = CV_ALLOWED_MIME[file.mimetype]
     const ext = path.extname(file.originalname).toLowerCase()
