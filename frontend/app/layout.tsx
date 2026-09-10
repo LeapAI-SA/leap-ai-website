@@ -64,7 +64,7 @@ export default async function RootLayout({
       lang={locale}
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
       suppressHydrationWarning
-      className={`${tajawal.variable} ${geistMono.variable} bg-background`}
+      className={`light ${tajawal.variable} ${geistMono.variable} bg-background`}
     >
       <head>
         <GoogleTagManagerHead id={gtmId} />
