@@ -25,6 +25,7 @@ import {
   sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
+import { randomSlug, uniqueContentSlug } from "../lib/slugify.js"
 import { uploadImage, CV_UPLOAD_DIR, detectImageKindFromFile, extensionForImageMime, removeUploadedFile, svgLooksUnsafe } from "../middleware/upload.js"
 
 const router = Router()
@@ -213,19 +214,17 @@ router.get("/content/:id", async (req, res) => {
 
 router.post("/content", async (req, res) => {
   const body = req.body as Record<string, unknown>
-  if (!isContentType(body.type) || !isValidSlug(body.slug) || !body.title) {
-    return res.status(400).json({ error: "type, slug, and title are required" })
+  if (!isContentType(body.type) || !body.title || typeof body.title !== "object") {
+    return res.status(400).json({ error: "type and title are required" })
   }
 
-  const existing = await ContentItem.findOne({ slug: body.slug })
-  if (existing) {
-    return res.status(409).json({ error: "Slug already exists" })
-  }
+  const requested = isValidSlug(body.slug) ? body.slug : randomSlug()
+  const slug = await uniqueContentSlug(requested, (candidate) => ContentItem.exists({ slug: candidate }))
 
   const image = body.image !== undefined ? sanitizeImagePath(body.image) ?? "" : ""
   const item = await ContentItem.create({
     type: body.type,
-    slug: body.slug,
+    slug,
     groupSlug: typeof body.groupSlug === "string" ? body.groupSlug : "",
     groupTitle: body.groupTitle,
     title: body.title,

@@ -56,25 +56,44 @@ function transliterateArabic(text: string): string {
   return out
 }
 
+const TASHKEEL_AND_TATWEEL = /[\u064B-\u065F\u0670\u0640]/g
+
 /** Lowercase kebab-case slug: letters, digits, hyphens only. */
 export function slugify(text: string): string {
   const raw = text.trim()
   if (!raw) return ""
 
-  const latin = transliterateArabic(raw)
+  const latin = transliterateArabic(raw.replace(TASHKEEL_AND_TATWEEL, ""))
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
 
-  return latin
+  const slug = latin
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "")
+    .slice(0, 120)
+    .replace(/-$/g, "")
+
+  return slug
 }
 
 /** Prefer English title for URLs; fall back to Arabic. */
 export function slugifyTitle(title: { ar?: string; en?: string }): string {
   const en = title.en?.trim() ?? ""
   const ar = title.ar?.trim() ?? ""
-  return slugify(en || ar)
+  return slugify(en || ar) || randomSlug()
+}
+
+const SLUG_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+/** Random URL slug (letters and digits only). Not derived from the title. */
+export function randomSlug(length = 12): string {
+  const bytes = new Uint8Array(length)
+  crypto.getRandomValues(bytes)
+  let out = ""
+  for (const byte of bytes) {
+    out += SLUG_ALPHABET[byte % SLUG_ALPHABET.length]
+  }
+  return out
 }

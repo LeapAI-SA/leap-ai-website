@@ -14,7 +14,6 @@ import {
   ImageUploadField,
 } from "@/components/dashboard/ui"
 import { useLanguage } from "@/lib/i18n"
-import { slugifyTitle } from "@/lib/slugify"
 
 export type ContentFormValues = {
   type: "solution" | "product" | "use-case" | "article" | "case" | "job" | "campaign"
@@ -61,7 +60,7 @@ export function ContentForm({
   saving,
   error,
   onDelete,
-  autoSlug = true,
+  autoSlug = false,
 }: {
   title: string
   description?: string
@@ -78,10 +77,6 @@ export function ContentForm({
   const [slugLocked, setSlugLocked] = useState(!autoSlug)
 
   function updateTitle(nextTitle: ContentFormValues["title"]) {
-    if (autoSlug && !slugLocked) {
-      setForm({ ...form, title: nextTitle, slug: slugifyTitle(nextTitle) })
-      return
-    }
     setForm({ ...form, title: nextTitle })
   }
 

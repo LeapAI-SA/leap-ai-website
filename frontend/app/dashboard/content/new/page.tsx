@@ -7,12 +7,13 @@ import { mapAdminError } from "@/lib/admin-i18n"
 import { adminFetch } from "@/lib/api"
 import { notifyContentUpdated } from "@/lib/cms-refresh"
 import { ContentForm, emptyContentForm } from "@/components/dashboard/content-form"
+import { randomSlug } from "@/lib/slugify"
 import { useLanguage } from "@/lib/i18n"
 
 export default function NewContentPage() {
   const router = useRouter()
   const { t, lang } = useLanguage()
-  const [form, setForm] = useState(emptyContentForm)
+  const [form, setForm] = useState(() => ({ ...emptyContentForm, slug: randomSlug() }))
   const [error, setError] = useState("")
   const [saving, setSaving] = useState(false)
 
@@ -21,7 +22,8 @@ export default function NewContentPage() {
     setSaving(true)
     setError("")
     try {
-      await adminFetch("/api/admin/content", { method: "POST", body: JSON.stringify(form) })
+      const slug = form.slug.trim() || randomSlug()
+      await adminFetch("/api/admin/content", { method: "POST", body: JSON.stringify({ ...form, slug }) })
       notifyContentUpdated()
       router.push("/dashboard/content")
     } catch (err) {
