@@ -49,7 +49,7 @@ export default async function FaqPage() {
           { label: locale === "en" ? "FAQ" : "أسئلة شائعة" },
         ]}
       >
-        <GeoFaqSection items={faqItems} showIntro={false} />
+        <GeoFaqSection items={faqItems} showIntro={false} searchable />
       </SitePageShell>
     </>
   )

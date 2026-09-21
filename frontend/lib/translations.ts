@@ -57,6 +57,10 @@ export const translations = {
     en: "Direct answers about LeapAI and its solutions — so you can decide quickly.",
   },
   "faq.seeAll": { ar: "عرض كل الأسئلة الشائعة", en: "See all frequently asked questions" },
+  "faq.searchPlaceholder": { ar: "اسأل سؤالاً أو ابحث في إجابات GEO…", en: "Ask a question or search GEO answers…" },
+  "faq.pdfOne": { ar: "حفظ الإجابة PDF", en: "Save answer as PDF" },
+  "faq.pdfAll": { ar: "حفظ الكل PDF", en: "Save all as PDF" },
+  "faq.noMatch": { ar: "لا توجد إجابة مطابقة. جرّب كلمات أخرى.", en: "No matching answer. Try different words." },
 
   /* ------------------------------- Social ------------------------------- */
   "social.facebook": { ar: "فيسبوك", en: "Facebook" },

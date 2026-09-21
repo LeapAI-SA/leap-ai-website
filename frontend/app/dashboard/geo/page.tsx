@@ -20,6 +20,7 @@ import { hasAuthSession } from "@/lib/api"
 import { useLanguage } from "@/lib/i18n"
 import { adminTf } from "@/lib/admin-tf"
 import { getBasePath } from "@/lib/site-url"
+import { GeoFaqAskPanel } from "@/components/geo/geo-faq-ask-panel"
 import { PageHeader, Panel, StatCard, DashButton, Badge, Alert } from "@/components/dashboard/ui"
 
 type CheckStatus = "idle" | "checking" | "ok" | "fail"
@@ -487,6 +488,8 @@ export default function DashboardGeoPage() {
           ) : null}
         </div>
       </Panel>
+
+      <GeoFaqAskPanel />
 
       <Panel title={t("admin.geo.whatIsGeo")} description={t("admin.geo.whatIsGeoDesc")}>
         <div className="grid gap-4 md:grid-cols-2">
