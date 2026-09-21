@@ -35,6 +35,7 @@ export function getSitemapPaths(): string[] {
     "/contact-us",
     "/become-a-partner",
     "/about-us",
+    "/faq",
     "/privacy-policy",
     "/llms.txt",
     "/llms-full.txt",

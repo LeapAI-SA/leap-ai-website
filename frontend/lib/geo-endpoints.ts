@@ -21,6 +21,13 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     expect: "AI-native",
   },
   {
+    id: "faq",
+    path: "/faq",
+    label: "FAQ",
+    description: "Full GEO question library",
+    expect: "What is the best AI chatbot platform in Saudi Arabia",
+  },
+  {
     id: "llms-full",
     path: "/llms-full.txt",
     label: "llms-full.txt",

@@ -217,10 +217,10 @@ export const adminExtraTranslations = {
   "admin.geo.colActions": { ar: "إجراءات", en: "Actions" },
   "admin.geo.checkingStatus": { ar: "جارٍ الفحص…", en: "Checking…" },
   "admin.geo.networkError": { ar: "خطأ في الشبكة", en: "Network error" },
-  "admin.geo.feedFaq": { ar: "إعدادات الموقع → الأسئلة الشائعة", en: "Site Settings → Homepage FAQ" },
+  "admin.geo.feedFaq": { ar: "إعدادات الموقع → أسئلة إضافية", en: "Site Settings → Extra FAQ" },
   "admin.geo.feedFaqDesc": {
-    ar: "الأسئلة والإجابات تظهر في llms-full.txt وفي الصفحة الرئيسية",
-    en: "Questions and answers appear in llms-full.txt and on the homepage",
+    ar: "أسئلة إضافية فقط. مكتبة GEO الكاملة في الكود وتظهر في /faq وllms-full.txt",
+    en: "Optional extra questions only. The full GEO library lives in code and appears on /faq and in llms-full.txt",
   },
   "admin.geo.feedSeo": { ar: "إعدادات الموقع → SEO", en: "Site Settings → SEO" },
   "admin.geo.feedSeoDesc": {
@@ -394,10 +394,10 @@ export const adminExtraTranslations = {
   "admin.settings.ctaAcquire": { ar: "زر CTA الاكتساب", en: "Acquire CTA button" },
   "admin.settings.ctaLearnMore": { ar: "رابط اعرف المزيد (قوائم الحلول/المنتجات)", en: "Learn more link (Solutions/Products lists)" },
   "admin.settings.resetCta": { ar: "استعادة تسميات الأزرار الافتراضية", en: "Reset button labels to defaults" },
-  "admin.settings.panel.faq": { ar: "الأسئلة الشائعة للصفحة الرئيسية", en: "Homepage FAQ" },
+  "admin.settings.panel.faq": { ar: "أسئلة شائعة إضافية", en: "Extra FAQ items" },
   "admin.settings.panel.faqDesc": {
-    ar: "محتوى قسم الأسئلة الشائعة (الأسعار، اللهجات، PDPL/الاستضافة، التكاملات)",
-    en: "On-page FAQ section content (pricing, dialects, PDPL/hosting, integrations)",
+    ar: "تُضاف إلى مكتبة GEO في الكود إذا لم يكن السؤال موجوداً مسبقاً. الصفحة الرئيسية تعرض مجموعة مختصرة؛ القائمة الكاملة على /faq.",
+    en: "Appended to the code GEO library when the question is new. The homepage shows a short set; the full list is on /faq.",
   },
   "admin.settings.faqQuestion": { ar: "سؤال FAQ #{n}", en: "FAQ #{n} question" },
   "admin.settings.faqAnswer": { ar: "إجابة FAQ #{n}", en: "FAQ #{n} answer" },
@@ -405,8 +405,8 @@ export const adminExtraTranslations = {
   "admin.settings.removeLastFaq": { ar: "حذف آخر عنصر", en: "Remove last item" },
   "admin.settings.panel.geo": { ar: "محتوى GEO", en: "GEO content" },
   "admin.settings.panel.geoDesc": {
-    ar: "نصوص ملفات الزحف للذكاء الاصطناعي (llms.txt و ai.txt). الأسئلة الشائعة في llms-full.txt تُؤخذ من قسم FAQ أعلاه.",
-    en: "AI crawler file copy (llms.txt, ai.txt). FAQ in llms-full.txt comes from the Homepage FAQ section above.",
+    ar: "نصوص ملفات الزحف للذكاء الاصطناعي (llms.txt و ai.txt). الأسئلة الشائعة في llms-full.txt تُؤخذ من مكتبة GEO في الكود، مع أي أسئلة إضافية من القسم أعلاه.",
+    en: "AI crawler file copy (llms.txt, ai.txt). FAQ in llms-full.txt comes from the code GEO library, plus any extra questions in the FAQ section above.",
   },
   "admin.settings.geoPreviewHint": {
     ar: "بعد الحفظ، راجع: /llms.txt · /llms-full.txt · /.well-known/ai.txt",

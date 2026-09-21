@@ -17,8 +17,8 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { fetchPublicSettings } from "@/lib/api"
 import { buildHomeMetadata, absoluteUrl, resolveOgImage, getSiteUrl, siteConfig, buildSiteNavigationSchema } from "@/lib/seo"
 import { getRequestLocale, withLocalePrefix } from "@/lib/locale"
-import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema, buildHomeHowToSchemaEn } from "@/lib/geo"
-import { geoFaqItems } from "@/lib/geo-faq"
+import { buildFaqPageSchema, buildFaqPageSchemaAr, buildHomeHowToSchema, buildHomeHowToSchemaEn, resolveFaqItems } from "@/lib/geo"
+import { featuredGeoFaq } from "@/lib/geo-faq"
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, locale] = await Promise.all([fetchPublicSettings(), getRequestLocale()])
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const [settings, locale] = await Promise.all([fetchPublicSettings(), getRequestLocale()])
-  const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
+  const faqItems = featuredGeoFaq(resolveFaqItems(settings))
 
   const homeSchema = {
     "@context": "https://schema.org",
@@ -70,7 +70,7 @@ export default async function Page() {
         <AcquireCta />
         <Partners />
         <Stats />
-        <GeoFaqSection />
+        <GeoFaqSection items={faqItems} showSeeAll />
         <HomeExploreSection />
       </main>
       <SiteFooter />

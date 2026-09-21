@@ -1,20 +1,31 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { ChevronDown } from "lucide-react"
-import { geoFaqItems } from "@/lib/geo-faq"
+import { featuredGeoFaq, mergeGeoFaq, type GeoFaqItem } from "@/lib/geo-faq"
 import { useLanguage } from "@/lib/i18n"
 import { useSiteSettings } from "@/lib/site-settings-context"
+import { sitePath } from "@/lib/site-path"
 
-export function GeoFaqSection() {
-  const { t, tr } = useLanguage()
+export function GeoFaqSection({
+  items,
+  showSeeAll = false,
+  showIntro = true,
+}: {
+  items?: GeoFaqItem[]
+  showSeeAll?: boolean
+  showIntro?: boolean
+}) {
+  const { t, tr, lang } = useLanguage()
   const { settings } = useSiteSettings()
   const [open, setOpen] = useState<number | null>(0)
-  const faqItems = settings?.faq?.length ? settings.faq : geoFaqItems
+  const faqItems = items ?? featuredGeoFaq(mergeGeoFaq(settings?.faq))
 
   return (
-    <section id="faq" className="bg-secondary py-20" aria-labelledby="faq-heading">
+    <section id="faq" className={showIntro ? "bg-secondary py-20" : "bg-background pb-20"} aria-labelledby={showIntro ? "faq-heading" : undefined}>
       <div className="mx-auto max-w-3xl px-6">
+        {showIntro ? (
         <div className="text-center">
           <span className="text-sm font-bold uppercase tracking-widest text-amber">{t("faq.badge")}</span>
           <h2 id="faq-heading" className="mt-3 text-3xl font-extrabold text-navy md:text-4xl">
@@ -22,8 +33,9 @@ export function GeoFaqSection() {
           </h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">{t("faq.lead")}</p>
         </div>
+        ) : null}
 
-        <div className="mt-12 flex flex-col gap-3">
+        <div className={showIntro ? "mt-12 flex flex-col gap-3" : "flex flex-col gap-3"}>
           {faqItems.map((item, i) => {
             const isOpen = open === i
             const question = tr(item.question)
@@ -31,7 +43,7 @@ export function GeoFaqSection() {
 
             return (
               <article
-                key={question}
+                key={`${question}-${i}`}
                 className="rounded-xl border border-border bg-card shadow-sm"
                 itemScope
                 itemType="https://schema.org/Question"
@@ -65,6 +77,17 @@ export function GeoFaqSection() {
             )
           })}
         </div>
+
+        {showSeeAll ? (
+          <p className="mt-8 text-center">
+            <Link
+              href={sitePath("/faq", lang)}
+              className="font-semibold text-navy underline decoration-amber underline-offset-4 hover:text-amber"
+            >
+              {t("faq.seeAll")}
+            </Link>
+          </p>
+        ) : null}
       </div>
     </section>
   )

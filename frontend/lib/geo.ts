@@ -6,7 +6,7 @@ import { ARTICLES } from "./articles"
 import { articleCanonicalPath } from "./article-paths"
 import { RESOURCES_ANNOUNCEMENT_SLUG } from "./ai-native-claim"
 import { absoluteUrl, getSiteUrl, siteConfig, resolveOgImage } from "./seo"
-import { geoFaqItems, type GeoFaqItem } from "./geo-faq"
+import { geoFaqItems, mergeGeoFaq, type GeoFaqItem } from "./geo-faq"
 import { DEFAULT_GEO_SETTINGS, mergeGeoSettings } from "./geo-defaults"
 import { DEFAULT_PRICING_PLANS } from "./site-marketing"
 
@@ -19,10 +19,8 @@ function resolveKnowsAbout(geo = mergeGeoSettings()): string[] {
   return [...geo.knowsAbout.en, ...geo.knowsAbout.ar]
 }
 
-function resolveFaqItems(settings?: GeoBuildSettings | null): GeoFaqItem[] {
-  const faq = settings?.faq
-  if (faq?.length) return faq
-  return geoFaqItems
+export function resolveFaqItems(settings?: GeoBuildSettings | null): GeoFaqItem[] {
+  return mergeGeoFaq(settings?.faq)
 }
 
 function formatPricingLines(plans: PricingPlan[]): string[] {
@@ -376,6 +374,8 @@ export function buildLlmsTxt(nav: NavContent, extended = false, settings?: GeoBu
     `- [Resources](${absoluteUrl("/resources")})`,
     `- [Home](${absoluteUrl("/")})`,
     `- [English home](${absoluteUrl("/en")})`,
+    `- [FAQ](${absoluteUrl("/faq")})`,
+    `- [English FAQ](${absoluteUrl("/en/faq")})`,
     `- [About Us](${absoluteUrl("/about-us")})`,
     `- [Solutions](${absoluteUrl("/solutions")})`,
     `- [Products](${absoluteUrl("/products")})`,
@@ -456,6 +456,7 @@ export function buildLlmsSmallTxt(settings?: GeoBuildSettings | null): string {
     "",
     `- Home: ${absoluteUrl("/")}`,
     `- English home: ${absoluteUrl("/en")}`,
+    `- FAQ: ${absoluteUrl("/faq")}`,
     `- About: ${absoluteUrl("/about-us")}`,
     `- AI-native CX announcement: ${absoluteUrl(announcementPath)}`,
     `- English announcement: ${absoluteUrl(`/en${announcementPath}`)}`,

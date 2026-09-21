@@ -431,6 +431,7 @@ export function buildSiteNavigationSchema() {
   const destinations = [
     { name: "Home", nameAr: "الرئيسية", path: "/" },
     { name: "About Us", nameAr: "معلومات عنا", path: "/about-us" },
+    { name: "FAQ", nameAr: "أسئلة شائعة", path: "/faq" },
     { name: "Solutions", nameAr: "حلولنا", path: "/solutions" },
     { name: "Products", nameAr: "منتجاتنا", path: "/products" },
     { name: "Use Cases", nameAr: "حالات الاستخدام", path: "/use-cases" },

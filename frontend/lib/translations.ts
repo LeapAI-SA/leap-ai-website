@@ -56,6 +56,7 @@ export const translations = {
     ar: "إجابات مباشرة عن منصة LeapAI وحلولها — لمساعدتك على اتخاذ القرار بسرعة.",
     en: "Direct answers about LeapAI and its solutions — so you can decide quickly.",
   },
+  "faq.seeAll": { ar: "عرض كل الأسئلة الشائعة", en: "See all frequently asked questions" },
 
   /* ------------------------------- Social ------------------------------- */
   "social.facebook": { ar: "فيسبوك", en: "Facebook" },
