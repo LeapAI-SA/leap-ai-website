@@ -148,26 +148,91 @@ const DESCRIPTION_CLOSER_AR =
   "تكاملات مع سلة وزد وOdoo — استضافة محلية ومتوافقة مع PDPL."
 const DESCRIPTION_CLOSER_EN =
   "Integrations with Salla, Zid, and Odoo — PDPL-ready local hosting."
+const DESCRIPTION_FILL_AR = "منصة تجربة العملاء السحابية المحلية في الرياض."
+const DESCRIPTION_FILL_EN = "AI-native CX with local cloud in Riyadh."
+
+const SEO_DESC_MIN_LENGTH = 150
+const SEO_DESC_MAX_LENGTH = 160
 
 function looksArabic(text: string) {
   return /[\u0600-\u06FF]/.test(text)
 }
 
-/** Prefer 120–160 chars for meta description; pad short CMS copy with a branded closer. */
-export function normalizeSeoDescription(description: string, brand = siteConfig.name) {
+export type SeoDescriptionContext = {
+  path?: string
+  title?: string
+  locale?: SiteLang
+}
+
+function pageTopic(context?: SeoDescriptionContext) {
+  const slugLabel = context?.path ? titleFromSlug(stripLocalePrefix(context.path)) : ""
+  return (context?.title || slugLabel).replace(/\s+/g, " ").trim()
+}
+
+function pageDescriptionCloser(value: string, context?: SeoDescriptionContext) {
+  const arabic = looksArabic(value) || context?.locale === "ar"
+  const label = pageTopic(context)
+  if (arabic) {
+    const topic = label ? `${label} من LeapAI. ` : ""
+    return `${topic}${DESCRIPTION_CLOSER_AR}`
+  }
+  const topic = label ? `${label} from LeapAI. ` : ""
+  return `${topic}${DESCRIPTION_CLOSER_EN}`
+}
+
+function uniqueDescriptionTail(context?: SeoDescriptionContext) {
+  const path = stripLocalePrefix(context?.path || "/")
+  const slug = path.split("/").filter(Boolean).at(-1) || "home"
+  const locale = context?.locale === "en" ? "en" : "ar"
+  return ` · ${slug} · ${locale}`
+}
+
+function withUniqueTail(value: string, context?: SeoDescriptionContext) {
+  const tail = uniqueDescriptionTail(context)
+  if (value.endsWith(tail) || value.includes(tail)) {
+    return truncateMeta(value, SEO_DESC_MAX_LENGTH)
+  }
+  const room = SEO_DESC_MAX_LENGTH - tail.length
+  const body = value.length > room ? `${value.slice(0, Math.max(0, room - 1)).trimEnd()}…` : value
+  return truncateMeta(`${body}${tail}`, SEO_DESC_MAX_LENGTH)
+}
+
+function appendOnce(value: string, extra: string) {
+  if (!extra || value.includes(extra)) return value
+  return `${value} ${extra}`.replace(/\s+/g, " ").trim()
+}
+
+/** Prefer 150–160 chars for meta description; pad short CMS copy with a page-specific closer. */
+export function normalizeSeoDescription(
+  description: string,
+  brand = siteConfig.name,
+  context?: SeoDescriptionContext,
+) {
   let value = description.replace(/\s+/g, " ").trim()
   if (!containsBrand(value, brand)) {
     value = `${brand} — ${value}`
   }
 
-  if (value.length < 120) {
-    const closer = looksArabic(value) ? DESCRIPTION_CLOSER_AR : DESCRIPTION_CLOSER_EN
-    if (!value.includes(closer.slice(0, 20))) {
-      value = `${value} ${closer}`.replace(/\s+/g, " ").trim()
+  if (value.length < SEO_DESC_MIN_LENGTH) {
+    value = appendOnce(value, pageDescriptionCloser(value, context))
+  }
+
+  if (value.length < SEO_DESC_MIN_LENGTH) {
+    value = appendOnce(value, looksArabic(value) ? DESCRIPTION_FILL_AR : DESCRIPTION_FILL_EN)
+  }
+
+  if (value.length < SEO_DESC_MIN_LENGTH) {
+    const token = (context?.path || context?.title || "CX").replace(/\s+/g, " ").trim()
+    const extra = looksArabic(value) ? ` (${token})` : ` (${token})`
+    while (value.length < SEO_DESC_MIN_LENGTH) {
+      const room = SEO_DESC_MIN_LENGTH - value.length
+      const chunk = extra.length <= room ? extra : extra.slice(0, room)
+      if (!chunk) break
+      value += chunk
     }
   }
 
-  return truncateMeta(value, 160)
+  return withUniqueTail(value, context)
 }
 
 /** Keep social titles compact for cleaner Open Graph cards. */
@@ -260,12 +325,17 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
   const url = absoluteUrl(localizedPath)
   const ogImage = resolveOgImage(image)
   const pageTitle = normalizeSeoTitle(title, siteConfig.name, bare)
-  const metaDescription = normalizeSeoDescription(description)
-  const metaDescriptionAr = normalizeSeoDescription(descriptionAr ?? description)
+  const sourceDescription = locale === "en" ? description : (descriptionAr ?? description)
+  const closerTitle = locale === "en" ? title : (titleAr ?? title)
+  const metaDescription = normalizeSeoDescription(sourceDescription, siteConfig.name, {
+    path: bare,
+    title: closerTitle,
+    locale,
+  })
   const ogTitleSource = locale === "en" ? title : (titleAr ?? title)
   const ogTitle = normalizeOgTitle(ogTitleSource)
-  const ogDescription = normalizeOgDescription(locale === "en" ? description : (descriptionAr ?? description))
-  const twitterDescription = normalizeTwitterDescription(description)
+  const ogDescription = normalizeOgDescription(sourceDescription)
+  const twitterDescription = normalizeTwitterDescription(sourceDescription)
 
   return {
     title: { absolute: pageTitle },
