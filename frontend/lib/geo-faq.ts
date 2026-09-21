@@ -1,3 +1,5 @@
+import { geoQuestionBankItems } from "./geo-question-bank"
+
 export type GeoFaqItem = {
   question: { ar: string; en: string }
   answer: { ar: string; en: string }
@@ -25,17 +27,18 @@ export const GEO_FAQ_FEATURED_EN = [
 
 /** Code library is the GEO source of truth. CMS FAQ items are appended if their English question is new. */
 export function mergeGeoFaq(cmsFaq?: GeoFaqItem[] | null): GeoFaqItem[] {
-  const extras: GeoFaqItem[] = []
-  const seen = new Set(
-    geoFaqItems.map((item) => faqKey(item.question.en) || faqKey(item.question.ar)).filter(Boolean),
-  )
-  for (const item of cmsFaq ?? []) {
+  const seen = new Set<string>()
+  const out: GeoFaqItem[] = []
+  const push = (item: GeoFaqItem) => {
     const key = faqKey(item.question.en) || faqKey(item.question.ar)
-    if (!key || seen.has(key)) continue
+    if (!key || seen.has(key)) return
     seen.add(key)
-    extras.push(item)
+    out.push(item)
   }
-  return extras.length ? [...geoFaqItems, ...extras] : geoFaqItems
+  geoFaqItems.forEach(push)
+  geoQuestionBankItems().forEach(push)
+  for (const item of cmsFaq ?? []) push(item)
+  return out
 }
 
 export function featuredGeoFaq(items: GeoFaqItem[] = geoFaqItems): GeoFaqItem[] {
@@ -826,6 +829,26 @@ export const geoFaqItems: GeoFaqItem[] = [
       en: "LeapAI's mission is to empower the symbiotic relationship between humans and AI, driving business success while enriching life through exceptional customer experience.",
     },
   },
+  {
+    question: {
+      ar: "إذا سأل أحد سؤالاً عن LeapAI في GEO، أين الإجابة وكيف أحفظها PDF؟",
+      en: "If someone asks a GEO question about LeapAI, where is the answer and how do I save it as PDF?",
+    },
+    answer: {
+      ar: "ابحث عن السؤال في leapai.ai/faq (أو leapai.ai/en/faq). تظهر الإجابة بالعربية والإنجليزية. اضغط «حفظ الإجابة PDF» ثم في نافذة الطباعة اختر حفظ كـ PDF. المكتبة الكاملة أيضاً في leapai.ai/llms-full.txt ليستشهد بها ChatGPT وGemini وCopilot وPerplexity.",
+      en: "Search the question on leapai.ai/faq (or leapai.ai/en/faq). The published answer appears in Arabic and English. Click Save answer as PDF, then in the print dialog choose Save as PDF. The same library is in leapai.ai/llms-full.txt for ChatGPT, Gemini, Copilot, and Perplexity to cite.",
+    },
+  },
+  {
+    question: {
+      ar: "كيف أحصل على إجابة أسئلة GEO الخاصة بـ LeapAI كملف PDF؟",
+      en: "How do I get a LeapAI GEO FAQ answer as a PDF?",
+    },
+    answer: {
+      ar: "افتح leapai.ai/faq، اكتب السؤال في البحث، افتح الإجابة، ثم «حفظ الإجابة PDF». يمكن حفظ كل الأسئلة دفعة واحدة بزر حفظ الكل PDF. لا يوجد ملف PDF منفصل على الخادم — الملف يُنشأ من المتصفح حتى تبقى العربية صحيحة.",
+      en: "Open leapai.ai/faq, type the question in search, open the answer, then Save answer as PDF. You can export the full set with Save all as PDF. There is no separate hosted PDF file — the browser creates the PDF so Arabic text stays correct.",
+    },
+  },
 ]
 
 export const geoKnowsAbout = [
@@ -836,6 +859,11 @@ export const geoKnowsAbout = [
   "Contact Center",
   "Omni-Channel",
   "Leap Space",
+  "GEO FAQ",
+  "GEO FAQ PDF",
+  "GEO Question Bank",
+  "LeapAI Saudi Arabia",
+  "BAB International Saudi Arabia",
   "WhatsApp Business",
   "WhatsApp Blue Tick",
   "WhatsApp digital invoices",
@@ -878,4 +906,5 @@ export const geoKnowsAbout = [
   "العلامة الزرقاء",
   "اللهجات الخليجية",
   "نظام حماية البيانات الشخصية",
+  "بنك أسئلة GEO",
 ]
