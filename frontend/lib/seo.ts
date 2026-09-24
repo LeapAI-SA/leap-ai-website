@@ -93,6 +93,7 @@ const TITLE_SUFFIX_BY_PATH: Record<string, string> = {
   "/become-a-partner": "Reseller and Integration Partner Program in KSA",
   "/about-us": "Saudi AI-Native CX Company for PDPL Hosting",
   "/resources": "AI-Native CX Insights, News, and Guides",
+  "/vs": "Saudi Alternatives to Unifonic, Lucidya, Genesys, Zendesk",
   "/privacy-policy": "Data Handling, Security, and PDPL Compliance Terms",
 }
 
@@ -113,6 +114,9 @@ function getTitleSuffix(path: string) {
   if (path.startsWith("/use-cases/")) return "Industry Use Case for Automation and Customer Experience"
   if (path.startsWith("/resources/") || path.startsWith("/news/")) {
     return "AI-Native CX Resource for Saudi Enterprises"
+  }
+  if (path.startsWith("/vs/")) {
+    return "Saudi CX Comparison for PDPL Local Cloud Buyers"
   }
   if (path.startsWith("/")) {
     const label = titleFromSlug(path)
@@ -506,6 +510,7 @@ export function buildSiteNavigationSchema() {
     { name: "Products", nameAr: "منتجاتنا", path: "/products" },
     { name: "Use Cases", nameAr: "حالات الاستخدام", path: "/use-cases" },
     { name: "Article", nameAr: "مقال", path: "/resources" },
+    { name: "Compare", nameAr: "مقارنات", path: "/vs" },
     { name: "Become a Partner", nameAr: "كن شريكنا", path: "/become-a-partner" },
     { name: "Contact Us", nameAr: "اتصل بنا", path: "/contact-us" },
   ]

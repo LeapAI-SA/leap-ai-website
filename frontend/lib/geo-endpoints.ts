@@ -56,6 +56,13 @@ export const GEO_ENDPOINT_CHECKS: GeoEndpointCheck[] = [
     expect: "news/2026/08/09/leap-ai-saudi-ai-native-cx-platform",
   },
   {
+    id: "vs",
+    path: "/vs",
+    label: "Comparisons",
+    description: "LeapAI vs Unifonic, Lucidya, Genesys, Zendesk",
+    expect: "LeapAI vs Unifonic",
+  },
+  {
     id: "ai-txt",
     path: "/.well-known/ai.txt",
     label: "ai.txt",

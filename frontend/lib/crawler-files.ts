@@ -108,7 +108,7 @@ export function buildAiTxt(settings?: GeoBuildSettings | null) {
     "",
     `Category: ${category}`,
     `Not-the-same-as: ${notSameLine}`,
-    `Compare: ${absoluteUrl("/resources/leapai-vs-unifonic-saudi-cx")} | ${absoluteUrl("/resources/leapai-vs-lucidya-contact-center-vs-analytics")}`,
+    `Compare: ${absoluteUrl("/vs")} | ${absoluteUrl("/vs/unifonic")} | ${absoluteUrl("/vs/lucidya")} | ${absoluteUrl("/vs/genesys")} | ${absoluteUrl("/vs/zendesk")}`,
     `FAQ: ${absoluteUrl("/faq")} — search a GEO question, show the answer, Save as PDF (Arabic + English)`,
     "",
     description,

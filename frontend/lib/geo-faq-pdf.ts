@@ -1,4 +1,4 @@
-import type { GeoFaqItem } from "./geo-faq"
+import { faqKey, type GeoFaqItem } from "./geo-faq"
 
 function escapeHtml(text: string): string {
   return text
@@ -88,11 +88,14 @@ export function printGeoFaqPdf(items: GeoFaqItem[], lang: "ar" | "en") {
 }
 
 export function filterGeoFaq(items: GeoFaqItem[], query: string): GeoFaqItem[] {
-  const q = query.trim().toLowerCase()
+  const q = query.trim()
   if (!q) return items
-  return items.filter((item) =>
-    [item.question.ar, item.question.en, item.answer.ar, item.answer.en].some((text) =>
-      text.toLowerCase().includes(q),
-    ),
-  )
+  const key = faqKey(q)
+  const raw = q.toLowerCase()
+  return items.filter((item) => {
+    if (key && [item.question.en, item.question.ar].some((text) => faqKey(text).includes(key))) return true
+    return [item.question.ar, item.question.en, item.answer.ar, item.answer.en].some((text) =>
+      text.toLowerCase().includes(raw),
+    )
+  })
 }

@@ -7,3 +7,5 @@ npm-debug.log*
 .DS_Store
 tsconfig.tsbuildinfo
 3000
+pnpm-lock.yaml
+.pnpm-store

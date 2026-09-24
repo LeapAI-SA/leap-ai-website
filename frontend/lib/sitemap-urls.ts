@@ -1,6 +1,7 @@
 import { solutionsGroups, products, useCases } from "@/lib/site-data"
 import { ARTICLES } from "@/lib/articles"
 import { articleCanonicalPath } from "@/lib/article-paths"
+import { GEO_COMPARISONS, geoComparisonPath } from "@/lib/geo-comparisons"
 import { withLocalePrefix } from "@/lib/locale-path"
 import { absoluteUrl } from "@/lib/seo"
 
@@ -19,7 +20,15 @@ export function getRedirectOnlySitemapPaths(): string[] {
 /** GSC URL Inspection — request these first (home AR/EN, llms.txt, dated news AR/EN). */
 export function getGscPriorityPaths(): string[] {
   const news = ARTICLES.filter((item) => item.kind === "news").map((item) => articleCanonicalPath(item))
-  return ["/", "/en", "/llms.txt", ...news, ...news.map((path) => withLocalePrefix(path, "en"))]
+  return [
+    "/",
+    "/en",
+    "/llms.txt",
+    "/vs",
+    "/vs/unifonic",
+    ...news,
+    ...news.map((path) => withLocalePrefix(path, "en")),
+  ]
 }
 
 /** Canonical public URLs included in /sitemap.xml (Arabic + English /en). */
@@ -36,6 +45,8 @@ export function getSitemapPaths(): string[] {
     "/become-a-partner",
     "/about-us",
     "/faq",
+    "/vs",
+    ...GEO_COMPARISONS.map((item) => geoComparisonPath(item.slug)),
     "/privacy-policy",
     "/llms.txt",
     "/llms-full.txt",

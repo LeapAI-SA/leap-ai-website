@@ -20,6 +20,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
   ],
   headerRight: [
     { label: { ar: "مقال", en: "Article" }, href: "/resources" },
+    { label: { ar: "مقارنات", en: "Compare" }, href: "/vs" },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
@@ -33,6 +34,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
     { label: { ar: "قصص النجاح", en: "Success Stories" }, href: "/cases" },
     { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" },
     { label: { ar: "مقال", en: "Article" }, href: "/resources" },
+    { label: { ar: "مقارنات", en: "Compare" }, href: "/vs" },
     { label: { ar: "كن شريكنا", en: "Become a Partner" }, href: "/become-a-partner" },
     { label: { ar: "اتصل بنا", en: "Contact Us" }, href: "/contact-us" },
   ],
@@ -44,6 +46,7 @@ export const DEFAULT_NAVIGATION: SiteNavigation = {
 
 const RESOURCES_LINK: SiteNavLink = { label: { ar: "مقال", en: "Article" }, href: "/resources" }
 const CAREERS_LINK: SiteNavLink = { label: { ar: "الوظائف", en: "Careers" }, href: "/careers" }
+const COMPARE_LINK: SiteNavLink = { label: { ar: "مقارنات", en: "Compare" }, href: "/vs" }
 
 function isResourcesHref(href: string) {
   return href === "/resources" || href.startsWith("/resources/")
@@ -91,13 +94,30 @@ function ensureCareersLink(links: SiteNavLink[], beforeHref: string): SiteNavLin
   return next
 }
 
+function ensureCompareLink(links: SiteNavLink[], beforeHref: string): SiteNavLink[] {
+  if (links.some((link) => link.href === "/vs" || link.href.startsWith("/vs/"))) {
+    return links
+  }
+  const next = [...links]
+  const idx = next.findIndex((link) => link.href === beforeHref)
+  if (idx >= 0) next.splice(idx, 0, COMPARE_LINK)
+  else next.push(COMPARE_LINK)
+  return next
+}
+
 export function mergeNavigation(navigation?: Partial<SiteNavigation> | null): SiteNavigation {
   const headerRight = navigation?.headerRight?.length ? navigation.headerRight : DEFAULT_NAVIGATION.headerRight
   const footerLinks = navigation?.footerLinks?.length ? navigation.footerLinks : DEFAULT_NAVIGATION.footerLinks
   return {
     headerLeft: navigation?.headerLeft?.length ? navigation.headerLeft : DEFAULT_NAVIGATION.headerLeft,
-    headerRight: ensureCareersLink(ensureResourcesLink(headerRight, "/become-a-partner"), "/contact-us"),
-    footerLinks: ensureCareersLink(ensureResourcesLink(footerLinks, "/become-a-partner"), "/resources"),
+    headerRight: ensureCompareLink(
+      ensureCareersLink(ensureResourcesLink(headerRight, "/become-a-partner"), "/contact-us"),
+      "/careers",
+    ),
+    footerLinks: ensureCompareLink(
+      ensureCareersLink(ensureResourcesLink(footerLinks, "/become-a-partner"), "/resources"),
+      "/become-a-partner",
+    ),
     footerLegal: navigation?.footerLegal?.length ? navigation.footerLegal : DEFAULT_NAVIGATION.footerLegal,
   }
 }

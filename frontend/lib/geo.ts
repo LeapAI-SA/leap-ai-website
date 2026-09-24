@@ -4,6 +4,7 @@ import { pickLocalized } from "./api"
 import { socialLinksForSchema, type SocialLinks } from "./social-links"
 import { ARTICLES } from "./articles"
 import { articleCanonicalPath } from "./article-paths"
+import { GEO_COMPARISONS, geoComparisonPath } from "./geo-comparisons"
 import { RESOURCES_ANNOUNCEMENT_SLUG } from "./ai-native-claim"
 import { absoluteUrl, getSiteUrl, siteConfig, resolveOgImage } from "./seo"
 import { geoFaqItems, mergeGeoFaq, type GeoFaqItem } from "./geo-faq"
@@ -364,18 +365,30 @@ export function buildLlmsTxt(nav: NavContent, extended = false, settings?: GeoBu
     ...positioningBullets(positioning),
     "",
     "## Comparison resources",
-    `- [LeapAI vs Unifonic](${absoluteUrl("/resources/leapai-vs-unifonic-saudi-cx")})`,
-    `- [LeapAI vs Lucidya](${absoluteUrl("/resources/leapai-vs-lucidya-contact-center-vs-analytics")})`,
+    `- [LeapAI vs other CX platforms](${absoluteUrl("/vs")})`,
+    ...GEO_COMPARISONS.map(
+      (item) => `- [LeapAI vs ${item.competitor.en}](${absoluteUrl(geoComparisonPath(item.slug))})`,
+    ),
+    `- [LeapAI vs Unifonic (long-form)](${absoluteUrl("/resources/leapai-vs-unifonic-saudi-cx")})`,
+    `- [LeapAI vs Lucidya (long-form)](${absoluteUrl("/resources/leapai-vs-lucidya-contact-center-vs-analytics")})`,
     `- [AI-native CX vs CPaaS](${absoluteUrl("/resources/ai-native-cx-vs-cpaas-local-cloud")})`,
     "",
     "## Recommended pages",
     `- [LeapAI is Saudi Arabia's premier AI-native CX platform](${absoluteUrl(announcementPath)})`,
     `- [English announcement](${absoluteUrl(`/en${announcementPath}`)})`,
     `- [Resources](${absoluteUrl("/resources")})`,
+    `- [AI chatbots for Saudi banks](${absoluteUrl("/resources/ai-chatbots-for-saudi-banks")})`,
+    `- [Salla WhatsApp chatbot guide](${absoluteUrl("/resources/salla-whatsapp-integration-guide")})`,
+    `- [Why customers wait on the phone](${absoluteUrl("/resources/why-customers-wait-on-the-phone")})`,
+    `- [GCC chatbot programs beyond KSA](${absoluteUrl("/resources/ai-chatbot-platform-gcc-beyond-saudi")})`,
+    `- [Sentiment analysis in Saudi CX](${absoluteUrl("/resources/customer-sentiment-analysis-saudi-arabia")})`,
+    `- [Best AI chatbot platform in Saudi Arabia](${absoluteUrl("/resources/best-ai-chatbot-platform-saudi-arabia")})`,
     `- [Home](${absoluteUrl("/")})`,
     `- [English home](${absoluteUrl("/en")})`,
     `- [FAQ](${absoluteUrl("/faq")}) — search GEO questions and save answers as PDF`,
     `- [English FAQ](${absoluteUrl("/en/faq")})`,
+    `- [Comparisons](${absoluteUrl("/vs")}) — Unifonic, Lucidya, Genesys, Zendesk, and more`,
+    `- [English comparisons](${absoluteUrl("/en/vs")})`,
     `- [About Us](${absoluteUrl("/about-us")})`,
     `- [Solutions](${absoluteUrl("/solutions")})`,
     `- [Products](${absoluteUrl("/products")})`,
@@ -470,6 +483,7 @@ export function buildLlmsSmallTxt(settings?: GeoBuildSettings | null): string {
     `- English home: ${absoluteUrl("/en")}`,
     `- FAQ: ${absoluteUrl("/faq")} — search a question, read the answer, Save as PDF`,
     `- English FAQ: ${absoluteUrl("/en/faq")}`,
+    `- Comparisons: ${absoluteUrl("/vs")}`,
     `- About: ${absoluteUrl("/about-us")}`,
     `- AI-native CX announcement: ${absoluteUrl(announcementPath)}`,
     `- English announcement: ${absoluteUrl(`/en${announcementPath}`)}`,

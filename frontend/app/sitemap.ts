@@ -27,6 +27,8 @@ function changeFrequencyFor(path: string): MetadataRoute.Sitemap[number]["change
     path === "/resources" ||
     path.startsWith("/resources/") ||
     path.startsWith("/news/") ||
+    path === "/vs" ||
+    path.startsWith("/vs/") ||
     path.startsWith("/en") ||
     path.startsWith("/llms") ||
     path.includes("ai.txt")
@@ -57,6 +59,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 path.startsWith("/products/") ||
                 path.startsWith("/use-cases/")
               ? 0.8
+              : path === "/vs" || path.startsWith("/vs/")
+              ? 0.85
               : 0.7),
     }))
   } catch (err) {

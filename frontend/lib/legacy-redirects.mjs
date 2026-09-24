@@ -88,6 +88,8 @@ const CANONICAL_STATIC_PAGES = new Set([
   "products",
   "use-cases",
   "resources",
+  "faq",
+  "vs",
 ])
 
 /**
@@ -106,7 +108,8 @@ export function isLikelyCanonicalPath(path) {
     p.startsWith("/resources/") ||
     p.startsWith("/news/") ||
     p.startsWith("/careers/") ||
-    p.startsWith("/lp/")
+    p.startsWith("/lp/") ||
+    p.startsWith("/vs/")
   ) {
     return true
   }
