@@ -19,9 +19,11 @@ export const LEGACY_SLUG_TO_PATH = {
 
   // Solutions (WordPress + short slugs)
   "nlu-ai-chatbot": "/solutions/nlu-chatbot",
+  "chatbot-nlp-nlu": "/solutions/nlu-chatbot",
   "ai-voice-bot": "/solutions/voice-bot",
   "genai-generative-ai-chatbot": "/solutions/genai-chatbot",
   "connecting-digital-chat-channels-and-social-media-messages": "/solutions/digital-channels",
+  "social-media-channel-integration": "/solutions/digital-channels",
   "omni-channel-contact-center": "/solutions",
   "multichannel-contact-centers": "/solutions",
   "whatsapp-business-registration": "/solutions/whatsapp-business",
