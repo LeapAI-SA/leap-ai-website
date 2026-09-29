@@ -396,10 +396,6 @@ export async function submitJobApplication(form: FormData) {
 }
 
 export async function uploadAdminImage(file: File): Promise<string> {
-  const maxBytes = 25 * 1024 * 1024
-  if (file.size > maxBytes) {
-    throw new Error("File too large. Use an image under 25 MB.")
-  }
   const form = new FormData()
   form.append("file", file)
   const res = await clientFetch(`${browserApiUrl()}/api/admin/upload`, {
@@ -413,7 +409,7 @@ export async function uploadAdminImage(file: File): Promise<string> {
       throw new Error("Unauthorized")
     }
     if (res.status === 413) {
-      throw new Error("File too large. Use an image under 25 MB.")
+      throw new Error("The server rejected the file as too large (check the nginx client_max_body_size).")
     }
     const err = await res.json().catch(() => ({ error: "Upload failed" }))
     throw new Error(err.error ?? "Upload failed")

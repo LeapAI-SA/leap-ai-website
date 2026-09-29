@@ -10,6 +10,12 @@ const nextConfig = {
   poweredByHeader: false,
   // Legacy /en/* redirects handle trailing slashes in one hop (see legacy-redirects.mjs).
   skipTrailingSlashRedirect: true,
+  experimental: {
+    // Next.js truncates every request body at 10 MB by default; admin image uploads have no size cap.
+    proxyClientMaxBodySize: Number.MAX_SAFE_INTEGER,
+    // /backend rewrite proxy: large admin image uploads need more than the 30s default.
+    proxyTimeout: 600_000,
+  },
   images: {
     unoptimized: false,
     formats: ["image/avif", "image/webp"],
