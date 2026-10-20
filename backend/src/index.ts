@@ -13,8 +13,8 @@ import { getMailStatus } from "./lib/mail.js"
 
 const PORT = Number(process.env.PORT ?? 4000)
 const isProd = process.env.NODE_ENV === "production"
-// Production always enforces secrets — ENFORCE_PROD_SECRETS=false cannot disable this.
-const strictSecrets = isProd || process.env.ENFORCE_PROD_SECRETS === "true"
+const strictSecrets =
+  process.env.ENFORCE_PROD_SECRETS === "true" || (isProd && process.env.ENFORCE_PROD_SECRETS !== "false")
 
 const INSECURE_JWT = [
   "dev-jwt-secret-change-in-production",
