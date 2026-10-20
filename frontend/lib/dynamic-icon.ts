@@ -35,6 +35,53 @@ async function loadLocalPublicAsset(assetPath: string) {
   }
 }
 
+function hostnameOf(url: string) {
+  try {
+    return new URL(url).hostname.toLowerCase()
+  } catch {
+    return ""
+  }
+}
+
+function isPrivateOrLocalHost(hostname: string) {
+  if (!hostname) return true
+  if (hostname === "localhost" || hostname.endsWith(".localhost")) return true
+  if (hostname === "0.0.0.0" || hostname === "::" || hostname === "::1") return true
+  // IPv4 private / link-local / loopback
+  if (/^(127\.|10\.|192\.168\.|169\.254\.)/.test(hostname)) return true
+  if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname)) return true
+  // IPv6 unique local / link-local
+  if (hostname.startsWith("fc") || hostname.startsWith("fd") || hostname.startsWith("fe80")) return true
+  return false
+}
+
+/** Only fetch logos from our public site host or the internal API host (for /uploads). */
+function isAllowedFetchUrl(url: string) {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false
+
+  const host = parsed.hostname.toLowerCase()
+  const siteHost = hostnameOf(getPublicSiteUrl())
+  const apiHost = hostnameOf(getApiUrl())
+
+  // Loopback only for Next serving its own public assets during icon generation.
+  if (host === "127.0.0.1" || host === "localhost") {
+    return parsed.pathname.startsWith("/") && !parsed.pathname.includes("..")
+  }
+
+  if (siteHost && host === siteHost) return true
+  if (apiHost && host === apiHost && parsed.pathname.startsWith("/uploads/")) return true
+
+  // Block everything else (including private IPs on unexpected hosts).
+  if (isPrivateOrLocalHost(host)) return false
+  return false
+}
+
 function toFetchableUrl(pathOrUrl: string) {
   if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl
 
@@ -51,11 +98,15 @@ function toFetchableUrl(pathOrUrl: string) {
 }
 
 async function fetchAsDataUrl(url: string) {
+  if (!isAllowedFetchUrl(url)) return null
   try {
-    const response = await fetch(url, { cache: "no-store" })
+    const response = await fetch(url, { cache: "no-store", redirect: "error" })
     if (!response.ok) return null
     const contentType = response.headers.get("content-type") ?? "image/png"
+    if (!contentType.startsWith("image/")) return null
     const bytes = Buffer.from(await response.arrayBuffer())
+    // Cap logo payload used for OG/icon generation (~2 MB).
+    if (bytes.byteLength > 2 * 1024 * 1024) return null
     return `data:${contentType};base64,${bytes.toString("base64")}`
   } catch {
     return null

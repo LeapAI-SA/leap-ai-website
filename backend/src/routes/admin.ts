@@ -11,7 +11,9 @@ import { LoginActivity } from "../models/LoginActivity.js"
 import { requireAuth, requireAdmin } from "../middleware/auth.js"
 import {
   isContentType,
+  isValidEmail,
   isValidSlug,
+  sanitizeHttpUrl,
   sanitizeImagePath,
   sanitizeNavLinks,
   sanitizePartners,
@@ -31,6 +33,12 @@ import { uploadImage, CV_UPLOAD_DIR, detectImageKindFromFile, extensionForImageM
 
 const router = Router()
 router.use(requireAuth, requireAdmin)
+
+function isInsideDir(filePath: string, dir: string) {
+  const resolvedFile = path.resolve(filePath)
+  const resolvedDir = path.resolve(dir)
+  return resolvedFile === resolvedDir || resolvedFile.startsWith(resolvedDir + path.sep)
+}
 
 function containsBrand(text: string, brand: string): boolean {
   const haystack = text.toLowerCase().replace(/\s+/g, "")
@@ -225,6 +233,17 @@ router.post("/content", async (req, res) => {
   const slug = await uniqueContentSlug(requested, (candidate) => ContentItem.exists({ slug: candidate }))
 
   const image = body.image !== undefined ? sanitizeImagePath(body.image) ?? "" : ""
+  const officialWebsite =
+    typeof body.officialWebsite === "string" && body.officialWebsite.trim()
+      ? sanitizeHttpUrl(body.officialWebsite)
+      : ""
+  if (typeof body.officialWebsite === "string" && body.officialWebsite.trim() && !officialWebsite) {
+    return res.status(400).json({ error: "Invalid officialWebsite URL" })
+  }
+  const officialEmailRaw = typeof body.officialEmail === "string" ? body.officialEmail.trim() : ""
+  if (officialEmailRaw && !isValidEmail(officialEmailRaw)) {
+    return res.status(400).json({ error: "Invalid officialEmail" })
+  }
   const item = await ContentItem.create({
     type: body.type,
     slug,
@@ -235,9 +254,9 @@ router.post("/content", async (req, res) => {
     description: body.description,
     features: body.features,
     image,
-    contactPhone: typeof body.contactPhone === "string" ? body.contactPhone : "",
-    officialWebsite: typeof body.officialWebsite === "string" ? body.officialWebsite : "",
-    officialEmail: typeof body.officialEmail === "string" ? body.officialEmail : "",
+    contactPhone: typeof body.contactPhone === "string" ? body.contactPhone.slice(0, 40) : "",
+    officialWebsite: officialWebsite || "",
+    officialEmail: officialEmailRaw,
     profileDescription: body.profileDescription,
     published: body.published !== false,
     sortOrder: typeof body.sortOrder === "number" ? body.sortOrder : 0,
@@ -284,9 +303,34 @@ router.put("/content/:id", async (req, res) => {
     }
     item.set("image", safe ?? "")
   }
+  if (body.officialWebsite !== undefined) {
+    const raw = typeof body.officialWebsite === "string" ? body.officialWebsite.trim() : ""
+    if (!raw) {
+      item.set("officialWebsite", "")
+    } else {
+      const safe = sanitizeHttpUrl(raw)
+      if (!safe) return res.status(400).json({ error: "Invalid officialWebsite URL" })
+      item.set("officialWebsite", safe)
+    }
+  }
+  if (body.officialEmail !== undefined) {
+    const raw = typeof body.officialEmail === "string" ? body.officialEmail.trim() : ""
+    if (raw && !isValidEmail(raw)) {
+      return res.status(400).json({ error: "Invalid officialEmail" })
+    }
+    item.set("officialEmail", raw)
+  }
 
   for (const field of fields) {
-    if (field === "image" || field === "type" || field === "slug") continue
+    if (
+      field === "image" ||
+      field === "type" ||
+      field === "slug" ||
+      field === "officialWebsite" ||
+      field === "officialEmail"
+    ) {
+      continue
+    }
     if (body[field] !== undefined) {
       item.set(field, body[field])
     }
@@ -351,7 +395,7 @@ router.delete("/job-applications/:id", async (req, res) => {
   if (!item) return res.status(404).json({ error: "Not found" })
   const relative = item.cvFile.replace(/^\/uploads\/cv\//, "")
   const filePath = path.resolve(CV_UPLOAD_DIR, relative)
-  if (filePath.startsWith(CV_UPLOAD_DIR) && fs.existsSync(filePath)) {
+  if (isInsideDir(filePath, CV_UPLOAD_DIR) && fs.existsSync(filePath)) {
     fs.unlinkSync(filePath)
   }
   await item.deleteOne()
@@ -363,7 +407,7 @@ router.get("/job-applications/:id/cv", async (req, res) => {
   if (!item) return res.status(404).json({ error: "Not found" })
   const relative = item.cvFile.replace(/^\/uploads\/cv\//, "")
   const filePath = path.resolve(CV_UPLOAD_DIR, relative)
-  if (!filePath.startsWith(CV_UPLOAD_DIR) || !fs.existsSync(filePath)) {
+  if (!isInsideDir(filePath, CV_UPLOAD_DIR) || !fs.existsSync(filePath)) {
     return res.status(404).json({ error: "CV file not found" })
   }
   res.download(filePath)

@@ -3,11 +3,20 @@ import { getSitemapUrls } from "@/lib/sitemap-urls"
 
 /**
  * IndexNow key — must match the file at /public/{INDEXNOW_KEY}.txt
- * Override with INDEXNOW_KEY env in production if rotated (e.g. Bing Webmaster Generate).
- * Rotate with: node scripts/rotate-indexnow-key.mjs --key=<newkey>
+ * Set INDEXNOW_KEY in production (validated by validate-production-env.mjs).
+ * Dev falls back to the committed key file. Rotate with: node scripts/rotate-indexnow-key.mjs
  */
+const DEV_INDEXNOW_KEY = "a0d1d00c073c48c2b85694d1a36ccfbf"
+
 export const INDEXNOW_KEY =
-  process.env.INDEXNOW_KEY?.trim() || "a0d1d00c073c48c2b85694d1a36ccfbf"
+  process.env.INDEXNOW_KEY?.trim() ||
+  (process.env.NODE_ENV === "production" ? "" : DEV_INDEXNOW_KEY)
+
+export function assertIndexNowKeyConfigured() {
+  if (!INDEXNOW_KEY) {
+    throw new Error("INDEXNOW_KEY must be set in production (must match /public/{key}.txt)")
+  }
+}
 
 /** Shared hub (Bing / partners) + direct Yandex — Bing can 403 while Yandex accepts. */
 export const INDEXNOW_ENDPOINTS = [
@@ -95,6 +104,7 @@ export async function submitIndexNow(
   urls: string[] = getSitemapUrls(),
   options?: { host?: string; key?: string },
 ): Promise<IndexNowResult> {
+  assertIndexNowKeyConfigured()
   const hostUrl = (options?.host ?? PRODUCTION_SITE_URL).replace(/\/$/, "")
   const host = new URL(hostUrl).host
   const key = options?.key ?? INDEXNOW_KEY

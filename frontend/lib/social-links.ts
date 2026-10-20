@@ -1,3 +1,6 @@
+import { safeExternalUrl } from "./safe-url"
+export { safeExternalUrl }
+
 export type SocialLinks = {
   facebook: string
   twitter: string
@@ -31,18 +34,6 @@ export const SOCIAL_PLATFORMS: {
 
 export function mergeSocialLinks(links?: Partial<SocialLinks> | null): SocialLinks {
   return { ...DEFAULT_SOCIAL_LINKS, ...links }
-}
-
-/** Allow only http(s) links — blocks javascript:, data:, etc. */
-export function safeExternalUrl(url: string | undefined | null): string | null {
-  if (!url?.trim()) return null
-  try {
-    const parsed = new URL(url.trim())
-    if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href
-  } catch {
-    /* invalid */
-  }
-  return null
 }
 
 export function safeSocialLinks(links?: Partial<SocialLinks> | null): SocialLinks {

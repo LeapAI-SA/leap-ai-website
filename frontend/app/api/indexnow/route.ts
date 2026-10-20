@@ -10,10 +10,29 @@ import { getApiUrl } from "@/lib/api-url"
 import {
   submitIndexNow,
   INDEXNOW_KEY,
+  assertIndexNowKeyConfigured,
   indexNowKeyLocation,
   checkIndexNowKeyLive,
 } from "@/lib/indexnow"
 import { getGscPriorityUrls, getRedirectOnlyUrls, getSitemapUrls } from "@/lib/sitemap-urls"
+import { getPublicSiteUrl } from "@/lib/site-url"
+
+function sameSiteUrls(urls: string[]) {
+  let siteHost = ""
+  try {
+    siteHost = new URL(getPublicSiteUrl()).hostname.toLowerCase()
+  } catch {
+    return []
+  }
+  return urls.filter((raw) => {
+    try {
+      const u = new URL(raw)
+      return (u.protocol === "https:" || u.protocol === "http:") && u.hostname.toLowerCase() === siteHost
+    } catch {
+      return false
+    }
+  })
+}
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
@@ -73,11 +92,19 @@ export async function POST(request: Request) {
   if (!(await authorized(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
+  try {
+    assertIndexNowKeyConfigured()
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "INDEXNOW_KEY not configured" },
+      { status: 503 },
+    )
+  }
 
   let urls = getSitemapUrls()
   try {
     const body = (await request.json().catch(() => null)) as { urls?: string[] } | null
-    if (body?.urls?.length) urls = body.urls
+    if (body?.urls?.length) urls = sameSiteUrls(body.urls)
   } catch {
     /* use default sitemap list */
   }
@@ -89,7 +116,6 @@ export async function POST(request: Request) {
   return NextResponse.json(
     {
       ...result,
-      key: INDEXNOW_KEY,
       keyLocation: key.keyLocation,
       keyLive: key.live,
       keyHttpStatus: key.status,
@@ -109,12 +135,22 @@ export async function GET(request: Request) {
   if (!(await authorized(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
+  try {
+    assertIndexNowKeyConfigured()
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "INDEXNOW_KEY not configured" },
+      { status: 503 },
+    )
+  }
 
   const key = await checkIndexNowKeyLive()
   const urls = getSitemapUrls()
   const priorityUrls = getGscPriorityUrls()
+  const maskedKey =
+    INDEXNOW_KEY.length <= 8 ? "********" : `${INDEXNOW_KEY.slice(0, 4)}…${INDEXNOW_KEY.slice(-4)}`
   return NextResponse.json({
-    key: INDEXNOW_KEY,
+    keyMasked: maskedKey,
     keyLocation: key.keyLocation,
     keyLive: key.live,
     keyHttpStatus: key.status,

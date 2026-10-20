@@ -48,7 +48,7 @@ services:
       MFA_CODE_SECRET: ${MFA_CODE_SECRET:-dev-mfa-secret-change-in-production}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,https://leapai.ai,https://leapai-webhook.bab.solutions}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-a.osman@bab.com.sa}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin@bab@#@#"}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}
       ENFORCE_PROD_SECRETS: ${ENFORCE_PROD_SECRETS:-false}
       SEED_ON_START: ${SEED_ON_START:-true}
       NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-sales@bab.com.sa}
@@ -77,6 +77,7 @@ services:
         NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-GTM-KTRBN5S2}
         NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-G-7NWB9C7RNB}
         API_URL: http://backend:4000
+        INDEXNOW_KEY: ${INDEXNOW_KEY:-a0d1d00c073c48c2b85694d1a36ccfbf}
     container_name: leap-frontend
     restart: unless-stopped
     ports:
@@ -89,6 +90,7 @@ services:
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://leapai.ai}
       NEXT_PUBLIC_GTM_ID: ${NEXT_PUBLIC_GTM_ID:-GTM-KTRBN5S2}
       NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-G-7NWB9C7RNB}
+      INDEXNOW_KEY: ${INDEXNOW_KEY:-a0d1d00c073c48c2b85694d1a36ccfbf}
     healthcheck:
       test:
         [

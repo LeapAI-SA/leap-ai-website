@@ -1,15 +1,6 @@
 import { getClientApiUrl } from "./api-url"
+import { safeHttpUrl } from "./safe-url"
 import { getBasePath } from "./site-url"
-
-function safeHttpUrl(url: string): string | null {
-  try {
-    const parsed = new URL(url)
-    if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href
-  } catch {
-    /* invalid */
-  }
-  return null
-}
 
 /** Prefix a site-relative path with NEXT_PUBLIC_BASE_PATH when configured. */
 export function withBasePath(path: string): string {

@@ -186,18 +186,6 @@ export function setAuthSession(active: boolean) {
   else sessionStorage.removeItem(AUTH_SESSION_KEY)
 }
 
-/** @deprecated Prefer hasAuthSession(); kept for call-site compatibility. */
-export function getToken(): string | null {
-  return hasAuthSession() ? "cookie" : null
-}
-
-export function setToken(token: string | null) {
-  setAuthSession(Boolean(token))
-  if (!token && typeof window !== "undefined") {
-    void clientFetch(`${browserApiUrl()}/api/auth/logout`, { method: "POST" }).catch(() => undefined)
-  }
-}
-
 export async function fetchAuthMe(): Promise<{ user: { email: string; role: string; userId?: string } } | null> {
   try {
     const res = await clientFetch(`${browserApiUrl()}/api/auth/me`, {

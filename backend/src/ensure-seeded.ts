@@ -157,11 +157,8 @@ export async function ensureSeeded() {
     const passwordHash = await bcrypt.hash(password, 12)
     await User.create({ email, passwordHash, role: "admin" })
     console.log(`Admin user created: ${email}`)
-  } else if (!(await bcrypt.compare(password, existing.passwordHash))) {
-    existing.passwordHash = await bcrypt.hash(password, 12)
-    await existing.save()
-    console.log(`Admin password updated: ${email}`)
   }
+  // Never overwrite an existing admin password from env (prevents surprise resets on restart).
 
   await getOrCreateSettings()
   await importContent()

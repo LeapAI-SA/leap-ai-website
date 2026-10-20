@@ -57,3 +57,7 @@ if (hostOf(siteUrl) !== hostOf(productionUrl)) {
 if (!process.env.NEXT_PUBLIC_BASE_PATH?.trim()) {
   console.warn("Warning: NEXT_PUBLIC_BASE_PATH is not set (site may be at domain root).")
 }
+if (!process.env.INDEXNOW_KEY?.trim()) {
+  console.error("INDEXNOW_KEY is required for production builds (must match /public/{key}.txt).")
+  process.exit(1)
+}
