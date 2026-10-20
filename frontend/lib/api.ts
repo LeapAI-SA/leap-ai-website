@@ -4,7 +4,7 @@ import { getApiUrl, getClientApiUrl, isBuildPhase } from "./api-url"
 
 import type { SocialLinks } from "./social-links"
 import type { SiteNavigation } from "./site-nav"
-import type { PartnerLogo, AddonsSection, AboutPageSettings, PrivacyPageSettings, CtaLabels, StoreIntegrationLinks } from "./site-marketing"
+import type { PartnerLogo, AddonsSection, AboutPageSettings, PrivacyPageSettings, CtaLabels, StoreIntegrationLinks, StoreIntegrationLogos } from "./site-marketing"
 import type { PricingPlan } from "./site-data"
 import type { GeoSettings } from "./geo-defaults"
 
@@ -33,6 +33,7 @@ export type PublicSiteSettings = {
   }
   social?: SocialLinks
   storeIntegrationLinks?: StoreIntegrationLinks
+  storeIntegrationLogos?: StoreIntegrationLogos
   seo?: {
     siteTitle: Localized
     metaDescription: Localized

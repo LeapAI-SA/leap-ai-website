@@ -64,6 +64,11 @@ export type StoreIntegrationLinks = {
   zid: string
 }
 
+export type StoreIntegrationLogos = {
+  salla: string
+  zid: string
+}
+
 export const DEFAULT_PARTNERS: PartnerLogo[] = [
   { name: "Meta", logo: "/logos/meta.png" },
   { name: "Microsoft", logo: "/logos/microsoft.png" },
@@ -192,6 +197,12 @@ export const DEFAULT_STORE_INTEGRATION_LINKS: StoreIntegrationLinks = {
   zid: "https://apps.zid.sa/application/3277",
 }
 
+/** Empty zid keeps the purple text wordmark until an image is uploaded. */
+export const DEFAULT_STORE_INTEGRATION_LOGOS: StoreIntegrationLogos = {
+  salla: "/logos/salla.svg",
+  zid: "",
+}
+
 function mergeLocalized(defaults: Localized, value?: Localized): Localized {
   if (!value) return defaults
   return { ar: value.ar || defaults.ar, en: value.en || defaults.en }
@@ -276,6 +287,15 @@ export function mergeStoreIntegrationLinks(
   links?: Partial<StoreIntegrationLinks> | null,
 ): StoreIntegrationLinks {
   return { ...DEFAULT_STORE_INTEGRATION_LINKS, ...links }
+}
+
+export function mergeStoreIntegrationLogos(
+  logos?: Partial<StoreIntegrationLogos> | null,
+): StoreIntegrationLogos {
+  return {
+    salla: logos?.salla?.trim() || DEFAULT_STORE_INTEGRATION_LOGOS.salla,
+    zid: typeof logos?.zid === "string" ? logos.zid.trim() : DEFAULT_STORE_INTEGRATION_LOGOS.zid,
+  }
 }
 
 export function activePartners(partners: PartnerLogo[]): PartnerLogo[] {

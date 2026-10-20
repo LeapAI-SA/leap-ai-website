@@ -37,6 +37,7 @@ import {
   DEFAULT_PRIVACY_PAGE,
   DEFAULT_CTA_LABELS,
   DEFAULT_STORE_INTEGRATION_LINKS,
+  DEFAULT_STORE_INTEGRATION_LOGOS,
   featuresToText,
   mergePartners,
   mergePricingPlans,
@@ -45,6 +46,7 @@ import {
   mergePrivacyPage,
   mergeCtaLabels,
   mergeStoreIntegrationLinks,
+  mergeStoreIntegrationLogos,
   paragraphsToText,
   textToFeatures,
   textToParagraphs,
@@ -101,6 +103,7 @@ function normalizeSettings(data: PublicSiteSettings): PublicSiteSettings {
     images: { ...DEFAULT_IMAGES, ...data.images },
     social: mergeSocialLinks(data.social),
     storeIntegrationLinks: mergeStoreIntegrationLinks(data.storeIntegrationLinks),
+    storeIntegrationLogos: mergeStoreIntegrationLogos(data.storeIntegrationLogos),
     seo: { ...DEFAULT_SEO, ...data.seo },
     navigation: mergeNavigation(data.navigation),
     partners: mergePartners(data.partners),
@@ -775,43 +778,75 @@ export default function DashboardSettingsPage() {
         title={t("admin.settings.panel.storeLinks")}
         description={t("admin.settings.panel.storeLinksDesc")}
       >
-        <div className="grid gap-4 md:grid-cols-2">
-          <FormField label={t("admin.settings.sallaLink")}>
-            <input
-              type="url"
-              dir="ltr"
-              value={settings.storeIntegrationLinks?.salla ?? DEFAULT_STORE_INTEGRATION_LINKS.salla}
-              onChange={(e) =>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-4">
+            <ImageUploadField
+              label={t("admin.settings.sallaLogo")}
+              hint={t("admin.settings.sallaLogoHint")}
+              value={settings.storeIntegrationLogos?.salla ?? DEFAULT_STORE_INTEGRATION_LOGOS.salla}
+              onChange={(url) =>
                 setSettings({
                   ...settings,
-                  storeIntegrationLinks: {
-                    ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
-                    salla: e.target.value,
+                  storeIntegrationLogos: {
+                    ...mergeStoreIntegrationLogos(settings.storeIntegrationLogos),
+                    salla: url,
                   },
                 })
               }
-              placeholder={DEFAULT_STORE_INTEGRATION_LINKS.salla}
-              className="form-input font-mono text-sm"
             />
-          </FormField>
-          <FormField label={t("admin.settings.zidLink")}>
-            <input
-              type="url"
-              dir="ltr"
-              value={settings.storeIntegrationLinks?.zid ?? DEFAULT_STORE_INTEGRATION_LINKS.zid}
-              onChange={(e) =>
+            <FormField label={t("admin.settings.sallaLink")}>
+              <input
+                type="url"
+                dir="ltr"
+                value={settings.storeIntegrationLinks?.salla ?? DEFAULT_STORE_INTEGRATION_LINKS.salla}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    storeIntegrationLinks: {
+                      ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
+                      salla: e.target.value,
+                    },
+                  })
+                }
+                placeholder={DEFAULT_STORE_INTEGRATION_LINKS.salla}
+                className="form-input font-mono text-sm"
+              />
+            </FormField>
+          </div>
+          <div className="space-y-4">
+            <ImageUploadField
+              label={t("admin.settings.zidLogo")}
+              hint={t("admin.settings.zidLogoHint")}
+              value={settings.storeIntegrationLogos?.zid ?? DEFAULT_STORE_INTEGRATION_LOGOS.zid}
+              onChange={(url) =>
                 setSettings({
                   ...settings,
-                  storeIntegrationLinks: {
-                    ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
-                    zid: e.target.value,
+                  storeIntegrationLogos: {
+                    ...mergeStoreIntegrationLogos(settings.storeIntegrationLogos),
+                    zid: url,
                   },
                 })
               }
-              placeholder={DEFAULT_STORE_INTEGRATION_LINKS.zid}
-              className="form-input font-mono text-sm"
             />
-          </FormField>
+            <FormField label={t("admin.settings.zidLink")}>
+              <input
+                type="url"
+                dir="ltr"
+                value={settings.storeIntegrationLinks?.zid ?? DEFAULT_STORE_INTEGRATION_LINKS.zid}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    storeIntegrationLinks: {
+                      ...mergeStoreIntegrationLinks(settings.storeIntegrationLinks),
+                      zid: e.target.value,
+                    },
+                  })
+                }
+                placeholder={DEFAULT_STORE_INTEGRATION_LINKS.zid}
+                className="form-input font-mono text-sm"
+              />
+            </FormField>
+          </div>
         </div>
       </Panel>
       </>

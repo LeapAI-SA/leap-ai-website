@@ -278,6 +278,21 @@ export function sanitizeStoreIntegrationLinks(value: unknown): { salla?: string;
   return out
 }
 
+export function sanitizeStoreIntegrationLogos(value: unknown): { salla?: string; zid?: string } {
+  const v = (value && typeof value === "object" ? value : {}) as Record<string, unknown>
+  const out: { salla?: string; zid?: string } = {}
+  for (const key of ["salla", "zid"] as const) {
+    if (v[key] === undefined) continue
+    if (typeof v[key] === "string" && !v[key].trim()) {
+      out[key] = ""
+      continue
+    }
+    const safe = sanitizeImagePath(v[key])
+    if (safe) out[key] = safe
+  }
+  return out
+}
+
 function cleanGeoStringArray(raw: unknown, maxItems = 20, maxLen = 500): string[] {
   if (!Array.isArray(raw)) return []
   return raw

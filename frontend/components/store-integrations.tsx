@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/i18n"
 import { pickLocalized } from "@/lib/api"
 import { resolveMediaUrl } from "@/lib/media"
 import { useSiteSettings } from "@/lib/site-settings-context"
-import { mergeCtaLabels, mergeStoreIntegrationLinks } from "@/lib/site-marketing"
+import { mergeCtaLabels, mergeStoreIntegrationLinks, mergeStoreIntegrationLogos } from "@/lib/site-marketing"
 import { safeExternalUrl } from "@/lib/social-links"
 
 export function StoreIntegrations() {
@@ -16,6 +16,7 @@ export function StoreIntegrations() {
   const { settings } = useSiteSettings()
   const storesCta = pickLocalized(mergeCtaLabels(settings?.ctaLabels).stores, lang, t("stores.cta"))
   const storeLinks = mergeStoreIntegrationLinks(settings?.storeIntegrationLinks)
+  const storeLogos = mergeStoreIntegrationLogos(settings?.storeIntegrationLogos)
 
   const sharedPoints = [t("stores.feat1"), t("stores.feat2"), t("stores.feat3"), t("stores.abandonedCart")]
 
@@ -26,6 +27,8 @@ export function StoreIntegrations() {
           const title = tr(store.title)
           const href = safeExternalUrl(storeLinks[store.name]) ?? "#contact"
           const isExternal = href.startsWith("http")
+          const logo = storeLogos[store.name] || store.logo || ""
+          const showImage = Boolean(logo)
 
           return (
             <motion.div
@@ -37,10 +40,10 @@ export function StoreIntegrations() {
               className="flex flex-col rounded-2xl border border-border bg-card p-8 shadow-sm"
             >
               <div className="flex h-12 items-center">
-                {store.isImage ? (
-                  <Image src={resolveMediaUrl(store.logo || "/placeholder.svg")} alt={title} width={120} height={40} className="h-9 w-auto" />
+                {showImage ? (
+                  <Image src={resolveMediaUrl(logo)} alt={title} width={120} height={40} className="h-9 w-auto" />
                 ) : (
-                  <span className="text-3xl font-extrabold lowercase text-[#5b2be0]">zid</span>
+                  <span className="text-3xl font-extrabold lowercase text-[#5b2be0]">{store.name}</span>
                 )}
               </div>
               <span className="mt-6 text-xs font-bold tracking-widest text-amber">{t("stores.eyebrow")}</span>

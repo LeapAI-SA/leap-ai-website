@@ -51,7 +51,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin@bab@#@#"}
       ENFORCE_PROD_SECRETS: ${ENFORCE_PROD_SECRETS:-false}
       SEED_ON_START: ${SEED_ON_START:-true}
-      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-info@leapai.ai}
+      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-sales@bab.com.sa}
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}

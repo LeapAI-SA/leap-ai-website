@@ -274,6 +274,10 @@ const siteSettingsSchema = new Schema(
       salla: { type: String, default: "https://apps.salla.sa/ar/app/1047911288/" },
       zid: { type: String, default: "https://apps.zid.sa/application/3277" },
     },
+    storeIntegrationLogos: {
+      salla: { type: String, default: "/logos/salla.svg" },
+      zid: { type: String, default: "" },
+    },
     seo: {
       siteTitle: {
         type: localizedSchema,
@@ -525,6 +529,10 @@ export function serializePublicSettings(settings: InstanceType<typeof SiteSettin
     storeIntegrationLinks: settings.storeIntegrationLinks ?? {
       salla: "https://apps.salla.sa/ar/app/1047911288/",
       zid: "https://apps.zid.sa/application/3277",
+    },
+    storeIntegrationLogos: settings.storeIntegrationLogos ?? {
+      salla: "/logos/salla.svg",
+      zid: "",
     },
     seo: settings.seo,
     navigation: settings.navigation ?? defaultNavigation(),

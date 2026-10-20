@@ -293,10 +293,20 @@ export const adminExtraTranslations = {
   "admin.settings.businessHours": { ar: "ساعات العمل", en: "Business hours" },
   "admin.settings.panel.social": { ar: "وسائل التواصل", en: "Social media" },
   "admin.settings.panel.socialDesc": { ar: "روابط التواصل في الفوتر (من leapai.ai)", en: "Footer social links (from leapai.ai)" },
-  "admin.settings.panel.storeLinks": { ar: "روابط تطبيقات المتاجر", en: "Store integration app links" },
+  "admin.settings.panel.storeLinks": { ar: "تكاملات المتاجر", en: "Store integrations" },
   "admin.settings.panel.storeLinksDesc": {
-    ar: "روابط تطبيقات سلة وزد في الصفحة الرئيسية",
-    en: "Homepage Salla and Zid Learn More destinations (app store URLs)",
+    ar: "شعارات وروابط تطبيقات سلة وزد في الصفحة الرئيسية",
+    en: "Homepage Salla and Zid logos and Learn More destinations",
+  },
+  "admin.settings.sallaLogo": { ar: "شعار سلة", en: "Salla logo" },
+  "admin.settings.sallaLogoHint": {
+    ar: "يظهر أعلى بطاقة سلة في الصفحة الرئيسية",
+    en: "Shown at the top of the Salla card on the homepage",
+  },
+  "admin.settings.zidLogo": { ar: "شعار زد", en: "Zid logo" },
+  "admin.settings.zidLogoHint": {
+    ar: "اتركه فارغًا لاستخدام كلمة zid النصية البنفسجية",
+    en: "Leave empty to keep the purple zid text wordmark",
   },
   "admin.settings.sallaLink": { ar: "رابط تطبيق سلة", en: "Salla App Link" },
   "admin.settings.zidLink": { ar: "رابط تطبيق زد", en: "Zid App Link" },

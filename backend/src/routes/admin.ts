@@ -22,6 +22,7 @@ import {
   sanitizeCtaLabels,
   sanitizeSocialLinks,
   sanitizeStoreIntegrationLinks,
+  sanitizeStoreIntegrationLogos,
   sanitizeGeoSettings,
 } from "../lib/validate.js"
 import { cacheDel } from "../config/redis.js"
@@ -114,6 +115,12 @@ router.put("/settings", async (req, res) => {
     settings.set("storeIntegrationLinks", {
       ...(plain.storeIntegrationLinks ?? {}),
       ...sanitizeStoreIntegrationLinks(body.storeIntegrationLinks),
+    })
+  }
+  if (body.storeIntegrationLogos && typeof body.storeIntegrationLogos === "object") {
+    settings.set("storeIntegrationLogos", {
+      ...(plain.storeIntegrationLogos ?? {}),
+      ...sanitizeStoreIntegrationLogos(body.storeIntegrationLogos),
     })
   }
   if (body.seo && typeof body.seo === "object") {
